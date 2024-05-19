@@ -1,0 +1,1 @@
+import { onLoad } from "utils.ts";

@@ -1,0 +1,41 @@
+/* The properties here can be overriden for easy theme creation. */
+:root {
+    /* Various fill colors */
+    --primary-color: rgb(21, 21, 21);
+    --secondary-color: rgb(0, 0, 0);
+    --container-background: black;
+    --unselected-tab-and-shadow: dimgray;
+    --tab-hover: purple;
+    /* Shadow colors */
+    --primary-shadow-color: rgba(255, 0, 0, 0.75);
+    --secondary-shadow-color: red;
+    /* Fonts */
+    --primary-font-family: 'MedievalSharp';
+    --secondary-font-family: 'Lobster Two';
+    /* Text Color */
+    --primary-text-color: rgb(255, 106, 106);
+    --secondary-text-color: maroon;
+}
+
+div.daycolumn {
+    background-color: dimgray;
+    color: var(--secondary-text-color);
+    text-shadow: 0 0 1rem red;
+}
+
+.task {
+    background-color: dimgray;
+}
+
+div.daycolumn:hover {
+    box-shadow: 0px 0px 1rem 0.25rem red;
+    color: red;
+}
+
+.tabbutton:hover {
+    color: white;
+}
+
+.tabbutton.active {
+    color: white;
+}
