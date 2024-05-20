@@ -2,10 +2,10 @@
 :root {
     /* Various fill colors */
     --primary-color: rgb(21, 21, 21);
-    --secondary-color: rgb(0, 0, 0);
-    --container-background: black;
-    --unselected-tab-and-shadow: dimgray;
-    --tab-hover: purple;
+    --secondary-color: darkgray;
+    --container-background: dimgray;
+    --unselected-tab-and-shadow: gray;
+    --tab-hover: dimgray;
     /* Shadow colors */
     --primary-shadow-color: rgba(255, 0, 0, 0.75);
     --secondary-shadow-color: red;
@@ -17,19 +17,10 @@
     --secondary-text-color: red;
 }
 
-div.daycolumn {
-    background-color: hsl(0, 0%, 41%);
-    text-shadow: 0 0 1rem red;
+header {
+    background-color: maroon;
 }
 
-.task {
-    background-color: dimgray;
-}
-
-.tabbutton:hover {
-    color: white;
-}
-
-.tabbutton.active {
-    color: white;
+/* .tabbutton:hover {
+    color: red;
 }

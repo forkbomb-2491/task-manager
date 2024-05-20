@@ -7,8 +7,8 @@
     --unselected-tab-and-shadow: lightgray;
     --tab-hover: lightcyan;
     /* Shadow colors */
-    --primary-shadow-color: rgba(112, 201, 230, 0.743);
-    --secondary-shadow-color: blue;
+    --primary-shadow-color: lightblue;
+    --secondary-shadow-color: rgba(112, 201, 230, 0.743);
     /* Fonts */
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
@@ -53,6 +53,7 @@ header {
 header button {
     font-family: var(--primary-font-family);
     background-color: var(--unselected-tab-and-shadow);
+    color: var(--primary-text-color);
     min-height: 1.75rem;
     border: 0;
     margin-top: 1rem;
@@ -134,19 +135,20 @@ header button {
 .daycolumn {
     width: calc(13% - 2rem);
     background-color: var(--secondary-color);
-    min-height: 25ch;
+    min-height: 37vmax;
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
 
+    transition: ease-in-out 200ms;
+
     padding: 1rem;
 }
 
-div.daycolumn:hover {
-    box-shadow: 0px 0px 1rem 0.25rem var(--primary-shadow-color);
+div.daycolumn.today {
+    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
     color: var(--secondary-text-color);
 }
-
 
 .daycolumn h4 {
     text-align: center;
@@ -160,14 +162,63 @@ div.daycolumn:hover {
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
 
+    transition: ease-in-out 200ms;
+
     padding: 0.75rem;
     margin-bottom: 0.5rem;
+}
+
+.task input {
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 5px;
+}
+
+.task select {
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 5px;
+}
+
+.task select:focus-within {
+    background-color: var(--secondary-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    /* background-color: rgba(0, 0, 0, 0); */
+}
+
+.task form {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--primary-font-family);
+    color: var(--primary-text-color);
+    
+    flex-grow: 1;
+}
+
+.task:hover {
+    box-shadow: 0px 0px 1rem 0.25rem var(--primary-shadow-color);
+    z-index: 10;
 }
 
 button.completed {
     border-radius: 1rem;
     width: 1.5rem;
     height: 1.5rem;
-    
+
     margin-right: 0.5rem;
 }

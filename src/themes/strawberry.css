@@ -7,13 +7,13 @@
     --tab-hover: #fb6966;
     /* Shadow colors */
     --primary-shadow-color: #e0653b;
-    --secondary-shadow-color: #fb6966;
+    --secondary-shadow-color: #c1bb41;
     /* Fonts */
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
     /* Text Color */
-    --primary-text-color: #e0653b;
-    --secondary-text-color: #fb6966;
+    --primary-text-color: #fb6966;
+    --secondary-text-color: #319c39;
 }
 
 .tabbutton {

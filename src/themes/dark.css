@@ -1,0 +1,18 @@
+/* The properties here can be overriden for easy theme creation. */
+:root {
+    /* Various fill colors */
+    --primary-color: rgb(0, 43, 57);
+    --secondary-color: #0d0d0d;
+    --container-background: rgb(0, 8, 15);
+    --unselected-tab-and-shadow: rgb(44, 44, 44);
+    --tab-hover: rgb(0, 31, 31);
+    /* Shadow colors */
+    --primary-shadow-color: rgba(0, 89, 118, 0.743);
+    --secondary-shadow-color: rgba(112, 201, 230, 0.743);
+    /* Fonts */
+    --primary-font-family: 'system-ui';
+    --secondary-font-family: 'system-ui';
+    /* Text Color */
+    --primary-text-color: rgb(255, 255, 255);
+    --secondary-text-color: rgb(255, 255, 255);
+}

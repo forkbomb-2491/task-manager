@@ -16,6 +16,22 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "fs": {
+        "all": true,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "exists": true,
+        "scope": ["$RESOURCE/**", "$APPCONFIG/*", "$APPCONFIG/**", "$APPCONFIG"]
+      },
+      "path": {
+        "all": true
       }
     },
     "windows": [
@@ -34,6 +50,9 @@
       "active": true,
       "targets": "all",
       "identifier": "dev.pgil.forkbomb.taskmgr",
+      "resources": [
+        "../src/themes/*"
+      ],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

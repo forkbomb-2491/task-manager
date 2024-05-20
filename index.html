@@ -3,10 +3,18 @@
     <head>
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="/src/styles.css" />
+        <!-- For live editing themes... -->
+        <!-- <link rel="stylesheet" href="/src/themes/vampire.css" /> -->
+
+        <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tauri App</title>
+
+        <!-- Scripts -->
         <script type="module" src="/src/main.ts" defer></script>
         <script type="module" src="/src/index.js" defer></script>
+
+        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">    
@@ -22,17 +30,40 @@
     </header>
     <body>
         <div class="tabcontainer">
-            <div class="tab visible" name="tasks">
+            <div class="tab visible" name="tasks" id="tasktab">
                 <h1 style="margin-top: 0;">Tasks</h1>
 
                 <p>Hello! I will be the task page!</p>
                 <div class="task">
-                    
-                    URMOM
-                </div>
-                <div class="task">
-                    <button class="completed"></button>
-                    URMOM
+                    <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
+                        <input type="submit" style="background: none; border: none;" value="➕">
+                        <div style="width: 50%;">
+                            <input type = "text" id = "titleinput" name="titleinput" required style="width: 90%;">
+                        </div>
+                        <div style="width: 29%;">
+                            <select id = "catinput" name = "catinput" required style="width: 90%;">
+                                <option name="red">Red</option>
+                                <option name="orange">Orange</option>
+                                <option name="yellow">Yellow</option>
+                                <option name="green">Green</option>
+                                <option name="blue">Blue</option>
+                                <option name="purple">Purple</option>
+                            </select>
+                        </div>
+                        <div style="width: 19%;">
+                            <select id = "deadlineday" name = "deadlineday" required style="width: 90%;">
+                                <option name="suncol">Sunday</option>
+                                <option name="moncol">Monday</option>
+                                <option name="tuecol">Tuesday</option>
+                                <option name="wedcol">Wednesday</option>
+                                <option name="thucol">Thursday</option>
+                                <option name="fricol">Friday</option>
+                                <option name="satcol">Saturday</option>
+
+                            </select>
+                        </div>
+                    </form>
+                    <div style="background: none; min-width: 2rem; border: 0;"></div>
                 </div>
             </div>
             <div class="tab" name="planner">
@@ -40,26 +71,26 @@
 
                 <p>Hello! I will be the planner page!</p>
                 <div class="plannercontainer">
-                    <div class="daycolumn">
+                    <div class="daycolumn" di="suncol">
+                        <h4>Sunday</h4>
+                    </div>
+                    <div class="daycolumn" id="moncol">
                         <h4>Monday</h4>
                     </div>
-                    <div class="daycolumn">
+                    <div class="daycolumn" id="tuecol">
                         <h4>Tuesday</h4>
                     </div>
-                    <div class="daycolumn">
+                    <div class="daycolumn" id="wedcol">
                         <h4>Wednesday</h4>
                     </div>
-                    <div class="daycolumn">
+                    <div class="daycolumn" id="thucol">
                         <h4>Thursday</h4>
                     </div>
-                    <div class="daycolumn">
+                    <div class="daycolumn" id="fricol">
                         <h4>Friday</h4>
                     </div>
-                    <div class="daycolumn">
+                    <div class="daycolumn" id="satcol">
                         <h4>Saturday</h4>
-                    </div>
-                    <div class="daycolumn">
-                        <h4>Sunday</h4>
                     </div>
                 </div>
             </div>
@@ -78,13 +109,13 @@
                 <h2>Sound Setting</h2>
                 
                 <h2>Themes</h2>
-                <button class="themebutton" name="light">Normal (Light)</button> <br>
-                <button class="themebutton" name="dark">Normal (Dark)</button> <br>
+                <button class="themebutton" name="light">Normal (Light)</button>
+                <button class="themebutton" name="dark">Normal (Dark)</button>
                 <button class="themebutton" name="gray">Grayscale</button> <br>
                 <button class="themebutton" name="vampire">Vampire</button> <br>
-                <button class="themebutton" name="gay">Gay</button> <br>
+                <button class="themebutton" name="gay">Gay</button>
                 <button class="themebutton" name="bisexual">Bisexual</button> <br>
-                <button class="themebutton" name="strawberry">Strawberry</button> <br>
+                <button class="themebutton" name="strawberry">Strawberry</button>
                 <button class="themebutton" name="matcha">Matcha</button> <br>    
             </div>
         </div>
