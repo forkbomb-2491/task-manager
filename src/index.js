@@ -1,4 +1,5 @@
 import { onLoad } from "./utils";
+import { changeTheme } from "./main";
 
 /**
  * Switches displayed tab to the target.
@@ -26,10 +27,26 @@ function changeTab(tab) {
     }
 }
 
+function themeButtonCallback(event) {
+    changeTheme(event.currentTarget.name)
+}
+
 function tabChangeCallback(event) {
     var button = event.currentTarget
     var tab = button.name
     changeTab(tab)
 }
-// This exposes the method to the HTML:
-window.tabChangeCallback = tabChangeCallback
+
+onLoad(() => {
+    var themeButtons = document.getElementsByClassName("themebutton")
+    for (let i = 0; i < themeButtons.length; i++) {
+        const button = themeButtons[i];
+        button.addEventListener("click", themeButtonCallback)
+    }
+
+    var tabButtons = document.getElementsByClassName("tabbutton")
+    for (let i = 0; i < tabButtons.length; i++) {
+        const button = tabButtons[i];
+        button.addEventListener("click", tabChangeCallback)
+    }
+})
