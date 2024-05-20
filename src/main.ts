@@ -13,4 +13,3 @@ export function changeTheme(theme: string) {
     newTheme.id = "themesheet"
     document.head.appendChild(newTheme)
 }
-

@@ -19,7 +19,7 @@ function changeTab(tab) {
     var tabs = document.getElementsByClassName("tab")
     for (let i = 0; i < tabs.length; i++) {
         const tabElement = tabs[i];
-        if (tabElement.name == tab) {
+        if (tabElement.getAttribute("name") == tab) {
             tabElement.className = "tab visible"
         } else if (tabElement.className == "tab visible") {
             tabElement.className = "tab"
@@ -27,17 +27,19 @@ function changeTab(tab) {
     }
 }
 
+/** Assign as click callback to theme buttons. */
 function themeButtonCallback(event) {
     changeTheme(event.currentTarget.name)
 }
 
+/** Assign as click callback to tab change buttons. */
 function tabChangeCallback(event) {
     var button = event.currentTarget
     var tab = button.name
     changeTab(tab)
 }
 
-onLoad(() => {
+onLoad(async () => {
     var themeButtons = document.getElementsByClassName("themebutton")
     for (let i = 0; i < themeButtons.length; i++) {
         const button = themeButtons[i];

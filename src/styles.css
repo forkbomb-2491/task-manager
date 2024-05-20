@@ -21,8 +21,8 @@ button:hover {
     cursor: pointer;
 }
 
-iframe {
-    border: 0;
+button {
+    transition: ease-in-out 200ms;
 }
 
 html {
@@ -36,6 +36,7 @@ html {
 
 body {
     margin: 0;
+    color: var(--primary-text-color);
 }
 
 header {
