@@ -1,10 +1,10 @@
 :root {
     /* Various fill colors */
-    --primary-color: black;
-    --secondary-color: dimgray;
+    --primary-color: gray;
+    --secondary-color: lightgray;
     --container-background: darkgray;
-    --unselected-tab-and-shadow: gray;
-    --tab-hover: lightgray;
+    --unselected-tab-and-shadow: darkgray;
+    --tab-hover: gray;
     /* Shadow colors */
     --primary-shadow-color: gray;
     --secondary-shadow-color: dimgray;
@@ -12,6 +12,6 @@
     --primary-font-family: 'Times New Roman', Times, serif;
     --secondary-font-family: 'Times New Roman', Times, serif;
     /* Text Color */
-    --primary-text-color: white;
-    --secondary-text-color: white;
+    --primary-text-color: dimgray;
+    --secondary-text-color: black;
 }
