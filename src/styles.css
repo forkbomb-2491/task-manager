@@ -184,6 +184,7 @@ div.daycolumn.today {
     border: 0;
     border-bottom: black dotted 1px;
     color: var(--primary-text-color);
+    appearance: none;
 
     font-size: medium;
     font-family: var(--primary-font-family);
