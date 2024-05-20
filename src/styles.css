@@ -2,12 +2,12 @@
 :root {
     /* Various fill colors */
     --primary-color: lightblue;
-    --secondary-color: white;
+    --secondary-color: #f3f3f3;
     --container-background: aliceblue;
     --unselected-tab-and-shadow: lightgray;
     --tab-hover: lightcyan;
     /* Shadow colors */
-    --primary-shadow-color: rgba(127, 127, 200, 0.75);
+    --primary-shadow-color: rgba(112, 201, 230, 0.743);
     --secondary-shadow-color: blue;
     /* Fonts */
     --primary-font-family: 'system-ui';
@@ -31,6 +31,8 @@ html {
     padding: 0;
     margin: 0;
 
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
     overscroll-behavior: none;
 }
 
@@ -45,6 +47,7 @@ header {
     width: 100%;
     background-color: var(--secondary-color);
     z-index: 1000;
+    overflow-y: hidden;
 }
 
 header button {
@@ -58,6 +61,13 @@ header button {
     margin-right: 0.5ch;
     margin-left: 0.5ch;
     min-width: fit-content;
+
+    text-shadow: 0px 0px 1px var(--secondary-color);
+
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+
+    box-shadow: 0px 0px 2px 1px var(--unselected-tab-and-shadow);
 }
 
 .tabbutton:hover {
@@ -67,6 +77,10 @@ header button {
 .tabbutton.active {
     background-color: var(--primary-color);
     color: var(--secondary-color);
+
+    text-shadow: 0px 0px 1.5px var(--primary-text-color);
+
+    box-shadow: 0px 0px 4px 2px var(--unselected-tab-and-shadow);
 }
 
 .flexspacer {
@@ -80,14 +94,10 @@ header button {
 
 .tab {
     display: none;
-    position: absolute;
+    position: relative;
     padding-left: 2rem;
     padding-right: 2rem;
     padding-top: 3rem;
-    word-break: break-all;
-
-    width: calc(100% - 4rem);
-    height: calc(100% - 3rem);
 }
 
 .tab.visible {
