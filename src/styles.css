@@ -17,7 +17,7 @@
     --secondary-text-color: black;
 }
 
-button :hover {
+button:hover {
     cursor: pointer;
 }
 
@@ -30,6 +30,8 @@ html {
     background-color: var(--primary-color);
     padding: 0;
     margin: 0;
+
+    overscroll-behavior: none;
 }
 
 body {
