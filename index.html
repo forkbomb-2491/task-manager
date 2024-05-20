@@ -6,20 +6,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tauri App</title>
         <script type="module" src="/src/main.ts" defer></script>
+        <script type="module" src="/src/index.js" defer></script>
     </head>
     <header>
-        <button class="tabbutton" name="tasks" style="margin-left: 2rem;">Tasks</button>
-        <button class="tabbutton" name="planner">Planner</button>
+        <button onclick="tabChangeCallback(event)" class="tabbutton active" name="tasks" style="margin-left: 2rem;">Tasks</button>
+        <button onclick="tabChangeCallback(event)" class="tabbutton" name="planner">Planner</button>
         
         <div class="flexspacer"></div>
 
-        <button class="tabbutton" name="help">Help!</button>
-        <button class="tabbutton" name="settings" style="width: 2rem;">⚙️</button>
+        <button onclick="tabChangeCallback(event)" class="tabbutton" name="help">Help!</button>
+        <button onclick="tabChangeCallback(event)" class="tabbutton" name="settings" style="width: 2rem;">⚙️</button>
     </header>
     <body>
         <div class="tabcontainer">
-            <iframe class="tab visible" src="src/tasks.html" scrolling="no"></iframe>
-            <iframe class="tab" src="src/planner.html" scrolling="no"></iframe>
+            <iframe class="tab visible" name="tasks" src="src/tasks.html"></iframe>
+            <iframe class="tab" name="planner" src="src/planner.html"></iframe>
+            <iframe class="tab" name="help" src="src/help.html"></iframe>
+            <iframe class="tab" name="settings" src="src/settings.html"></iframe>
         </div>
     </body>
 </html>

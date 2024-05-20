@@ -1,0 +1,17 @@
+:root {
+    /* Various fill colors */
+    --primary-color: #fbd1c7;
+    --secondary-color: #fbd1c7;
+    --container-background: #fcb3ac;
+    --unselected-tab-and-shadow: #e0653b;
+    --tab-hover: #fbd1c7;
+    /* Shadow colors */
+    --primary-shadow-color: #e0653b;
+    --secondary-shadow-color: #fcb3ac;
+    /* Fonts */
+    --primary-font-family: 'system-ui';
+    --secondary-font-family: 'system-ui';
+    /* Text Color */
+    --primary-text-color: #fcb3ac;
+    --secondary-text-color: olive;
+}

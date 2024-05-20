@@ -38,9 +38,10 @@ body {
 
 header {
     display: flex;
-    position: relative;
+    position: absolute;
     width: 100%;
     background-color: var(--secondary-color);
+    z-index: 1000;
 }
 
 header button {
@@ -56,13 +57,22 @@ header button {
     min-width: fit-content;
 }
 
+.tabbutton:hover {
+    background-color: var(--tab-hover);
+}
+
+.tabbutton.active {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
 .flexspacer {
     flex-grow: 1;
 }
 
 .tabcontainer {
     display: flex;
-    overflow: hidden;
+    break-after: always;
 }
 
 .tab {
@@ -70,9 +80,11 @@ header button {
     position: absolute;
     padding-left: 2rem;
     padding-right: 2rem;
+    padding-top: 3rem;
+    word-break: break-all;
 
-    width: auto;
-    height: 100%;
+    width: calc(100% - 4rem);
+    height: calc(100% - 3rem);
 }
 
 .tab.visible {

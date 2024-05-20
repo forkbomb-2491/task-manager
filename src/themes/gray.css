@@ -1,0 +1,17 @@
+:root {
+    /* Various fill colors */
+    --primary-color: black;
+    --secondary-color: dimgray;
+    --container-background: darkgray;
+    --unselected-tab-and-shadow: gray;
+    --tab-hover: lightgray;
+    /* Shadow colors */
+    --primary-shadow-color: gray;
+    --secondary-shadow-color: dimgray;
+    /* Fonts */
+    --primary-font-family: 'Times New Roman', Times, serif;
+    --secondary-font-family: 'Times New Roman', Times, serif;
+    /* Text Color */
+    --primary-text-color: black;
+    --secondary-text-color: white;
+}
