@@ -13,23 +13,17 @@
     --primary-font-family: 'MedievalSharp';
     --secondary-font-family: 'Lobster Two';
     /* Text Color */
-    --primary-text-color: rgb(255, 106, 106);
-    --secondary-text-color: maroon;
+    --primary-text-color: maroon;
+    --secondary-text-color: red;
 }
 
 div.daycolumn {
-    background-color: dimgray;
-    color: var(--secondary-text-color);
+    background-color: hsl(0, 0%, 41%);
     text-shadow: 0 0 1rem red;
 }
 
 .task {
     background-color: dimgray;
-}
-
-div.daycolumn:hover {
-    box-shadow: 0px 0px 1rem 0.25rem red;
-    color: red;
 }
 
 .tabbutton:hover {
