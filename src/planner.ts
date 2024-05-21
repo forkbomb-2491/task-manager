@@ -2,16 +2,19 @@ import { onLoad } from "./utils"
 
 // const planner = document.getElementsByName("planner")[0]
 
-export function addTask(title: string, dayId: string, completeCallback: (e: Event) => void) {
+export function addPlannerTask(task: HTMLElement, dayId: string) {
     const day = document.getElementById(dayId)
-    var newElement = document.createElement("p")
-    newElement.innerHTML = title
-    
-    var completeButton = document.createElement("button")
-    completeButton.addEventListener("click", completeCallback)
-    newElement.appendChild(completeButton)
+    day?.appendChild(task)
+}
 
-    day?.appendChild(newElement)
+export function createPlannerTaskElement(title: string) {
+    var newElement = document.createElement("p")
+    newElement.innerHTML = `
+    <button class="completed"></button>
+    ${title}
+    `
+
+    return newElement
 }
 
 onLoad(() => {

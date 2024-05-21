@@ -1,6 +1,6 @@
 import { onLoad } from "./utils";
 import { changeTheme, createTaskElement } from "./main";
-import { addTask } from "./planner"
+import { addPlannerTask, createPlannerTaskElement } from "./planner"
 import { getSettings } from "./storage"
 
 /**
@@ -41,28 +41,38 @@ function tabChangeCallback(event) {
     changeTab(tab)
 }
 
-function deleteTaskCallback(event) {
-    // window.thing = event.currentTarget
-    event.currentTarget.parentNode.remove()
-}
-
 function createTaskCallback(event) {
     event.preventDefault()
     var form = event.srcElement
     var title = form.titleinput.value
     var cat = form.catinput.value
     var date = form.deadlineday.value
-    var task = createTaskElement(title, cat, date)
-    task.getElementsByClassName("completed")[0].addEventListener(
+    var day = form.deadlineday.selectedOptions.item(0).getAttribute("name")
+
+    var listTask = createTaskElement(title, cat, date)
+    var plannerTask = createPlannerTaskElement(title)
+
+    var deleteTaskCallback = (e) => {
+        listTask.remove()
+        plannerTask.remove()
+    }
+
+    listTask.getElementsByClassName("completed")[0].addEventListener(
         "click",
         deleteTaskCallback
     )
-    task.getElementsByClassName("deletetask")[0].addEventListener(
+    listTask.getElementsByClassName("deletetask")[0].addEventListener(
         "click",
         deleteTaskCallback
     )
-    document.getElementById("tasktab").appendChild(task)
-    addTask(title, form.deadlineday.selectedOptions.item(0).getAttribute("name"), deleteTaskCallback)
+
+    plannerTask.getElementsByClassName("completed")[0].addEventListener(
+        "click",
+        deleteTaskCallback
+    )
+
+    document.getElementById("tasktab").appendChild(listTask)
+    addPlannerTask(plannerTask, day)
 }
 window.createTaskCallback = createTaskCallback
 
