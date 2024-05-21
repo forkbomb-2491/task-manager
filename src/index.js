@@ -62,7 +62,7 @@ function createTaskCallback(event) {
         deleteTaskCallback
     )
     document.getElementById("tasktab").appendChild(task)
-    addTask(title, "moncol")
+    addTask(title, form.deadlineday.selectedOptions.item(0).getAttribute("name"), deleteTaskCallback)
 }
 window.createTaskCallback = createTaskCallback
 
