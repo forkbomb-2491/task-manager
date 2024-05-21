@@ -123,6 +123,10 @@ header button {
     box-shadow: 0px 0px 1rem 0.25rem var(--primary-shadow-color);
 }
 
+.tab h1 {
+    margin-top: 0;
+}
+
 .tab.visible {
     display: block;
 }
