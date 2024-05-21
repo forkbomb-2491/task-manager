@@ -1,0 +1,17 @@
+:root {
+    /* Various fill colors */
+    --primary-color: rgb(255,213,231);
+    --secondary-color: #ffffff;
+    --container-background: rgb(183, 219, 252);
+    --unselected-tab-and-shadow: rgb(252, 216, 178);
+    --tab-hover: #fff4d3;
+    /* Shadow colors */
+    --primary-shadow-color: rgb(157, 203, 245);
+    --secondary-shadow-color: rgba(255, 255, 255, 0.743);
+    /* Fonts */
+    --primary-font-family: 'system-ui';
+    --secondary-font-family: 'system-ui';
+    /* Text Color */
+    --primary-text-color: #FFFFFF;
+    --secondary-text-color: #FFFFFF;
+}

@@ -130,6 +130,7 @@ header button {
 .plannercontainer {
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
 }
 
 .daycolumn {
@@ -239,4 +240,89 @@ button.completed {
 
 button.completed:hover {
     box-shadow: 0 0 0.25rem 0.25rem var(--primary-shadow-color);
+}
+
+.helpcontainer {
+    flex-grow: 1;
+    background-color: var(--secondary-color);
+
+    min-width: 33%;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+
+}
+
+.helpbutton {
+    display: flex;
+    background-color: var(--container-background);
+
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.helpbutton:hover {
+    background-color: var(--tab-hover);
+    color: var(--secondary-text-color);
+    cursor: pointer;
+
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+}
+
+.techniquebutton {
+    display: flex;
+    background-color: var(--container-background);
+
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    width: 25%;
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.techniquebutton:hover {
+    background-color: var(--tab-hover);
+    color: var(--secondary-text-color);
+    cursor: pointer;
+
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+}
+
+.helpcontent {
+    display: none;
+}
+
+.helpcontent.visible {
+    display: block;
 }

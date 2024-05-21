@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="/src/styles.css" />
         <!-- For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/vampire.css" /> -->
+        <link rel="stylesheet" href="/src/themes/danishpastel.css" />
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,10 +22,14 @@
     <header>
         <button class="tabbutton active" name="tasks" style="margin-left: 2rem;">Tasks</button>
         <button class="tabbutton" name="planner">Planner</button>
+        <button class="tabbutton" name="techniques">Techniques</button>
+
+
         
         <div class="flexspacer"></div>
 
         <button class="tabbutton" name="help">Help!</button>
+        <button class="tabbutton" name="reminders">🔔</button>
         <button class="tabbutton" name="settings" style="width: 2rem;">⚙️</button>
     </header>
     <body>
@@ -59,7 +63,6 @@
                                 <option name="thucol">Thursday</option>
                                 <option name="fricol">Friday</option>
                                 <option name="satcol">Saturday</option>
-
                             </select>
                         </div>
                     </form>
@@ -94,19 +97,108 @@
                     </div>
                 </div>
             </div>
+            <div class="tab" name="techniques">
+                <h1>Techniques</h1>
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="helpcontainer">
+                        <button class="helpbutton" name="pomodoro">Pomodoro</button>
+                        <button class="helpbutton" name="frog">Eat that Frog</button>
+                    </div>
+                    <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
+                        <div class="helpcontent visible" name="pomodoro">
+                            <h2>Pomodoro</h2>
+                            <ul>
+                                <li>Choose a task to focus on</li>
+                                <li>Choose a length for worktime (recommended: 50 minutes)</li>
+                                <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
+                                <li>Switch between the two.</li>
+                            </ul>
+                        </div>
+                        <div class="helpcontent" name="frog">
+                            <h2>Frog</h2>
+                            <ul>
+                                <li>Identify Your Frog : figure out your most difficult tasks to work on. Have a look at your Task List for help.</li>
+                                <li>Eat It : get them out of the way first thing in the morning, don't leave them for later</li>
+                                <li>Repeat Every Day: repeat every day until it becomes a habit</li>
+                            </ul>
+                        </div>
+                        <div class="helpcontent" name="eisenhower">
+                            <h2>EisenhowerMatrix</h2>
+                            <ul>
+                                <li>Urgent</li>
+                                <li>Significant</li>
+                                <li>Not Urgent</li>
+                                <li>Insignificant</li>
+                            </ul>
+                        </div>
+                        <div class="helpcontent" name="minutefocus">
+                            <h2>Minute Focus Block</h2>
+                            <ul>
+                                <li>peepeepoopoo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
             <div class="tab" name="help">
                 <h1 style="margin-top: 0;">Help</h1>
                 <p>This is the help page!</p>
                 <p>This is where, when you are experiencing the agonies of life and neurodivergency, you can go to find assistance.</p>
-                <h2>Tips & Tricks</h2>
-                <p>Break larger tasks down to smaller, bite-sized tasks</p>
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="helpcontainer">
+                        <h2>Situation</h2>
+                        <button class="helpbutton" name="overwhelmed">Feeling overwhelmed?</button>
+                        <button class="helpbutton" name="cantstart">Can't Get Started?</button>
+                        <button class="helpbutton" name="sidetracked">Getting Sidetracked?</button>
+                        <button class="helpbutton" name="techniques">Need Work Techniques?</button>
+                    </div>
+                    <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
+                        <div class="helpcontent visible" name="overwhelmed">
+                            <h2>Feeling Overwhelmed?</h2>
+                            <p>Try breaking larger tasks down to smaller, more bite-sized tasks</p>
+                        </div>
+                        <div class="helpcontent" name="cantstart">
+                            <h2>Can't Get Started?</h2>
+                            <p>Here are some of your tasks you can get started on to get in the groove.</p>
+                        </div>
+                        <div class="helpcontent" name="sidetracked">
+                            <h2>Getting Sidetracked?</h2>
+                        </div>
+                        <div class="helpcontent" name="techniques">
+                            <h2>Need Work Techniques?</h2>
+                            <p>Try:</p>
+                            <ul>
+                                <li>Pomodoro</li>
+                                    <ul>
+                                        <li>Choose a task to focus on</li>
+                                        <li>Choose a length for worktime (recommended: 50 minutes)</li>
+                                        <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
+                                        <li>Switch between the two.</li>
+                                    </ul>
+                                <li>Eat That Frog:</li>
+                                    <ul>
+                                        <li>Identify Your Frog</li>
+                                        <li>Eat It</li>
+                                        <li>Repeat Every Day</li>
+                                    </ul>
+                                <li>Eisenhower Matrix</li>
+                                <li>Minute Focus Block</li>
+                            </ul>
+                            <p>Use the Techniques tab to help you with some of these techniques!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab" name="reminders">
+                <h1>Reminders</h1>
             </div>
             <div class="tab" name="settings">
                 <h1 style="margin-top: 0;">Settings</h1>
 
                 <p>Hello! I will be the settings page!</p>
-                
-                <h2>Sound Setting</h2>
+                <h2>Notification Settings</h2>
+                <h2>Sound Settings</h2>
                 
                 <h2>Themes</h2>
                 <button class="themebutton" name="light">Normal (Light)</button>
@@ -116,7 +208,8 @@
                 <button class="themebutton" name="gay">Gay</button>
                 <button class="themebutton" name="bisexual">Bisexual</button> <br>
                 <button class="themebutton" name="strawberry">Strawberry</button>
-                <button class="themebutton" name="matcha">Matcha</button> <br>    
+                <button class="themebutton" name="matcha">Matcha</button> <br>  
+                <button class="themebutton" name="danishpastel">Danish Pastel</button> <br>
             </div>
         </div>
     </body>

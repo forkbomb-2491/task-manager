@@ -2,6 +2,7 @@ import { onLoad } from "./utils";
 import { changeTheme, createTaskElement } from "./main";
 import { addPlannerTask, createPlannerTaskElement } from "./planner"
 import { getSettings } from "./storage"
+import { changeHelpStuff } from "./help"
 
 /**
  * Switches displayed tab to the target.
@@ -95,6 +96,17 @@ onLoad(async () => {
     for (let i = 0; i < tabButtons.length; i++) {
         const button = tabButtons[i];
         button.addEventListener("click", tabChangeCallback)
+    }
+
+    var helpButtons = document.getElementsByClassName("helpbutton")
+    for (let i = 0; i < helpButtons.length; i++) {
+        const button = helpButtons[i];
+        button.addEventListener(
+            "click",
+            (e) => {
+                changeHelpStuff(e.currentTarget.getAttribute("name"))
+            }
+        )
     }
 
     highlightCurrentDay()
