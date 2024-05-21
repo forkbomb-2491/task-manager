@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="/src/styles.css" />
         <!-- For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/danishpastel.css" /> -->
+        <link rel="stylesheet" href="/src/themes/danishpastel.css" />
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,7 +36,6 @@
         <div class="tabcontainer">
             <div class="tab visible" name="tasks" id="tasktab">
                 <h1 style="margin-top: 0;">Tasks</h1>
-
                 <p>Hello! I will be the task page!</p>
                 <div class="task">
                     <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
@@ -103,6 +102,7 @@
                     <div class="helpcontainer">
                         <button class="helpbutton" name="pomodoro">Pomodoro</button>
                         <button class="helpbutton" name="frog">Eat that Frog</button>
+                        <button
                     </div>
                     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
                         <div class="helpcontent visible" name="pomodoro">
@@ -130,6 +130,7 @@
                                 <li>Not Urgent</li>
                                 <li>Insignificant</li>
                             </ul>
+                            
                         </div>
                         <div class="helpcontent" name="minutefocus">
                             <h2>Minute Focus Block</h2>
