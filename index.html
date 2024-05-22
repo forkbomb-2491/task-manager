@@ -121,7 +121,7 @@
                             <li>Choose a task to focus on</li>
                             <li>Choose a length for worktime (recommended: 25-30 minutes)</li>
                             <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
-                            <li>Switch between the two.</li>
+                            <li>Alternate between the two.</li>
                         </ul>
                         <h3>Minute Focus Block</h3>
                         <ul>
@@ -144,11 +144,11 @@
                         <h3>Do</h3>
                         <h4>There are vital tasks with substantial urgency</h4>
                     </div>
-                </div>
+                </div>              
                 <div style="display: flex; justify-content: space-between">
                     <div class="eisenquad">
                         <h2>Insignificant</h2>
-                        <h3>Delete or ignore for now</h3>
+                        <h3>Delete</h3>
                         <h4>These are trivial tasks with minor urgency</h4>
                     </div>
                     <div class="eisenquad">
@@ -196,18 +196,17 @@
                         </div>
                         <div class="helpcontent" name="techniques">
                             <h2>Need Work Techniques?</h2>
-                            <p>Try:</p>
+                            <p>Try using:</p>
                             <ul>
-                                <li>Pomodoro</li>
+                                <li>The Pomodoro Technique</li>
                                     <ul>
                                         <li>The Pomodoro method organizes work and break times in order to be motivating and refreshing.</li>
                                     </ul>
-                                <li>Eisenhower Matrix</li>
+                                <li>The Eisenhower Matrix</li>
                                     <ul>
-                                        <li>The Eisenhower Matrix is a way of categorizing tasks based on importance and urgency.</li>
+                                        <li>The Eisenhower Matrix is a way of categorizing and prioritizing tasks based on importance and urgency.</li>
                                     </ul>
                             </ul>
-                            <p>Use the Techniques tab to help you with some of these techniques!</p>
                         </div>
                     </div>
                 </div>
@@ -219,13 +218,14 @@
                 <h1 style="margin-top: 0;">Settings</h1>
 
                 <h2>Notification Settings</h2>
+                <button class="timerbutton" name="notifTest">Notification Test</button>
+
                 <h2>Sound Settings</h2>
-                
                 <label for="timervolume">Timer Volume</label><br>
-                <input type="range" class="settingsslider" id="timervolume" name = "worktime" min="30" max="120" value="75" step="5">
+                <input type="range" class="slider" id="timervolume" name = "worktime" min="0" max="100" value="50" step="5" width="50%">
                 
                 <h2>Themes</h2>
-                <h3>⚠️ Uncomment line 7 of index.html and set the link to point to your sheet to edit in real time!</h3>
+                <p><i>⚠️ Uncomment line 7 of index.html and set the link to point to your sheet to edit in real time!</i></p>
                 <button class="themebutton" name="light">Normal (Light)</button>
                 <button class="themebutton" name="dark">Normal (Dark)</button>
                 <button class="themebutton" name="gray">Grayscale</button> <br>
