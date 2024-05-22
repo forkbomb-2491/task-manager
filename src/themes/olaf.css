@@ -1,0 +1,55 @@
+:root {
+    /* Various fill colors */
+    --primary-color: rgb(35, 55, 70);
+    --secondary-color:rgb(255, 255, 255);
+    --container-background: rgb(246, 193, 103);
+    --unselected-tab-and-shadow: rgb(246, 193, 103);
+    --tab-hover: rgb(228, 160, 27);
+    /* Shadow colors */
+    --primary-shadow-color: rgba(12, 14, 69, 0.484);
+    --secondary-shadow-color: rgb(255, 204, 51, 0.5);
+    /* Fonts */
+    --primary-font-family: 'Helvetica';
+    --secondary-font-family: 'Helvetica';
+    /* Text Color */
+    --primary-text-color: rgb(35, 55, 70);
+    --secondary-text-color: rgb(228, 160, 27);
+}
+
+.tabbutton.active {
+    color: #ffffff;
+    box-shadow: 0px 0px 4px 1px rgba(119, 37, 14, 0.5);
+}
+
+.tabbutton {
+    color: rgb(35, 55, 70);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+}
+
+.helpbutton {
+    color: rgb(35, 55, 70);
+    box-shadow: 0px 0px 0.2rem 0.10rem var(--secondary-shadow-color);
+    text-shadow: none;
+}
+.helpbutton:hover {
+    background-color: rgb(228, 160, 27);
+    color: rgb(35, 55, 70);
+}
+
+.eisenquad {
+    text-shadow: none;
+}
+
+.daycolumn.today {
+    text-shadow: none;
+}
+
+.timerbutton:hover {
+    background-color: rgb(228, 160, 27);
+    color: rgb(35, 55, 70);
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
+}
+
+div[name="settings"] {
+    background-color: #f7f5f2;
+}
