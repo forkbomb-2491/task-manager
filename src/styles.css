@@ -7,7 +7,7 @@
     --unselected-tab-and-shadow: lightgray;
     --tab-hover: lightcyan;
     /* Shadow colors */
-    --primary-shadow-color: lightblue;
+    --primary-shadow-color: rgba(156, 209, 226, 0.801);
     --secondary-shadow-color: rgba(112, 201, 230, 0.743);
     /* Fonts */
     --primary-font-family: 'system-ui';
