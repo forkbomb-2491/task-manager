@@ -134,27 +134,50 @@
             <div class="tab" name="eisenhower">
                 <h1>Eisenhower Matrix</h1>
                 <div style="display: flex; justify-content: space-between">
-                    <div class="eisenquad">
-                        <h2>Significant</h2>
-                        <h3>Schedule</h3>
-                        <h4>These are critical tasks with minimal urgency</h4>
-                    </div>
-                    <div class="eisenquad">
-                        <h2>Urgent</h2>
-                        <h3>Do</h3>
-                        <h4>There are vital tasks with substantial urgency</h4>
-                    </div>
-                </div>              
-                <div style="display: flex; justify-content: space-between">
-                    <div class="eisenquad">
-                        <h2>Insignificant</h2>
-                        <h3>Delete</h3>
-                        <h4>These are trivial tasks with minor urgency</h4>
-                    </div>
-                    <div class="eisenquad">
-                        <h2>Not Urgent</h2>
-                        <h3>Delegate</h3>
-                        <h4>These are pressing tasks with negligible impact</h4>
+                    <!-- <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>High Priority</div>
+                        <div>Low Priority</div>
+                    </div> -->
+                    <div>
+                        <!-- Quadrants Start -->
+                        <div style="display: flex; justify-content: space-between">
+                            <div style="flex-grow: 1;">High Importance</div>
+                            <div class="eisenquad">
+                                <h2>Significant</h2>
+                                <h3>Schedule</h3>
+                                <h4>These are critical tasks with minimal urgency</h4>
+                            </div>
+                            <div class="eisenquad">
+                                <h2>Urgent</h2>
+                                <h3>Do</h3>
+                                <h4>There are vital tasks with substantial urgency</h4>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; vertical-align: baseline;">
+                            <div style="flex-grow: 1;">Low Importance</div>              
+                            <div class="eisenquad">
+                                <h2>Insignificant</h2>
+                                <h3>Delete</h3>
+                                <h4>These are trivial tasks with minor urgency</h4>
+                            </div>
+                            <div class="eisenquad">
+                                <h2>Not Urgent</h2>
+                                <h3>Delegate</h3>
+                                <h4>These are pressing tasks with negligible impact</h4>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between">
+                                <div>None</div>
+                                <div>
+                                    Low Urgency
+                                </div>
+                                <div>
+                                    High Urgency
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Quadrants End -->
                     </div>
                 </div>
             </div>
@@ -179,7 +202,7 @@
                         <div class="helpcontent" name="cantstart">
                             <h2>Can't Get Started?</h2>
                             <p>Here are some of your tasks you can get started on to get in the groove.</p>
-                            <p>Here are some significant things coming up.</p>
+                            <p>Here are some #Significant things coming up.</p>
                         </div>
                         <div class="helpcontent" name="sidetracked">
                             <h2>Getting Sidetracked?</h2>
