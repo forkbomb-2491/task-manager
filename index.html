@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="/src/styles.css" />
         <!-- For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/olaf.css" /> -->
+        <link rel="stylesheet" href="/src/themes/olaf.css" />
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -138,42 +138,42 @@
                         <div>High Priority</div>
                         <div>Low Priority</div>
                     </div> -->
-                    <div>
+                    <div style="flex-grow: 1;">
                         <!-- Quadrants Start -->
                         <div style="display: flex; justify-content: space-between">
-                            <div style="flex-grow: 1;">High Importance</div>
-                            <div class="eisenquad">
+                            <div style="width: 10ch;">Big</div>
+                            <div class="eisenquad" style="width: calc(50% - 5ch)">
                                 <h2>Significant</h2>
                                 <h3>Schedule</h3>
-                                <h4>These are critical tasks with minimal urgency</h4>
+                                <h4>These are critical tasks with minimal urgency (big, not soon)</h4>
                             </div>
-                            <div class="eisenquad">
+                            <div class="eisenquad" style="width: calc(50% - 5ch)">
                                 <h2>Urgent</h2>
                                 <h3>Do</h3>
-                                <h4>There are vital tasks with substantial urgency</h4>
+                                <h4>There are vital tasks with substantial urgency (big, soon)</h4>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between; vertical-align: baseline;">
-                            <div style="flex-grow: 1;">Low Importance</div>              
-                            <div class="eisenquad">
+                            <div style="width: 10ch;">Not Big</div>              
+                            <div class="eisenquad" style="width: calc(50% - 5ch)">
                                 <h2>Insignificant</h2>
                                 <h3>Delete</h3>
-                                <h4>These are trivial tasks with minor urgency</h4>
+                                <h4>These are trivial tasks with minor urgency (not big, not soon)</h4>
                             </div>
-                            <div class="eisenquad">
+                            <div class="eisenquad" style="width: calc(50% - 5ch)">
                                 <h2>Not Urgent</h2>
                                 <h3>Delegate</h3>
-                                <h4>These are pressing tasks with negligible impact</h4>
+                                <h4>These are pressing tasks with negligible impact (not big, soon)</h4>
                             </div>
                         </div>
                         <div>
                             <div style="display: flex; justify-content: space-between">
                                 <div>None</div>
                                 <div>
-                                    Low Urgency
+                                    Not Soon
                                 </div>
                                 <div>
-                                    High Urgency
+                                    Soon
                                 </div>
                             </div>
                         </div>
