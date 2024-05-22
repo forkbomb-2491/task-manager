@@ -11,8 +11,34 @@ function createTaskCallback(event) {
     var cat = form.catinput.value
     var date = form.deadlineday.value
     var day = form.deadlineday.selectedOptions.item(0).getAttribute("name")
+    var bigness = ""
 
-    var listTask = createTaskElement(title, cat, date)
+    switch (form.bignessinput.selectedOptions.item(0).getAttribute("name")) {
+        case "1":
+            bigness = "Not Big"
+            break;
+
+        case "2":
+            bigness = "A Little Big"
+            break;
+
+        case "3":
+            bigness = "Medium Big"
+            break;
+            
+        case "4":
+            bigness = "Pretty Big"
+            break;
+
+        case "5":
+            bigness = "Very Big"
+            break;
+    
+        default:
+            break;
+    }
+
+    var listTask = createTaskElement(title, cat, bigness, date)
     var plannerTask = createPlannerTaskElement(title)
 
     var deleteTaskCallback = (e) => {

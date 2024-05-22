@@ -3,6 +3,7 @@ import { readTextFile, writeTextFile, BaseDirectory, exists, createDir } from "@
 
 const SETTINGS_FN = "settings.json"
 
+
 var settingsLoaded = false
 
 var settings = {

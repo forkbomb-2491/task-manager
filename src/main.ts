@@ -21,7 +21,7 @@ export async function changeTheme(theme: string) {
     await setLastTheme(theme)
 }
 
-export function createTaskElement(title: string, cat: string, due: string) {
+export function createTaskElement(title: string, cat: string, bigness: string, due: string) {
     var newTask = document.createElement("div")
     newTask.className = "task"
     newTask.innerHTML = `
@@ -29,8 +29,11 @@ export function createTaskElement(title: string, cat: string, due: string) {
         <div style="width: 50%;">
             ${title}
         </div>
-        <div style="width: 29%;">
+        <div style="width: 19%;">
             ${cat}
+        </div>
+        <div style="width: 19%;">
+            ${bigness}
         </div>
         <div style="width: 19%;">
             ${due}

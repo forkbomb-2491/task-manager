@@ -22,7 +22,7 @@
     <header>
         <button class="tabbutton active" name="tasks" style="margin-left: 2rem;">Tasks</button>
         <button class="tabbutton" name="planner">Planner</button>
-        <button class="tabbutton" name="pomodoro">Pomodoro</button>
+        <button class="tabbutton" name="pomodoro">Time Block</button>
         <button class="tabbutton" name="eisenhower">Eisenhower</button>
 
         
@@ -43,7 +43,7 @@
                         <div style="width: 50%;">
                             <input type = "text" id = "titleinput" name="titleinput" required style="width: 90%;">
                         </div>
-                        <div style="width: 29%;">
+                        <div style="width: 19%;">
                             <select id = "catinput" name = "catinput" required style="width: 90%;">
                                 <option name="red">Red</option>
                                 <option name="orange">Orange</option>
@@ -51,6 +51,15 @@
                                 <option name="green">Green</option>
                                 <option name="blue">Blue</option>
                                 <option name="purple">Purple</option>
+                            </select>
+                        </div>
+                        <div style="width: 19%;">
+                            <select id = "bignessinput" name = "bignessinput" required style="width: 90%;">
+                                <option name="1">Not big</option>
+                                <option name="2">A Little Big</option>
+                                <option name="3">Medium Big</option>
+                                <option name="4">Pretty Big</option>
+                                <option name="5">Very Big</option>
                             </select>
                         </div>
                         <div style="width: 19%;">
@@ -97,7 +106,7 @@
                 </div>
             </div>
             <div class="tab" name="pomodoro">
-                <h1>Pomodoro</h1>
+                <h1>Time Block</h1>
                 <div style="display: flex; justify-content: space-between;">
                     <div class="helpcontainer">
                         <h2>TIMER</h2>
@@ -133,6 +142,7 @@
             </div>
             <div class="tab" name="eisenhower">
                 <h1>Eisenhower Matrix</h1>
+                <p>Categorize your tasks based on Bigness and Time Left</p>
                 <div style="display: flex; justify-content: space-between">
                     <!-- <div style="display: flex; flex-direction: column; justify-content: space-between;">
                         <div>High Priority</div>
@@ -143,27 +153,27 @@
                         <div style="display: flex; justify-content: space-between">
                             <div style="width: 10ch;">Big</div>
                             <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Significant</h2>
+                                <h2>Significant (big, not soon)</h2>
                                 <h3>Schedule</h3>
-                                <h4>These are critical tasks with minimal urgency (big, not soon)</h4>
+                                <h4>These are critical tasks with minimal urgency</h4>
                             </div>
                             <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Urgent</h2>
+                                <h2>Urgent (big, soon)</h2>
                                 <h3>Do</h3>
-                                <h4>There are vital tasks with substantial urgency (big, soon)</h4>
+                                <h4>There are vital tasks with substantial urgency</h4>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between; vertical-align: baseline;">
                             <div style="width: 10ch;">Not Big</div>              
                             <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Insignificant</h2>
+                                <h2>Insignificant (not big, not soon)</h2>
                                 <h3>Delete</h3>
-                                <h4>These are trivial tasks with minor urgency (not big, not soon)</h4>
+                                <h4>These are trivial tasks with minor urgency</h4>
                             </div>
                             <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Not Urgent</h2>
+                                <h2>Not Urgent (not big, soon)</h2>
                                 <h3>Delegate</h3>
-                                <h4>These are pressing tasks with negligible impact (not big, soon)</h4>
+                                <h4>These are pressing tasks with negligible impact</h4>
                             </div>
                         </div>
                         <div>
@@ -197,17 +207,20 @@
                         <div class="helpcontent visible" name="overwhelmed">
                             <h2>Feeling Overwhelmed?</h2>
                             <p>Try breaking larger tasks down to smaller, more bite-sized tasks</p>
-                            <p>Or, alternatively, here are some of your smaller tasks!</p>
+                            <p>Or, alternatively, here are some of your smaller upcoming tasks!</p>
+                            <p>#Not Urgent - (not big, soon) here</p>
                         </div>
                         <div class="helpcontent" name="cantstart">
                             <h2>Can't Get Started?</h2>
                             <p>Here are some of your tasks you can get started on to get in the groove.</p>
-                            <p>Here are some #Significant things coming up.</p>
+                            <p>Here are some significant things coming up.</p>
+                            <p>#Significant - (big, not soon) here</p>
                         </div>
                         <div class="helpcontent" name="sidetracked">
                             <h2>Getting Sidetracked?</h2>
                             <p>Remember that these things are coming up super soon!</p>
-                            <p>(Show #Urgent stuff)</p>
+                            <p>#Not Urgent - (not big, soon) here</p>
+                            <p>#Urgent - (big, soon) here</p>
                         </div>
                         <div class="helpcontent" name="frog">
                             <h2>Eat That Frog!</h2>
@@ -216,6 +229,7 @@
                                 <li><i>Eat It</i> : get them out of the way first thing in the morning, don't leave them for later</li>
                                 <li><i>Repeat Every Day</i>: repeat this every day until it becomes a habit</li>
                             </ul>
+                            <p>#Urgent - (big, soon) here</p>
                         </div>
                         <div class="helpcontent" name="techniques">
                             <h2>Need Work Techniques?</h2>
