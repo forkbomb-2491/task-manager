@@ -6,7 +6,8 @@ const SETTINGS_FN = "settings.json"
 var settingsLoaded = false
 
 var settings = {
-    "lastTheme": "light"
+    "lastTheme": "light",
+    "plannerflipped": false
 }
 
 async function checkAppDataValid() {
@@ -37,6 +38,11 @@ export async function loadSettings() {
     } catch (error) {
         await saveSettings()
     }
+}
+
+export async function savePlannerFlip(flipped: boolean) {
+    settings.plannerflipped = flipped
+    await saveSettings()
 }
 
 export async function setLastTheme(theme: string) {
