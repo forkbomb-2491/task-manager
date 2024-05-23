@@ -1,8 +1,41 @@
 import { onLoad } from "./utils";
-import { createTaskElement } from "./main";
-import { addPlannerTask, createPlannerTaskElement, switchPlannerOrientation } from "./planner"
-import { getSettings } from "./storage"
+import { changeTheme } from "./main";
+import { addPlannerTask, switchPlannerOrientation } from "./planner"
+import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged } from "./storage"
 import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks } from "./setup"
+import { Task } from "./task"
+import { sendNotif } from "./notifications"
+
+var tasks = []
+
+function sortTaskElements() {
+    var currentList = document.getElementById("currenttasklist");
+    var completedList = document.getElementById("completedtasklist");
+    for (let i = 0; i < currentList.children.length; i++) {
+        const task = currentList.children[i];
+        if (task.className.includes("completed")) {
+            currentList.removeChild(task)
+            completedList.appendChild(task)
+        }
+    }
+
+    for (let i = 0; i < completedList.children.length; i++) {
+        const task = completedList.children[i];
+        if (!task.className.includes("completed")) {
+            completedList.removeChild(task)
+            currentList.appendChild(task)
+        }
+    }
+}
+
+function taskCompleteCallback() {
+    sortTaskElements()
+    window.dispatchEvent(getTasksChanged(tasks))
+}
+
+function deleteTaskCallback() {
+    window.dispatchEvent(getTasksChanged(tasks))
+}
 
 function createTaskCallback(event) {
     event.preventDefault()
@@ -11,57 +44,18 @@ function createTaskCallback(event) {
     var cat = form.catinput.value
     var date = form.deadlineday.value
     var day = form.deadlineday.selectedOptions.item(0).getAttribute("name")
-    var bigness = ""
+    var bigness = form.bignessinput.selectedOptions.item(0).getAttribute("name")
 
-    switch (form.bignessinput.selectedOptions.item(0).getAttribute("name")) {
-        case "1":
-            bigness = "Not Big"
-            break;
+    var task = new Task(title, bigness, cat, date, false)
+    task.completeCallback = taskCompleteCallback
+    task.deleteCallback = deleteTaskCallback
 
-        case "2":
-            bigness = "A Little Big"
-            break;
+    tasks.push(task)
 
-        case "3":
-            bigness = "Medium Big"
-            break;
-            
-        case "4":
-            bigness = "Pretty Big"
-            break;
+    document.getElementById("currenttasklist").appendChild(task.getTaskListElement())
+    addPlannerTask(task.getPlannerElement(), day)
 
-        case "5":
-            bigness = "Very Big"
-            break;
-    
-        default:
-            break;
-    }
-
-    var listTask = createTaskElement(title, cat, bigness, date)
-    var plannerTask = createPlannerTaskElement(title)
-
-    var deleteTaskCallback = (e) => {
-        listTask.remove()
-        plannerTask.remove()
-    }
-
-    listTask.getElementsByClassName("completed")[0].addEventListener(
-        "click",
-        deleteTaskCallback
-    )
-    listTask.getElementsByClassName("deletetask")[0].addEventListener(
-        "click",
-        deleteTaskCallback
-    )
-
-    plannerTask.getElementsByClassName("completed")[0].addEventListener(
-        "click",
-        deleteTaskCallback
-    )
-
-    document.getElementById("tasktab").appendChild(listTask)
-    addPlannerTask(plannerTask, day)
+    saveTasks(tasks)
 }
 window.createTaskCallback = createTaskCallback
 
@@ -83,14 +77,32 @@ onLoad(async () => {
         (e) => { switchPlannerOrientation() }
     )
 
+    document.getElementById("notiftestbutton").addEventListener(
+        "click",
+        async (e) => {
+            await sendNotif("urmom", "gottem lolololololololol")
+        }
+    )
+
     highlightCurrentDay()
     var settings = await getSettings()
     await changeTheme(settings.lastTheme)
     if (settings.plannerflipped) {
         switchPlannerOrientation()
     }
+
+    tasks = await loadTasks()
+    for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
+        task.completeCallback = taskCompleteCallback
+        task.deleteCallback = deleteTaskCallback
+
+        addPlannerTask(task.getPlannerElement(), (task.due.slice(0, 3) + "col").toLowerCase())
+
+        if (task.completed) {
+            document.getElementById("completedtasklist").appendChild(task.getTaskListElement())
+        } else {
+            document.getElementById("currenttasklist").appendChild(task.getTaskListElement())
+        }
+    }
 })
-
-
-
-

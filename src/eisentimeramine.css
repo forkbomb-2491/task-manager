@@ -1,0 +1,75 @@
+/* UNDER NO CIRCUMSTANCES MAY THIS FILE NAME BE CHANGED */
+
+.timerbutton:hover {
+    background-color: var(--tab-hover);
+    color: var(--secondary-text-color);
+    cursor: pointer;
+
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+}
+
+.eisenquad {
+    flex-grow: 1;
+    background-color: var(--secondary-color);
+
+    margin: 0.5rem;
+    min-height: 15vmax;
+
+    /* width: 50%; */
+    padding: 1rem;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+}
+
+.eisenquad h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.eisenquad h3 {
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.eisenquad h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-style: italic;
+    color: var(--secondary-text-color);
+}
+
+.dopamenusec {
+    flex-grow: 1;
+    background-color: var(--secondary-color);
+
+    margin: 0.5rem;
+    min-height: 10vmax;
+
+    /* width: 50%; */
+    padding: 1rem;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+}
+
+.dopamenusec:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.dopamenusec h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.eisenquad h3 {
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 0;
+}

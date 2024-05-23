@@ -1,0 +1,100 @@
+.tasklist {
+    /* display: flex;
+    border-radius:0.5rem;
+    background-color: var(--primary-color); */
+}
+
+.task {
+    display: flex;
+    /* width: 100%; */
+    background-color: var(--secondary-color);
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.task input {
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 5px;
+}
+
+.task select {
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+    appearance: none;
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 5px;
+}
+
+.task select:focus-within {
+    background-color: var(--secondary-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    /* background-color: rgba(0, 0, 0, 0); */
+}
+
+.task form {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--primary-font-family);
+    color: var(--primary-text-color);
+    
+    flex-grow: 1;
+}
+
+.task:hover {
+    box-shadow: 0px 0px 1rem 0.25rem var(--primary-shadow-color);
+    z-index: 10;
+}
+
+.task.button.deletetask {
+    text-decoration: none;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: var(--secondary-shadow-color);
+}
+
+.task.completed button.complete {
+    background-color: var(--container-background);
+}
+
+
+button.complete {
+    background-color: rgba(0, 0, 0, 0);
+
+    border-color: var(--primary-text-color);
+    box-shadow: 0 0 0.125rem 0.125rem var(--primary-shadow-color);
+
+    border-style: solid;
+
+    border-radius: 1rem;
+    width: 1.35rem;
+    height: 1.35rem;
+
+    margin-right: 0.5rem;
+}
+
+button.complete:hover {
+    box-shadow: 0 0 0.25rem 0.25rem var(--primary-shadow-color);
+}

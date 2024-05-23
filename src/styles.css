@@ -130,206 +130,6 @@ header button {
     display: block;
 }
 
-.plannercontainer {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-}
-
-.daycolumn {
-    width: calc(13% - 2rem);
-    background-color: var(--secondary-color);
-    min-height: 37vmax;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 1rem;
-}
-
-.daycolumn button.completed {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 0.125em;
-}
-
-.daycolumn.today {
-    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
-    color: var(--secondary-text-color);
-}
-
-.daycolumn h4 {
-    text-align: center;
-    margin-top: 0;
-}
-
-.task {
-    display: flex;
-    background-color: var(--secondary-color);
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.task input {
-    background-color: rgba(0, 0, 0, 0);
-    border: 0;
-    border-bottom: black dotted 1px;
-    color: var(--primary-text-color);
-
-    font-size: medium;
-    font-family: var(--primary-font-family);
-    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    border-radius: 5px;
-}
-
-.task select {
-    border: 0;
-    border-bottom: black dotted 1px;
-    color: var(--primary-text-color);
-    appearance: none;
-
-    font-size: medium;
-    font-family: var(--primary-font-family);
-    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    background-color: rgba(0, 0, 0, 0);
-    border-radius: 5px;
-}
-
-.task select:focus-within {
-    background-color: var(--secondary-color);
-
-    font-size: medium;
-    font-family: var(--primary-font-family);
-    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    /* background-color: rgba(0, 0, 0, 0); */
-}
-
-.task form {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--primary-font-family);
-    color: var(--primary-text-color);
-    
-    flex-grow: 1;
-}
-
-.task:hover {
-    box-shadow: 0px 0px 1rem 0.25rem var(--primary-shadow-color);
-    z-index: 10;
-}
-
-button.completed {
-    background-color: rgba(0, 0, 0, 0);
-
-    border-color: var(--primary-text-color);
-    box-shadow: 0 0 0.125rem 0.125rem var(--primary-shadow-color);
-
-    border-style: solid;
-
-    border-radius: 1rem;
-    width: 1.35rem;
-    height: 1.35rem;
-
-    margin-right: 0.5rem;
-}
-
-button.completed:hover {
-    box-shadow: 0 0 0.25rem 0.25rem var(--primary-shadow-color);
-}
-
-.helpcontainer {
-    flex-grow: 1;
-    background-color: var(--secondary-color);
-
-    min-width: 33%;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 1rem;
-
-}
-
-.helpbutton {
-    display: flex;
-    background-color: var(--container-background);
-
-    color: var(--primary-text-color);
-
-    font-family: var(--primary-font-family);
-    font-size: medium;
-    text-align: center;
-    width: 100%;
-    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-
-    border: 0;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.helpbutton:hover {
-    background-color: var(--tab-hover);
-    color: var(--secondary-text-color);
-    cursor: pointer;
-
-    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
-}
-
-.techniquebutton {
-    display: flex;
-    background-color: var(--container-background);
-
-    color: var(--primary-text-color);
-
-    font-family: var(--primary-font-family);
-    font-size: medium;
-    text-align: center;
-    width: 25%;
-    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-
-    border: 0;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.techniquebutton:hover {
-    background-color: var(--tab-hover);
-    color: var(--secondary-text-color);
-    cursor: pointer;
-
-    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
-}
-
-.helpcontent {
-    display: none;
-}
-
-.helpcontent.visible {
-    display: block;
-}
-
 .slider {
     -webkit-appearance: none;
     appearance: none;
@@ -362,7 +162,7 @@ button.completed:hover {
     box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
 }
 
-.timerbutton {
+.settingsbutton {
     display: flex;
     background-color: var(--container-background);
 
@@ -371,7 +171,9 @@ button.completed:hover {
     font-family: var(--primary-font-family);
     font-size: medium;
     text-align: center;
-    width: 30%;
+    vertical-align: middle;
+
+    /* width: 30%; */
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
     border: 0;
@@ -385,45 +187,21 @@ button.completed:hover {
     margin-bottom: 0.5rem;
 }
 
-.timerbutton:hover {
-    background-color: var(--tab-hover);
+.showhidebutton {
+    font-family: var(--primary-font-family);
+    color: var(--secondary-color);
+
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    margin-top: auto; 
+    margin-bottom: auto; 
+    border: 0; 
+    background: none;
+}
+
+.showhidebutton:hover {
     color: var(--secondary-text-color);
-    cursor: pointer;
 
-    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+    text-shadow: 0 0 0.5rem var(--primary-shadow-color);
 }
 
-.eisenquad {
-    flex-grow: 1;
-    background-color: var(--secondary-color);
-
-    margin: 0.5rem;
-    min-height: 15vmax;
-
-    /* width: 50%; */
-    padding: 1rem;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-}
-
-.eisenquad h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.eisenquad h3 {
-    font-style: italic;
-    margin-top: 0;
-    /* 420 babey */
-    margin-bottom: 0;
-}
-
-.eisenquad h4 {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-style: italic;
-    color: var(--secondary-text-color);
-}

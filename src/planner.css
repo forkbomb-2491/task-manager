@@ -1,0 +1,35 @@
+.plannercontainer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.daycolumn {
+    width: calc(13% - 2rem);
+    background-color: var(--secondary-color);
+    min-height: 37vmax;
+    word-break: break-all;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+}
+
+.daycolumn button.complete {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.125em;
+}
+
+.daycolumn.today {
+    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
+    color: var(--secondary-text-color);
+}
+
+.daycolumn h4 {
+    text-align: center;
+    margin-top: 0;
+}

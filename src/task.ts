@@ -1,49 +1,38 @@
 
-
 export class Task {
     // id: string
     
     name: string
-    bigness: number
+    bigness: string
     category: string
     due: string
+    completed: boolean
+
+    deleted: boolean = false
+
+    completeCallback: (() => void) | null = null
+    deleteCallback: (() => void) | null = null
 
     private elements: Array<HTMLElement>
 
-    constructor(name: string, bigness: number, category: string, due: string) {
+    constructor(name: string, bigness: string, category: string, due: string, completed: boolean = false) {
         this.name = name
         this.bigness = bigness
         this.category = category
         
         this.due = due
+        this.completed = completed
 
         this.elements = []
     }
 
-    private getBignessString() {
-        switch (this.bigness) {
-            case 1:
-                return "Not Big"
-                break;
-    
-            case 2:
-                return "A Little Big"
-                break;
-    
-            case 3:
-                return "Medium Big"
-                break;
-                
-            case 4:
-                return "Pretty Big"
-                break;
-    
-            case 5:
-                return "Very Big"
-                break;
-        
-            default:
-                break;
+    toBasicObject() {
+        return {
+            "name": this.name,
+            "bigness": this.bigness,
+            "category": this.category,
+            "due": this.due,
+            "completed": this.completed
         }
     }
 
@@ -53,21 +42,45 @@ export class Task {
             element.remove()
         }
 
-        this.elements = []
+        this.deleted = true
+
+        if (this.deleteCallback != null) {
+            this.deleteCallback()
+        }
+    }
+
+    toggleCompleted() {
+        if (!this.completed) {
+            for (let i = 0; i < this.elements.length; i++) {
+                const element = this.elements[i];
+                element.className += " completed"
+            }
+        } else {
+            for (let i = 0; i < this.elements.length; i++) {
+                const element = this.elements[i];
+                element.className = element.className.replace(" completed", "")
+            }
+        }
+
+        this.completed = !this.completed
+
+        if (this.completeCallback != null) {
+            this.completeCallback()
+        }
     }
 
     getTaskListElement() {
         var newElement = document.createElement("div")
-        newElement.className = "task"
+        newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = `
-            <button class="completed"></button>
-            <div style="width: 50%;">
+            <button class="complete"></button>
+            <div style="width: 60%;">
                 ${this.name}
             </div>
             <div style="width: 19%;">
                 ${this.category}
             </div>
-            <div style="width: 19%;">
+            <div style="width: 9%;">
                 ${this.bigness}
             </div>
             <div style="width: 19%;">
@@ -79,10 +92,11 @@ export class Task {
         `
 
         var deleteTaskCallback = (_: Event) => { this.delete() }
+        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
-        newElement.getElementsByClassName("completed")[0].addEventListener(
+        newElement.getElementsByClassName("complete")[0].addEventListener(
             "click",
-            deleteTaskCallback
+            completeTaskCallback
         )
 
         newElement.getElementsByClassName("deletetask")[0].addEventListener(
@@ -96,16 +110,19 @@ export class Task {
 
     getPlannerElement() {
         var newElement = document.createElement("p")
+        if (this.completed) {
+            newElement.className = " completed"
+        }
         newElement.innerHTML = `
-        <button class="completed"></button>
+        <button class="complete"></button>
         ${this.name}
         `
 
-        var deleteTaskCallback = (_: Event) => { this.delete() }
+        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
-        newElement.getElementsByClassName("completed")[0].addEventListener(
+        newElement.getElementsByClassName("complete")[0].addEventListener(
             "click",
-            deleteTaskCallback
+            completeTaskCallback
         )
 
         this.elements.push(newElement)

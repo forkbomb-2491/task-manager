@@ -3,8 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="/src/styles.css" />
+        <link rel="stylesheet" href="/src/eisentimeramine.css" />
+        <link rel="stylesheet" href="/src/help.css" />
+        <link rel="stylesheet" href="/src/planner.css" />
+        <link rel="stylesheet" href="/src/settings.css" />
+        <link rel="stylesheet" href="/src/tasks.css" />
         <!-- For live editing themes... -->
-        <link rel="stylesheet" href="/src/themes/olaf.css" />
+        <link rel="stylesheet" href="/src/themes/lilac.css" />
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,17 +22,18 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">    
+        <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet"> 
+        <link href='https://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet'>   
     </head>
     <header>
         <button class="tabbutton active" name="tasks" style="margin-left: 2rem;">Tasks</button>
         <button class="tabbutton" name="planner">Planner</button>
         <button class="tabbutton" name="pomodoro">Time Block</button>
         <button class="tabbutton" name="eisenhower">Eisenhower</button>
-
         
         <div class="flexspacer"></div>
 
+        <button class="tabbutton" name="dopamenu">DopaMenu</button>
         <button class="tabbutton" name="help">Help!</button>
         <button class="tabbutton" name="reminders">🔔</button>
         <button class="tabbutton" name="settings" style="width: 2rem;">⚙️</button>
@@ -35,12 +41,11 @@
     <body>
         <div class="tabcontainer">
             <div class="tab visible" name="tasks" id="tasktab">
-                <h1 style="margin-top: 0;">Tasks</h1>
-                <p>Hello! I will be the task page!</p>
+                <h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
                 <div class="task">
                     <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
                         <input type="submit" style="background: none; border: none;" value="➕">
-                        <div style="width: 50%;">
+                        <div style="width: 60%;">
                             <input type = "text" id = "titleinput" name="titleinput" required style="width: 90%;">
                         </div>
                         <div style="width: 19%;">
@@ -53,13 +58,13 @@
                                 <option name="purple">Purple</option>
                             </select>
                         </div>
-                        <div style="width: 19%;">
+                        <div style="width: 9%;">
                             <select id = "bignessinput" name = "bignessinput" required style="width: 90%;">
-                                <option name="1">Not big</option>
-                                <option name="2">A Little Big</option>
-                                <option name="3">Medium Big</option>
-                                <option name="4">Pretty Big</option>
-                                <option name="5">Very Big</option>
+                                <option name="1">1</option>
+                                <option name="2">2</option>
+                                <option name="3">3</option>
+                                <option name="4">4</option>
+                                <option name="5">5</option>
                             </select>
                         </div>
                         <div style="width: 19%;">
@@ -76,11 +81,28 @@
                     </form>
                     <div style="background: none; min-width: 2rem; border: 0;"></div>
                 </div>
+                <div>
+                    <div style="display: flex;">
+                        <button class="showhidebutton">S/H</button>
+                        <h2>Current Tasks</h2>
+                    </div>
+                    <div class="tasklist" id="currenttasklist">
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex;">
+                        <button class="showhidebutton">S/H</button>
+                        <h2>Completed Tasks</h2>
+                    </div>
+                    <div class="tasklist" id="completedtasklist">
+                    </div>
+                </div>
             </div>
             <div class="tab" name="planner">
-                <h1 style="margin-top: 0;">Planner</h1>
-                <button id="switchplanner">sWiTcH</button>
-                <p>Hello! I will be the planner page!</p>
+                <div style="display: flex; justify-content: space-between">
+                    <h1 style="margin-top: 0;">Planner</h1>
+                    <button class="settingsbutton" id="switchplanner"  style="width: 20%;">Switch Orientation</button>
+                </div>
                 <div class="plannercontainer">
                     <div class="daycolumn" id="suncol">
                         <h4>Sunday</h4>
@@ -119,9 +141,9 @@
                         <input type="range" class="slider" id="breaktime" name = "breaktime" min="5" max="45" value="25" step="5">
                         </div>
                         <div style="display:flex; justify-content: space-between; margin-top: 0.75rem">
-                            <button class="timerbutton" name="start">Start</button>
-                            <button class="timerbutton" name="pause">Pause</button>
-                            <button class="timerbutton" name="stop">Stop</button>
+                            <button class="settingsbutton" name="start" style="width: 30%;">Start</button>
+                            <button class="settingsbutton" name="pause" style="width: 30%;">Pause</button>
+                            <button class="settingsbutton" name="stop" style="width: 30%;">Stop</button>
                         </div>
                     </div>
                     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
@@ -141,53 +163,112 @@
                 </div>
             </div>
             <div class="tab" name="eisenhower">
-                <h1>Eisenhower Matrix</h1>
-                <p>Categorize your tasks based on Bigness and Time Left</p>
-                <div style="display: flex; justify-content: space-between">
-                    <!-- <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>High Priority</div>
-                        <div>Low Priority</div>
-                    </div> -->
-                    <div style="flex-grow: 1;">
-                        <!-- Quadrants Start -->
-                        <div style="display: flex; justify-content: space-between">
-                            <div style="width: 10ch;">Big</div>
-                            <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Significant (big, not soon)</h2>
-                                <h3>Schedule</h3>
-                                <h4>These are critical tasks with minimal urgency</h4>
-                            </div>
-                            <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Urgent (big, soon)</h2>
-                                <h3>Do</h3>
-                                <h4>There are vital tasks with substantial urgency</h4>
-                            </div>
+            <h1>Eisenhower Matrix</h1>
+            <p>Categorize your tasks based on Bigness and Time Left</p>
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <div style="width: 6ch; min-height: 20vmax;">Big</div>
+                    <div style="width: 6ch; min-height: 10vmax;">Not Big</div>   
+                </div>
+                   <!-- Quadrant Container  -->
+                <div style="vertical-align: middle; width: calc(100% - 6ch)">        
+                    <!-- Quadrants Start -->
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="eisenquad" style="width: 50%">
+                            <h2>Significant (big, not soon)</h2>
+                            <h3>Schedule</h3>
+                            <h4>These are critical tasks with minimal urgency</h4>
                         </div>
-                        <div style="display: flex; justify-content: space-between; vertical-align: baseline;">
-                            <div style="width: 10ch;">Not Big</div>              
-                            <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Insignificant (not big, not soon)</h2>
-                                <h3>Delete</h3>
-                                <h4>These are trivial tasks with minor urgency</h4>
-                            </div>
-                            <div class="eisenquad" style="width: calc(50% - 5ch)">
-                                <h2>Not Urgent (not big, soon)</h2>
-                                <h3>Delegate</h3>
-                                <h4>These are pressing tasks with negligible impact</h4>
-                            </div>
+                        <div class="eisenquad" style="width:50%">
+                            <h2>Urgent (big, soon)</h2>
+                            <h3>Do</h3>
+                            <h4>There are vital tasks with substantial urgency</h4>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="eisenquad" style="width: 50%">
+                            <h2>Insignificant (not big, not soon)</h2>
+                            <h3>Delete</h3>
+                            <h4>These are trivial tasks with minor urgency</h4>
+                        </div>
+                        <div class="eisenquad" style="width: 50%">
+                            <h2>Not Urgent (not big, soon)</h2>
+                            <h3>Delegate</h3>
+                            <h4>These are pressing tasks with negligible impact</h4>
+                        </div>
+                    </div>
+                    <!-- Quadrants End -->
+                </div>
+            </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between">
+                        <div style="width: 6ch; min-height: 10vmax;">None</div>
+                        <div>
+                            Not Soon
                         </div>
                         <div>
-                            <div style="display: flex; justify-content: space-between">
-                                <div>None</div>
-                                <div>
-                                    Not Soon
-                                </div>
-                                <div>
-                                    Soon
-                                </div>
-                            </div>
+                            Soon
                         </div>
-                        <!-- Quadrants End -->
+                    </div>
+                </div>
+            </div>
+            <div class="tab" name="dopamenu">
+                <h1 style="margin-top: 0;">DopaMenu</h1>
+                <div style="vertical-align: middle;">
+                    <!-- Row1 -->
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Starter</h2>
+                            <h3>Things that take 10-15 minutes</h3>
+                            <ul>
+                                <li>Quick walk</li>
+                                <li>Stretching</li>
+                            </ul>
+                        </div>
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Mains</h2>
+                            <h3>Things that take about an hour</h3>
+                            <ul>
+                                <li>Exercise</li>
+                                <li>Reading</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Sides</h2>
+                            <h3>Things that you can do while doing something else</h3>
+                            <ul>
+                                <li>Listening to a podcast or playlist</li>
+                                <li>Coloring or drawing</li>
+                            </ul>
+                        </div>
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Desserts</h2>
+                            <h3>Things that are good in moderation</h3>
+                            <ul>
+                                <li>Scrolling through Social Media</li>
+                                <li>Binge watching a show</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Specials</h2>
+                            <h3>Things that take a while and happen infrequently</h3>
+                            <ul>
+                                <li>Concerts</li>
+                                <li>Take a trip</li>
+                            </ul>
+                        </div>
+                        <div class="dopamenusec" style="width: 50%">
+                            <h2>Salads</h2>
+                            <h3>Things that you don't really want to do but you know will make you feel good</h3>
+                            <ul>
+                                <li>Workout</li>
+                                <li>Meal prep</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,7 +336,7 @@
                 <h1 style="margin-top: 0;">Settings</h1>
 
                 <h2>Notification Settings</h2>
-                <button class="timerbutton" name="notifTest">Notification Test</button>
+                <button class="settingsbutton" id="notiftestbutton">Notification Test</button>
 
                 <h2>Sound Settings</h2>
                 <label for="timervolume">Timer Volume</label><br>
@@ -270,6 +351,8 @@
                 <button class="themebutton" name="gay">Gay</button>
                 <button class="themebutton" name="bisexual">Bisexual</button> <br>
                 <button class="themebutton" name="strawberry">Strawberry</button>
+                <button class="themebutton" name="barbie">Barbie</button>
+                <button class="themebutton" name="lilac">Lilac</button>
                 <button class="themebutton" name="matcha">Matcha</button> <br>  
                 <button class="themebutton" name="danishpastel">Danish Pastel</button> <br>
                 <button class="themebutton" name="macalester">Macalester</button>
