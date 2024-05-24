@@ -7,6 +7,17 @@ import { Task } from "./task"
 import { sendNotif } from "./notifications"
 
 var tasks = []
+var tabs = {
+    tasks: document.getElementById("taskstab").contentDocument,
+    planner: document.getElementById("plannertab").contentDocument,
+    pomodoro: document.getElementById("pomodorotab").contentDocument,
+    eisenhower: document.getElementById("eisenhowertab").contentDocument,
+    dopamenu: document.getElementById("dopamenutab").contentDocument,
+    help: document.getElementById("helptab").contentDocument,
+    reminders: document.getElementById("reminderstab").contentDocument,
+    settings: document.getElementById("settingstab").contentDocument,
+}
+window.tabs = tabs
 
 function sortTaskElements() {
     var currentList = document.getElementById("currenttasklist");
@@ -63,8 +74,22 @@ function highlightCurrentDay() {
     var date = new Date()
     var day = date.getDay()
 
-    var days = document.getElementsByClassName("daycolumn")
+    var days = tabs.planner.getElementsByClassName("daycolumn")
     days[day].className += " today"
+}
+
+
+function applyStylesToTabs() {
+    var styles = document.getElementsByTagName("link")
+    for (const tab in tabs) {
+        if (Object.hasOwnProperty.call(tabs, tab)) {
+            const element = tabs[tab];
+            for (let i = 0; i < styles.length; i++) {
+                const style = styles[i];
+                tab.head.appendChild(style)
+            }
+        }
+    }
 }
 
 onLoad(async () => {
@@ -72,12 +97,12 @@ onLoad(async () => {
     addTabButtonCallbacks()
     addHelpButtonCallbacks()
 
-    document.getElementById("switchplanner").addEventListener(
+    tabs.planner.getElementById("switchplanner").addEventListener(
         "click",
         (e) => { switchPlannerOrientation() }
     )
 
-    document.getElementById("notiftestbutton").addEventListener(
+    tabs.settings.getElementById("notiftestbutton").addEventListener(
         "click",
         async (e) => {
             await sendNotif("urmom", "gottem lolololololololol")
@@ -105,4 +130,6 @@ onLoad(async () => {
             document.getElementById("currenttasklist").appendChild(task.getTaskListElement())
         }
     }
+
+    applyStylesToTabs()
 })

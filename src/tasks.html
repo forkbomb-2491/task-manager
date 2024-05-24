@@ -1,0 +1,56 @@
+<h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
+<div class="task">
+    <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
+        <input type="submit" style="background: none; border: none;" value="➕">
+        <div style="width: 60%;">
+            <input type = "text" id = "titleinput" name="titleinput" required style="width: 90%;">
+        </div>
+        <div style="width: 19%;">
+            <select id = "catinput" name = "catinput" required style="width: 90%;">
+                <option name="red">Red</option>
+                <option name="orange">Orange</option>
+                <option name="yellow">Yellow</option>
+                <option name="green">Green</option>
+                <option name="blue">Blue</option>
+                <option name="purple">Purple</option>
+            </select>
+        </div>
+        <div style="width: 9%;">
+            <select id = "bignessinput" name = "bignessinput" required style="width: 90%;">
+                <option name="1">1</option>
+                <option name="2">2</option>
+                <option name="3">3</option>
+                <option name="4">4</option>
+                <option name="5">5</option>
+            </select>
+        </div>
+        <div style="width: 19%;">
+            <select id = "deadlineday" name = "deadlineday" required style="width: 90%;">
+                <option name="suncol">Sunday</option>
+                <option name="moncol">Monday</option>
+                <option name="tuecol">Tuesday</option>
+                <option name="wedcol">Wednesday</option>
+                <option name="thucol">Thursday</option>
+                <option name="fricol">Friday</option>
+                <option name="satcol">Saturday</option>
+            </select>
+        </div>
+    </form>
+    <div style="background: none; min-width: 2rem; border: 0;"></div>
+</div>
+<div>
+    <div style="display: flex;">
+        <button class="showhidebutton">S/H</button>
+        <h2>Current Tasks</h2>
+    </div>
+    <div class="tasklist" id="currenttasklist">
+    </div>
+</div>
+<div>
+    <div style="display: flex;">
+        <button class="showhidebutton">S/H</button>
+        <h2>Completed Tasks</h2>
+    </div>
+    <div class="tasklist" id="completedtasklist">
+    </div>
+</div>

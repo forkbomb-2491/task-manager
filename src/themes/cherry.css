@@ -1,0 +1,36 @@
+:root {
+    /* Various fill colors */
+    --primary-color: rgb(115, 0, 13);
+    --secondary-color: rgb(0,34,23);
+    --container-background: rgb(0,34,23);
+    --unselected-tab-and-shadow: rgb(0,34,23);
+    --tab-hover: rgb(143, 112, 161);
+    /* Shadow colors */
+    --primary-shadow-color: rgba(79, 40, 100, 0.5);
+    --secondary-shadow-color: rgba(164, 141, 206, 0.5);
+    /* Fonts */
+    --primary-font-family: 'Cantarell';
+    --secondary-font-family: 'Helvetica';
+    /* Text Color */
+    --primary-text-color: rgb(154,114,166);
+    --secondary-text-color: rgb(127, 94, 159);
+}
+
+.tabbutton.active {
+    color: #ffffff;
+    box-shadow: 0px 0px 4px 1px rgb(154,114,166);
+}
+
+.tabbutton {
+    color: #ffffff;
+}
+
+.helpbutton {
+    color: #ffffff;
+    
+}
+.helpbutton:hover {
+    background-color: rgb(154,114,166);
+    color: #ffffff;
+}
+

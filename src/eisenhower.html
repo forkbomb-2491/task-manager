@@ -1,0 +1,50 @@
+<h1>Eisenhower Matrix</h1>
+<p>Categorize your tasks based on Bigness and Time Left</p>
+<div style="display: flex; justify-content: space-between;">
+    <div class="eisenaxis" style="text-align: center; width: 2ch; flex-direction: column; background-image: linear-gradient(var(--primary-color), var(--secondary-color));">
+        <div style="transform: rotate(-90deg); color: var(--secondary-color);">Big</div>
+        <div style="transform: rotate(-90deg); color: var(--primary-text-color);">Small</div>   
+    </div>
+        <!-- Quadrant Container  -->
+    <div style="vertical-align: middle; width: calc(100% - 2ch);">        
+        <!-- Quadrants Start -->
+        <div style="display: flex; justify-content: space-between;">
+            <div class="eisenquad" style="width: 50%">
+                <h2>Significant (big, not soon)</h2>
+                <h3>Schedule</h3>
+                <h4>These are critical tasks with minimal urgency</h4>
+            </div>
+            <div class="eisenquad" style="width:50%">
+                <h2>Urgent (big, soon)</h2>
+                <h3>Do</h3>
+                <h4>There are vital tasks with substantial urgency</h4>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <div class="eisenquad" style="width: 50%">
+                <h2>Insignificant (not big, not soon)</h2>
+                <h3>Delete</h3>
+                <h4>These are trivial tasks with minor urgency</h4>
+            </div>
+            <div class="eisenquad" style="width: 50%">
+                <h2>Not Urgent (not big, soon)</h2>
+                <h3>Delegate</h3>
+                <h4>These are pressing tasks with negligible impact</h4>
+            </div>
+        </div>
+        <!-- Quadrants End -->
+    </div>
+</div>
+    <div>
+        <div style="display: flex; justify-content: space-between">
+            <div style="width: 4ch;"></div>
+            <div class="eisenaxis" style="width: calc(100% - 4ch); background-image: linear-gradient(to left, var(--primary-color), var(--secondary-color));">
+                <div style="color: var(--primary-text-color);">
+                    Not Soon
+                </div>
+                <div style="color: var(--secondary-color);">
+                    Soon
+                </div>
+            </div>
+        </div>
+    </div>
