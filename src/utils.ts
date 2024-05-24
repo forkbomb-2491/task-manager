@@ -8,3 +8,13 @@ export function onLoad(closure: () => void) {
         "DOMContentLoaded", closure
     )
 }
+
+export enum DayCols {
+    "suncol",
+    "moncol",
+    "tuecol",
+    "wedcol",
+    "thucol",
+    "fricol",
+    "satcol"
+}

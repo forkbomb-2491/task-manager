@@ -5,7 +5,7 @@ export class Task {
     name: string
     bigness: string
     category: string
-    due: string
+    due: Date
     completed: boolean
 
     deleted: boolean = false
@@ -15,7 +15,7 @@ export class Task {
 
     private elements: Array<HTMLElement>
 
-    constructor(name: string, bigness: string, category: string, due: string, completed: boolean = false) {
+    constructor(name: string, bigness: string, category: string, due: Date, completed: boolean = false) {
         this.name = name
         this.bigness = bigness
         this.category = category

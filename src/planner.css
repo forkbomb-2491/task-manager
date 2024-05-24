@@ -24,6 +24,10 @@
     border-radius: 0.125em;
 }
 
+.daycolumn .completed button.complete {
+    background-color: var(--primary-color);
+}
+
 .daycolumn.today {
     box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
     color: var(--secondary-text-color);

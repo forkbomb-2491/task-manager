@@ -1,8 +1,8 @@
-import { onLoad } from "./utils";
+import { onLoad, DayCols } from "./utils";
 import { changeTheme } from "./main";
 import { addPlannerTask, switchPlannerOrientation } from "./planner"
 import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged } from "./storage"
-import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks } from "./setup"
+import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks, changeTab } from "./setup"
 import { Task } from "./task"
 import { sendNotif } from "./notifications"
 
@@ -40,10 +40,11 @@ function deleteTaskCallback() {
 function createTaskCallback(event) {
     event.preventDefault()
     var form = event.srcElement
+    window.test = form
     var title = form.titleinput.value
     var cat = form.catinput.value
-    var date = form.deadlineday.value
-    var day = form.deadlineday.selectedOptions.item(0).getAttribute("name")
+    var date = form.deadlineinput.value
+    var day = DayCols[(new Date(date)).getUTCDay()]
     var bigness = form.bignessinput.selectedOptions.item(0).getAttribute("name")
 
     var task = new Task(title, bigness, cat, date, false)
@@ -87,17 +88,19 @@ onLoad(async () => {
     highlightCurrentDay()
     var settings = await getSettings()
     await changeTheme(settings.lastTheme)
+    await changeTab(settings.lasttab)
     if (settings.plannerflipped) {
         switchPlannerOrientation()
     }
 
     tasks = await loadTasks()
+    window.tasks = tasks
     for (let i = 0; i < tasks.length; i++) {
         const task = tasks[i];
         task.completeCallback = taskCompleteCallback
         task.deleteCallback = deleteTaskCallback
 
-        addPlannerTask(task.getPlannerElement(), (task.due.slice(0, 3) + "col").toLowerCase())
+        addPlannerTask(task.getPlannerElement(), DayCols[(new Date(task.due)).getUTCDay()])
 
         if (task.completed) {
             document.getElementById("completedtasklist").appendChild(task.getTaskListElement())

@@ -1,11 +1,12 @@
 import { changeHelpStuff } from "./help"
 import { changeTheme } from "./main"
+import { setCurrentTab, SettingsChanged } from "./storage";
 
 /**
  * Switches displayed tab to the target.
  * @param {string} tab Tab Name
  */
-function changeTab(tab) {
+export function changeTab(tab) {
     var buttons = document.getElementsByClassName("tabbutton")
     for (let i = 0; i < buttons.length; i++) {
         const button = buttons[i];
@@ -25,6 +26,9 @@ function changeTab(tab) {
             tabElement.className = "tab"
         }
     }
+
+    setCurrentTab(tab)
+    window.dispatchEvent(SettingsChanged)
 }
 
 /** Assign as click callback to theme buttons. */

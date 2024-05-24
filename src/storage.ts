@@ -42,7 +42,8 @@ var settingsLoaded = false
 
 var settings = {
     "lastTheme": "light",
-    "plannerflipped": false
+    "plannerflipped": false,
+    "lasttab": "tasks"
 }
 
 async function saveSettings() {
@@ -56,6 +57,15 @@ export async function loadSettings() {
 
 export async function savePlannerFlip(flipped: boolean) {
     settings.plannerflipped = flipped
+    await saveSettings()
+}
+
+export function setCurrentTab(tab: string) {
+    settings.lasttab = tab
+}
+
+export async function saveCurrentTab(tab: string) {
+    settings.lasttab = tab
     await saveSettings()
 }
 
