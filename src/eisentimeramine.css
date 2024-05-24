@@ -8,14 +8,21 @@
     box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
 }
 
+.eisenaxis {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 3rem;
+    padding: 0.5rem;
+}
 .eisenquad {
     flex-grow: 1;
     background-color: var(--secondary-color);
 
     margin: 0.5rem;
-    min-height: 15vmax;
+    min-height: 13vmax;
 
-    /* width: 50%; */
     padding: 1rem;
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
@@ -47,9 +54,9 @@
     background-color: var(--secondary-color);
 
     margin: 0.5rem;
-    min-height: 10vmax;
+    min-height: 5vmax;
+    width: 50%;
 
-    /* width: 50%; */
     padding: 1rem;
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
@@ -68,8 +75,15 @@
     margin-bottom: 0;
 }
 
-.eisenquad h3 {
+.dopamenusec h3 {
+    font-size: medium;
+    margin-top: 0;
+    margin-bottom: 0;
     font-style: italic;
+    color: var(--secondary-text-color);
+}
+
+.dopamenusec ul {
     margin-top: 0;
     margin-bottom: 0;
 }
