@@ -4,9 +4,10 @@ import { addPlannerTask, switchPlannerOrientation } from "./planner"
 import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged } from "./storage"
 import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks, changeTab } from "./setup"
 import { Task } from "./task"
-import { sendNotif } from "./notifications"
+import { sendNotif, CheckInHandler } from "./notifications"
 
 var tasks = []
+var checkInHandler = null
 
 function sortTaskElements() {
     var currentList = document.getElementById("currenttasklist");
@@ -84,6 +85,12 @@ onLoad(async () => {
             await sendNotif("urmom", "gottem lolololololololol")
         }
     )
+
+    if (checkInHandler == null) {
+        checkInHandler = new CheckInHandler("00:00", "16:15", 15000)
+        console.log(checkInHandler)
+        // checkInHandler.start()
+    }
 
     highlightCurrentDay()
     var settings = await getSettings()

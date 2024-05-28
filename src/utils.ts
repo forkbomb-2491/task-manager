@@ -8,6 +8,12 @@ export function onLoad(closure: () => void) {
         "DOMContentLoaded", closure
     )
 }
+/** !!!!! LOCAL LOCAL LOCAL !!!!!! */
+export function todayDateString() {
+    var date = new Date()
+    return date.toDateString()
+    // return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
 
 export enum DayCols {
     "suncol",

@@ -43,7 +43,11 @@ var settingsLoaded = false
 var settings = {
     "lastTheme": "light",
     "plannerflipped": false,
-    "lasttab": "tasks"
+    "lasttab": "tasks",
+    "checkIns": {
+        "start": "",
+        "end": ""
+    }
 }
 
 async function saveSettings() {
