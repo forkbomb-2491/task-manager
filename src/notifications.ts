@@ -29,7 +29,6 @@ export class CheckInHandler {
 
     private getStartTimestamp() {
         var dateString = todayDateString() + " " + this.startTime // Local
-        console.log(dateString)
         return Date.parse(dateString) // Local
     }
 
@@ -39,8 +38,7 @@ export class CheckInHandler {
     }
 
     private checkIsInTimeRange(interval: number) {
-        var now = Date.now() - (new Date()).getTimezoneOffset() * 60000 // UTC -> Local
-        console.log(this.getStartTimestamp(), now, this.getEndTimestamp())
+        var now = Date.now() // Local
         if (now + interval > this.getStartTimestamp() && now + interval < this.getEndTimestamp()) {
             return true
         }
@@ -54,7 +52,6 @@ export class CheckInHandler {
         var multiplier = Math.random()/2 + 0.75
         var interval = this.interval * multiplier
         if (!this.checkIsInTimeRange(interval)) {
-            console.log("Stopping!")
             this.stop()
             return
         }
@@ -68,7 +65,6 @@ export class CheckInHandler {
             title: "Just Checking In!",
             body: "Are you finding it hard to be productive? Click me for some help!"
         })
-        console.log(this)
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
         }
@@ -79,7 +75,6 @@ export class CheckInHandler {
     }
 
     start() {
-        console.log(this.checkIsInTimeRange(0))
         if (this.isRunning || this.scheduledReminder != null) {
             return
         }

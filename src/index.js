@@ -87,8 +87,8 @@ onLoad(async () => {
     )
 
     if (checkInHandler == null) {
-        checkInHandler = new CheckInHandler("00:00", "16:15", 15000)
-        console.log(checkInHandler)
+        checkInHandler = new CheckInHandler("00:00", "16:27", 15000)
+        window.cih = checkInHandler
         // checkInHandler.start()
     }
 
