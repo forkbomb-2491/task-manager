@@ -63,7 +63,7 @@ export class CheckInHandler {
 
         sendNotification({
             title: "Just Checking In!",
-            body: "Are you finding it hard to be productive? Click me for some help!"
+            body: "Are you finding it hard to be productive? Open Task Manager for some help!"
         })
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
@@ -72,6 +72,30 @@ export class CheckInHandler {
 
     remindersActive() {
         return this.isRunning
+    }
+
+    setStartTime(time: string) {
+        this.startTime = time
+        if (this.isRunning) {
+            this.stop()
+            this.start()
+        }
+    }
+
+    setEndTime(time: string) {
+        this.endTime = time
+        if (this.isRunning) {
+            this.stop()
+            this.start()
+        }
+    }
+    
+    setInterval(interval: number) {
+        this.interval = interval
+        if (this.isRunning) {
+            this.stop()
+            this.start()
+        }
     }
 
     start() {

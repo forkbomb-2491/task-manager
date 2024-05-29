@@ -9,8 +9,8 @@
         <link rel="stylesheet" href="/src/taskplan.css" />
         <link rel="stylesheet" href="/src/settings.css" />
         <link rel="stylesheet" href="/src/tasks.css" />
-        <!-- For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/lilac.css" /> -->
+        <!-- LINE 7: For live editing themes... -->
+        <!-- <link rel="stylesheet" href="/src/themes/cherry.css" /> -->
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -127,29 +127,60 @@
             <div class="tab" name="taskplan">
                 <h1>Task Planner</h1>
                 <div style="display: flex; justify-content: space-between;">
-                    <div class="tpcontainer" style="width: 20%;">
+                    <div class="tpcontainer" style="width: 30%;">
                         <h2>Task</h2>
-                        <p>Choose Task. Dropdown?</p>
-                        <div style="width: 50%;">
-                            <select id = "tptask" name = "tptask" required style="width: 90%;">
+                        <h3>Choose Task</h3>
+                        <div>
+                            <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required>
                                 <option name="t1">t1</option>
                                 <option name="t2">t2</option>
                                 <option name="t3">t3</option>
                             </select>
                         </div>
-                        <p>Select Start Date between currdate and task.deadline</p>
-                        <div style="width: 10%;">
-                            <input id="deadlineinput" type="date" value="2024-01-01">
+                        <h3>Select Start Date</h3>
+                        <!-- <p>between currdate and task.deadline</p> -->
+                        <div>
+                            <input type="date" id="deadlineinput" value="2024-01-01" style="width: 100%;" required>
                         </div>
-                        <p>+ button. Add subtasks with dates</p>
+                        <h3>Make Subtasks</h3>
+                        <h4>Maybe assign them a day?</h4>
+                        <form name="subtaskcreate" autocomplete="off">
+                            <div class="subtask" style="display:flex; justify-content: space-between;">
+                                <input type="submit" style="background: none; border: none;" value="➕">
+                                <input type="text" id="subtasktitleinput" name="subtasktitleinput" style="width: 50%;">
+                                <input type="date" id="deadlineinput" value="2024-01-01">
+                            </div>
+                        </form>
                         <p>Task Deadline</p>
                     </div>
                     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
-                        <h2>Display Calendar</h2>
-                        <p>Teehee days here. tpday is a column containing dates. Dates containing subtasks are slightly bigger squares than the others</p>
+                        <h2>Your Task Calendar</h2>
+                        <p>columns contain dates, which contain subtasks are slightly bigger squares</p>
                         <div class="tpcalendar" style="display:flex; justify-content: space-between;">
-                            <div class="tpday">Sun</div>
-                            <div class="tpday">Mon</div>
+                            <div class="tpday">Sun
+                                <div class="tpdate">6/2</div>
+                                <div class="tpdate">6/2</div>
+                            </div>
+                            <div class="tpday">Mon
+                                <div class="tpdate hastask">6/3<br>...
+                                    <div class="expanded">
+                                        
+                                        subtaskiiiiiiiiiiiiiiii<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                        subtask<br>
+                                    </div>
+                                </div>
+                                <div class="tpdate">6/2</div>
+                                <div class="tpdate">6/2</div>
+                                <div class="tpdate">6/2</div>
+                                <div class="tpdate">6/2</div>
+                            </div>
                             <div class="tpday">Tue</div>
                             <div class="tpday">Wed</div>
                             <div class="tpday">Thu</div>

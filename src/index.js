@@ -87,9 +87,9 @@ onLoad(async () => {
     )
 
     if (checkInHandler == null) {
-        checkInHandler = new CheckInHandler("00:00", "16:27", 15000)
+        checkInHandler = new CheckInHandler("13:00", "16:30", 300000)
         window.cih = checkInHandler
-        // checkInHandler.start()
+        checkInHandler.start()
     }
 
     highlightCurrentDay()

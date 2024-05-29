@@ -1,36 +1,64 @@
 :root {
     /* Various fill colors */
-    --primary-color: rgb(115, 0, 13);
-    --secondary-color: rgb(0,34,23);
-    --container-background: rgb(0,34,23);
-    --unselected-tab-and-shadow: rgb(0,34,23);
-    --tab-hover: rgb(143, 112, 161);
+    --primary-color: rgb(0,34,23);
+    --secondary-color: rgb(246,233,230);
+    --container-background: rgb(246,233,230);
+    --unselected-tab-and-shadow: rgb(246,233,230);
+    --tab-hover: rgb(219, 201, 197);
     /* Shadow colors */
-    --primary-shadow-color: rgba(79, 40, 100, 0.5);
-    --secondary-shadow-color: rgba(164, 141, 206, 0.5);
+    --primary-shadow-color: rgba(40, 100, 60, 0.5);
+    --secondary-shadow-color: rgba(208, 185, 157, 0.5);
     /* Fonts */
-    --primary-font-family: 'Cantarell';
+    --primary-font-family: 'Georgia';
     --secondary-font-family: 'Helvetica';
     /* Text Color */
-    --primary-text-color: rgb(154,114,166);
-    --secondary-text-color: rgb(127, 94, 159);
+    --primary-text-color: rgb(0,34,23);
+    --secondary-text-color: rgb(246,233,230);
 }
 
 .tabbutton.active {
-    color: #ffffff;
-    box-shadow: 0px 0px 4px 1px rgb(154,114,166);
+    color: rgb(246,233,230);
+    box-shadow: 0px 0px 4px 1px rgb(110, 19, 25);
 }
 
 .tabbutton {
-    color: #ffffff;
+    color:rgb(115, 0, 13);
 }
-
 .helpbutton {
     color: #ffffff;
     
 }
 .helpbutton:hover {
-    background-color: rgb(154,114,166);
+    background-color: rgb(0,34,23);
     color: #ffffff;
+}
+
+.tpcontainer {
+    background-color: rgb(115, 0, 13);
+    color: rgb(246,233,230);
+}
+
+.tpselect {
+    background-color: rgb(246,233,230);
+}
+
+#deadlineinput {
+    background-color: rgb(246,233,230);
+}
+
+.tpday {
+    color: rgb(0,34,23);
+}
+
+header {
+    background-color: rgb(115, 0, 13);
+}
+
+#subtasktitleinput {
+    background-color: rgb(246,233,230);
+}
+
+.tpday {
+    color: rgb(246,233,230);
 }
 
