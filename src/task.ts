@@ -1,3 +1,16 @@
+import { loadTasks, saveTasks, getTasksChanged } from "./storage"
+
+export class TaskList {
+    private tasks: Task[] = []
+
+    constructor(tasks: Task[]) {
+        this.tasks = tasks
+    }
+
+    getTasks() {
+        return [...this.tasks]
+    }
+}
 
 export class Task {
     // id: string
@@ -12,6 +25,8 @@ export class Task {
 
     completeCallback: (() => void) | null = null
     deleteCallback: (() => void) | null = null
+
+    parent: TaskList | null = null
 
     private elements: Array<HTMLElement>
 

@@ -16,6 +16,9 @@
     --secondary-text-color: rgb(246,233,230);
 }
 
+/* TO-DO FOR ME: EITHER FIX THESE OR JUST DELETE THE THEMES U MADE. */
+/* too many overrides but the theme is ugly without, so prob just delete ?? */
+
 .tabbutton.active {
     color: rgb(246,233,230);
     box-shadow: 0px 0px 4px 1px rgb(110, 19, 25);
