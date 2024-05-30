@@ -6,7 +6,6 @@ import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks,
 import { Task } from "./task"
 import { sendNotif, CheckInHandler } from "./notifications"
 
-var tasks = []
 var checkInHandler = null
 
 var taskMgr = new TaskManager()
@@ -24,6 +23,14 @@ function createTaskCallback(event) {
     taskMgr.addTask(task)
 }
 window.createTaskCallback = createTaskCallback
+
+function changeNotifSettingsCallback(event) {
+    event.preventDefault()
+}
+document.getElementById("remindersettings").addEventListener(
+    "submit",
+    changeNotifSettingsCallback
+)
 
 onLoad(async () => {
     addThemeButtonCallbacks()

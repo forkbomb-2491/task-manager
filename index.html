@@ -73,9 +73,6 @@
                         <div style="width: 16%;">
                             <input id="deadlineinput" type="date" value="2024-01-01">
                         </div>
-                        <!-- <div style="width: 10%;">
-                            <input id="deadlinetimeinput" type="time">
-                        </div> -->
                     </form>
                     <div style="background: none; min-width: 2rem; border: 0;"></div>
                 </div>
@@ -383,14 +380,17 @@
                 <h1 style="margin-top: 0;">Settings</h1>
 
                 <h2>Reminder Settings</h2>
-                <form>
+                <form name="remindersettings" id="remindersettings">
                     You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> <br>
-                    Average time between notif is...
+                    with the average time between notifs being
                     <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
-                    <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="15" max="120" value="60" step="5" style="width: 50%;" oninput="notifinterval.innerText=this.value">
+                    <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 50%;" oninput="notifinterval.innerText=this.value">
+                    <div style="display:flex; justify-content: space-between;">
+                        <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
+                        <button class="settingsbutton" id="notiftestbutton">Notification Test</button>
+                    </div>
                 </form>
 
-                <button class="settingsbutton" id="notiftestbutton">Notification Test</button>
                 <h2>Sound Settings</h2>
                 <h3>Time Block Volume</h3>
                 <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 50%;" oninput="timervolume.innerText = this.value">            
@@ -405,9 +405,9 @@
                 <br>
                 <button class="themebutton" name="vampire">Vampire</button>
                 <br>
-                <button class="themebutton" name="gay">Gay</button>
+                <!-- <button class="themebutton" name="gay">Gay</button>
                 <button class="themebutton" name="bisexual">Bisexual</button>
-                <br>
+                <br> -->
                 <button class="themebutton" name="barbie">Barbie</button>
                 <button class="themebutton" name="strawberry">Strawberry</button>
                 <button class="themebutton" name="lilac">Lilac</button>
