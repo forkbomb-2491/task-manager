@@ -154,6 +154,10 @@ export class Task {
             deleteTaskCallback
         )
 
+        if (this.category != "Default") {
+            newElement.style.color = getColor(this.category)
+        }
+
         this.listElement = newElement
         return newElement
     }
@@ -179,7 +183,46 @@ export class Task {
             completeTaskCallback
         )
 
+        if (this.category != "Default") {
+            newElement.style.color = getColor(this.category)
+        }
+
         this.plannerElement = newElement
         return newElement
+    }
+}
+
+export const CAT_COLORS: {  } = {
+    "Red": "var(--cat1-color)",
+    "Orange": "var(--cat2-color)",
+    "Yellow": "var(--cat3-color)",
+    "Green": "var(--cat4-color)",
+    "Blue": "var(--cat5-color)",
+    "Purple": "var(--cat6-color)"
+}
+
+
+function getColor(color: string) {
+    switch (color) {
+        case "Red":
+            return "var(--cat1-color)"
+    
+        case "Orange":
+            return "var(--cat2-color)"
+    
+        case "Yellow":
+            return "var(--cat3-color)"
+    
+        case "Green":
+            return "var(--cat4-color)"
+    
+        case "Blue":
+            return "var(--cat5-color)"
+    
+        case "Purple":
+            return "var(--cat6-color)"
+
+        default:
+            return "inherit"
     }
 }

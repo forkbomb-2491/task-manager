@@ -43,7 +43,7 @@ onLoad(async () => {
     )
 
     if (checkInHandler == null) {
-        checkInHandler = new CheckInHandler("13:00", "16:30", 300000)
+        checkInHandler = new CheckInHandler("10:00", "16:30", 300000)
         window.cih = checkInHandler
         checkInHandler.start()
     }
@@ -55,3 +55,4 @@ onLoad(async () => {
         switchPlannerOrientation()
     }
 })
+
