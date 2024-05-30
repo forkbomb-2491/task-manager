@@ -1,5 +1,5 @@
 import { path } from "@tauri-apps/api"
-import { readTextFile, writeTextFile, BaseDirectory, exists, createDir } from "@tauri-apps/api/fs"
+import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { Task } from "./task";
 
 const SETTINGS_FN = "settings.json"
@@ -10,10 +10,10 @@ export const getTasksChanged = (tasks: Array<Task>) => { return new CustomEvent(
 
 async function checkAppDataValid() {
     var dirExists = await exists(".", {
-        dir: BaseDirectory.AppData
+        baseDir: BaseDirectory.AppData
     })
     if (!dirExists) {
-        await createDir(await path.appDataDir())
+        await mkdir(await path.appDataDir())
     }
 }
 
@@ -21,7 +21,7 @@ async function loadFile(fn: string, defaultdata: Object) {
     try {
         await checkAppDataValid()
         var text = await readTextFile(fn, {
-            dir: BaseDirectory.AppConfig
+            baseDir: BaseDirectory.AppConfig
         })
         return JSON.parse(text)
     } catch (error) {
@@ -34,7 +34,7 @@ async function saveFile(data: Object, fn: string) {
     await checkAppDataValid()
     var text = JSON.stringify(data)
     await writeTextFile(fn, text, {
-        dir: BaseDirectory.AppConfig
+        baseDir: BaseDirectory.AppConfig
     })
 }
 

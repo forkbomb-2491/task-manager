@@ -1,5 +1,5 @@
 import { resolveResource } from '@tauri-apps/api/path'
-import { readTextFile } from '@tauri-apps/api/fs'
+import { readTextFile } from '@tauri-apps/plugin-fs'
 import { setLastTheme, getTasksChanged, loadTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner } from './planner'

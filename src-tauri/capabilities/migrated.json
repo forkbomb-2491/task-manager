@@ -1,0 +1,42 @@
+{
+  "identifier": "migrated",
+  "description": "permissions that were migrated from v1",
+  "local": true,
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "path:default",
+    "event:default",
+    "window:default",
+    "app:default",
+    "resources:default",
+    "menu:default",
+    "tray:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-read-dir",
+    "fs:allow-copy-file",
+    "fs:allow-mkdir",
+    "fs:allow-remove",
+    "fs:allow-remove",
+    "fs:allow-rename",
+    "fs:allow-exists",
+    "fs:allow-app-write",
+    "path:allow-resolve-directory",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "$RESOURCE/**",
+        "$APPCONFIG/*",
+        "$APPCONFIG/**",
+        "$APPCONFIG"
+      ]
+    },
+    "shell:allow-open",
+    "notification:default",
+    "notification:default",
+    "fs:default",
+    "shell:default"
+  ]
+}
