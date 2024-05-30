@@ -1,6 +1,9 @@
 import { resolveResource } from '@tauri-apps/api/path'
 import { readTextFile } from '@tauri-apps/api/fs'
-import { setLastTheme } from './storage'
+import { setLastTheme, getTasksChanged, loadTasks } from './storage'
+import { Task, TaskList } from './task'
+import { Planner } from './planner'
+import { onLoad } from './utils'
 
 export async function changeTheme(theme: string) {
     const previousTheme = document.getElementById("themesheet")
@@ -21,26 +24,50 @@ export async function changeTheme(theme: string) {
     await setLastTheme(theme)
 }
 
-export function createTaskElement(title: string, cat: string, bigness: string, due: string) {
-    var newTask = document.createElement("div")
-    newTask.className = "task"
-    newTask.innerHTML = `
-        <button class="completed"></button>
-        <div style="width: 50%;">
-            ${title}
-        </div>
-        <div style="width: 19%;">
-            ${cat}
-        </div>
-        <div style="width: 19%;">
-            ${bigness}
-        </div>
-        <div style="width: 19%;">
-            ${due}
-        </div>
-        <button style="background: none; border: 0;" class="deletetask">
-            🗑️
-        </button>
-    `
-    return newTask
+export class TaskManager {
+    private tasks: Task[] = []
+
+    private taskList: TaskList
+    private planner: Planner
+
+    constructor() {
+        this.taskList = new TaskList(this)
+        this.planner = new Planner(this)
+
+        onLoad(this.onLoadCallback)
+    }
+
+    private async onLoadCallback() {
+        await this.loadTasks()
+        this.render()
+    }
+
+    private async loadTasks() {
+        this.tasks = await loadTasks()
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            task.completeCallback = this.refresh
+            task.deleteCallback = this.refresh
+        }
+    }
+
+    private saveTasksViaEvent() {
+        window.dispatchEvent(getTasksChanged(this.tasks))
+    }
+
+    private render() {
+        this.taskList.render()
+        this.planner.render()
+    }
+
+    private refresh() {
+        this.taskList.refresh()
+        this.planner.refresh()
+
+        this.saveTasksViaEvent()
+    }
+
+    getTasks() {
+        return [...this.tasks]
+    }
 }

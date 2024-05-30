@@ -1,14 +1,53 @@
-import { loadTasks, saveTasks, getTasksChanged } from "./storage"
+import { TaskManager } from "./main"
 
 export class TaskList {
-    private tasks: Task[] = []
+    private taskMgr: TaskManager
 
-    constructor(tasks: Task[]) {
-        this.tasks = tasks
+    constructor (taskMgr: TaskManager) {
+        this.taskMgr = taskMgr
     }
 
-    getTasks() {
-        return [...this.tasks]
+    render() {
+        var currentList = document.getElementById("currenttasklist")!
+        var completedList = document.getElementById("completedtasklist")!
+
+        currentList.innerHTML = ""
+        completedList.innerHTML = ""
+
+        var tasks = this.taskMgr.getTasks()
+        for (let index = 0; index < tasks.length; index++) {
+            const task = tasks[index];
+            if (task.deleted) { continue }
+            if (task.completed) {
+                completedList.appendChild(task.getTaskListElement())
+            } else {
+                currentList.appendChild(task.getTaskListElement())
+            }
+        }
+    }
+
+    refresh() {
+        var currentList = document.getElementById("currenttasklist")!;
+        var completedList = document.getElementById("completedtasklist")!;
+        for (let i = 0; i < currentList.children.length; i++) {
+            const task = currentList.children[i];
+            if (task.className.includes("completed")) {
+                currentList.removeChild(task)
+                completedList.appendChild(task)
+            }
+        }
+
+        for (let i = 0; i < completedList.children.length; i++) {
+            const task = completedList.children[i];
+            if (!task.className.includes("completed")) {
+                completedList.removeChild(task)
+                currentList.appendChild(task)
+            }
+        }
+    }
+
+    addTask(task: Task) {
+        document.getElementById("currenttasklist")!.appendChild(task.getTaskListElement())
     }
 }
 
@@ -26,9 +65,8 @@ export class Task {
     completeCallback: (() => void) | null = null
     deleteCallback: (() => void) | null = null
 
-    parent: TaskList | null = null
-
-    private elements: Array<HTMLElement>
+    private listElement: HTMLDivElement | null = null
+    private plannerElement: HTMLParagraphElement | null = null
 
     constructor(name: string, bigness: string, category: string, due: Date, completed: boolean = false) {
         this.name = name
@@ -37,8 +75,6 @@ export class Task {
         
         this.due = due
         this.completed = completed
-
-        this.elements = []
     }
 
     toBasicObject() {
@@ -52,10 +88,8 @@ export class Task {
     }
 
     delete() {
-        for (let i = 0; i < this.elements.length; i++) {
-            const element = this.elements[i];
-            element.remove()
-        }
+        if (this.listElement != null) { this.listElement.remove() }
+        if (this.plannerElement != null) { this.plannerElement.remove() }
 
         this.deleted = true
 
@@ -66,15 +100,11 @@ export class Task {
 
     toggleCompleted() {
         if (!this.completed) {
-            for (let i = 0; i < this.elements.length; i++) {
-                const element = this.elements[i];
-                element.className += " completed"
-            }
+            if (this.listElement != null) { this.listElement.className += " completed" }
+            if (this.plannerElement != null) { this.plannerElement.className += " completed" }
         } else {
-            for (let i = 0; i < this.elements.length; i++) {
-                const element = this.elements[i];
-                element.className = element.className.replace(" completed", "")
-            }
+            if (this.listElement != null) { this.listElement.className = this.listElement.className.replace(" completed", "") }
+            if (this.plannerElement != null) { this.plannerElement.className = this.plannerElement.className.replace(" completed", "") }
         }
 
         this.completed = !this.completed
@@ -85,6 +115,10 @@ export class Task {
     }
 
     getTaskListElement() {
+        if (this.listElement != null) {
+            return this.listElement
+        }
+
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = `
@@ -119,11 +153,15 @@ export class Task {
             deleteTaskCallback
         )
 
-        this.elements.push(newElement)
+        this.listElement = newElement
         return newElement
     }
 
     getPlannerElement() {
+        if (this.plannerElement != null) {
+            return this.plannerElement
+        }
+
         var newElement = document.createElement("p")
         if (this.completed) {
             newElement.className = " completed"
@@ -140,7 +178,7 @@ export class Task {
             completeTaskCallback
         )
 
-        this.elements.push(newElement)
+        this.plannerElement = newElement
         return newElement
     }
 }
