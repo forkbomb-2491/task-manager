@@ -46,7 +46,8 @@ var settings = {
     "lasttab": "tasks",
     "checkIns": {
         "start": "",
-        "end": ""
+        "end": "",
+        "interval": ""
     }
 }
 
@@ -66,6 +67,22 @@ export async function savePlannerFlip(flipped: boolean) {
 
 export function setCurrentTab(tab: string) {
     settings.lasttab = tab
+}
+
+export async function saveReminderSettings(start: string, end: string, interval: string) {
+    if (settings.checkIns == undefined) {
+        settings.checkIns = {
+            "start": "",
+            "end": "",
+            "interval": ""
+        }
+    }
+
+    settings.checkIns.start = start
+    settings.checkIns.end = end
+    settings.checkIns.interval = interval
+
+    await saveSettings()
 }
 
 export async function saveCurrentTab(tab: string) {

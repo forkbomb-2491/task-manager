@@ -1,7 +1,7 @@
 import { onLoad, DayCols } from "./utils";
 import { TaskManager, changeTheme } from "./main";
 import { addPlannerTask, switchPlannerOrientation } from "./planner"
-import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged } from "./storage"
+import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged, saveReminderSettings } from "./storage"
 import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks, changeTab } from "./setup"
 import { Task } from "./task"
 import { sendNotif, CheckInHandler } from "./notifications"
@@ -24,8 +24,22 @@ function createTaskCallback(event) {
 }
 window.createTaskCallback = createTaskCallback
 
-function changeNotifSettingsCallback(event) {
+async function changeNotifSettingsCallback(event) {
     event.preventDefault()
+    var form = event.srcElement
+    var startTime = form.notifstart.value
+    var endTime = form.notifend.value
+    var sliderValue = form.notifintervalslider.value
+
+    if (checkInHandler != null) {
+        checkInHandler.setStartTime(startTime)
+        checkInHandler.setEndTime(endTime)
+        checkInHandler.setInterval(Number(sliderValue) * 60_000)
+    } else {
+        checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000)
+        checkInHandler.start()
+    }
+    await saveReminderSettings(startTime, endTime, sliderValue)
 }
 document.getElementById("remindersettings").addEventListener(
     "submit",
@@ -49,13 +63,25 @@ onLoad(async () => {
         }
     )
 
+    var settings = await getSettings()
+
     if (checkInHandler == null) {
-        checkInHandler = new CheckInHandler("10:00", "16:30", 300000)
+        var startTime, endTime, interval
+
+        try {
+            startTime = settings.checkIns.start
+            endTime = settings.checkIns.end
+            interval = settings.checkIns.interval
+            
+            checkInHandler = new CheckInHandler(startTime, endTime, Number(interval) * 60_000)
+            checkInHandler.start()
+        } catch (error) {
+            
+        }
+
         window.cih = checkInHandler
-        checkInHandler.start()
     }
 
-    var settings = await getSettings()
     await changeTheme(settings.lastTheme)
     await changeTab(settings.lasttab)
     if (settings.plannerflipped) {
