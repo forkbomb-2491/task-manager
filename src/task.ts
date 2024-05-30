@@ -73,7 +73,8 @@ export class Task {
         this.bigness = bigness
         this.category = category
         
-        this.due = due
+        this.due = new Date(due)
+        this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
         this.completed = completed
     }
 
@@ -133,7 +134,7 @@ export class Task {
                 ${this.bigness}
             </div>
             <div style="width: 19%;">
-                ${this.due}
+                ${this.due.toDateString()}
             </div>
             <button style="background: none; border: 0;" class="deletetask">
                 🗑️

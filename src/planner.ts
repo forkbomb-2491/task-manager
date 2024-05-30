@@ -41,6 +41,16 @@ export class Planner {
             col.refresh()
         }
     }
+
+    addTask(task: Task) {
+        for (let index = 0; index < this.dayColumns.length; index++) {
+            const col = this.dayColumns[index];
+            if (isSameDay(col.date, task.due)) {
+                col.addTask(task)
+                return
+            }
+        }
+    }
 }
 
 class DayColumn {

@@ -34,7 +34,9 @@ export class TaskManager {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
 
-        onLoad(this.onLoadCallback)
+        onLoad(async () => {
+            await this.onLoadCallback()
+        })
     }
 
     private async onLoadCallback() {
@@ -46,9 +48,11 @@ export class TaskManager {
         this.tasks = await loadTasks()
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            task.completeCallback = this.refresh
-            task.deleteCallback = this.refresh
+            task.completeCallback = () => { this.refresh() }
+            task.deleteCallback = () => { this.refresh() }
         }
+
+        this.render()
     }
 
     private saveTasksViaEvent() {
@@ -69,5 +73,17 @@ export class TaskManager {
 
     getTasks() {
         return [...this.tasks]
+    }
+
+    addTask(task: Task) {
+        this.tasks.push(task)
+
+        task.completeCallback = () => { this.refresh() }
+        task.deleteCallback = () => { this.refresh() }
+
+        this.planner.addTask(task)
+        this.taskList.addTask(task)
+
+        this.saveTasksViaEvent()
     }
 }
