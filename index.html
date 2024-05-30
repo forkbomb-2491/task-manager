@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="/src/settings.css" />
         <link rel="stylesheet" href="/src/tasks.css" />
         <!-- LINE 7: For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/cherry.css" /> -->
+        <!-- <link rel="stylesheet" href="/src/themes/dark.css" /> -->
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -52,6 +52,7 @@
                         </div>
                         <div style="width: 19%;">
                             <select id = "catinput" name = "catinput" required style="width: 90%;">
+                                <option name="default">Default</option>
                                 <option name="red">Red</option>
                                 <option name="orange">Orange</option>
                                 <option name="yellow">Yellow</option>
@@ -100,29 +101,7 @@
                     <h1 style="margin-top: 0;">Planner</h1>
                     <button class="settingsbutton" id="switchplanner" style="font-size: small;">Switch Orientation</button>
                 </div>
-                <div class="plannercontainer">
-                    <div class="daycolumn" id="suncol">
-                        <h4>Sunday</h4>
-                    </div>
-                    <div class="daycolumn" id="moncol">
-                        <h4>Monday</h4>
-                    </div>
-                    <div class="daycolumn" id="tuecol">
-                        <h4>Tuesday</h4>
-                    </div>
-                    <div class="daycolumn" id="wedcol">
-                        <h4>Wednesday</h4>
-                    </div>
-                    <div class="daycolumn" id="thucol">
-                        <h4>Thursday</h4>
-                    </div>
-                    <div class="daycolumn" id="fricol">
-                        <h4>Friday</h4>
-                    </div>
-                    <div class="daycolumn" id="satcol">
-                        <h4>Saturday</h4>
-                    </div>
-                </div>
+                <div class="plannercontainer"></div>
             </div>
             <div class="tab" name="taskplan">
                 <h1>Task Planner</h1>
@@ -265,7 +244,7 @@
             </div>
                 <div>
                     <div style="display: flex; justify-content: space-between">
-                        <div style="width: 4ch;"></div>
+                        <div style="width: calc(4ch + 1rem);"></div>
                         <div class="eisenaxis" style="width: calc(100% - 4ch); background-image: linear-gradient(to left, var(--primary-color), var(--secondary-color));">
                             <div style="color: var(--primary-text-color);">
                                 Not Soon

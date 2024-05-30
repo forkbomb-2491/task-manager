@@ -24,3 +24,23 @@ export enum DayCols {
     "fricol",
     "satcol"
 }
+
+export enum Weekdays {
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday"
+}
+
+export const WEEKDAY_STRINGS = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+]
