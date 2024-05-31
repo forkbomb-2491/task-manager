@@ -1,0 +1,24 @@
+:root {
+    /* Various fill colors */
+    --primary-color: #e88b4d;
+    --secondary-color: #f0a56c91;
+    --container-background: #f0e1c4;
+    --unselected-tab-and-shadow: #f0a56c;
+    --tab-hover: #f0d876;
+    /* Shadow colors */
+    --primary-shadow-color: rgba(240, 165, 108, 0.801);
+    --secondary-shadow-color: rgba(240, 216, 118, 0.743);
+    /* Fonts */
+    --primary-font-family: 'system-ui';
+    --secondary-font-family: 'system-ui';
+    /* Text Color */
+    --primary-text-color: black;
+    --secondary-text-color: black;
+    /* Category Color */
+    --cat1-color: #e60000;
+    --cat2-color: #ff8e00;
+    --cat3-color: #dacd18;
+    --cat4-color: #00821b;
+    --cat5-color: #004bff;
+    --cat6-color: #780089;
+}
