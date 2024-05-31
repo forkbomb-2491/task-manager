@@ -1,0 +1,24 @@
+:root {
+    /* Various fill colors */
+    --primary-color: #064490;
+    --secondary-color: #41a8f9;
+    --container-background: #aeecfb;
+    --unselected-tab-and-shadow: #7686e0;
+    --tab-hover: #aeecfb;
+    /* Shadow colors */
+    --primary-shadow-color: rgba(4, 35, 90, 0.801);
+    --secondary-shadow-color: rgba(118, 134, 224, 0.743);
+    /* Fonts */
+    --primary-font-family: 'system-ui';
+    --secondary-font-family: 'system-ui';
+    /* Text Color */
+    --primary-text-color: rgb(4, 35, 90);
+    --secondary-text-color: #aeecfb;
+    /* Category Color */
+    --cat1-color: #e60000;
+    --cat2-color: #ff8e00;
+    --cat3-color: #dacd18;
+    --cat4-color: #00821b;
+    --cat5-color: #004bff;
+    --cat6-color: #780089;
+}
