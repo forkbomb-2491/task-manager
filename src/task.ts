@@ -1,12 +1,46 @@
 import { TaskManager } from "./main"
 
-export class TaskList {
+// const ALGO_CONST = 1
+
+/**
+ * A View for Tasks. It displays, sorts, and processes user input for
+ * the Task Manager. It is typical to have one of these per tab where
+ * tasks are manipulated.
+ */
+export interface TaskView {
+    /**
+     * Clears the UI for which the TaskView is responsible and reloads all
+     * tasks and relevant elements from scratch.
+     */
+    render(): void
+
+    /**
+     * Checks all existing UI elements to verify they are correctly placed
+     * and that all attributes match internal state.
+     */
+    refresh(): void
+
+    /**
+     * Adds a new Task to the View without refreshing or re-rendering.
+     * @param task The new Task to add
+     */
+    addTask(task: Task): void
+}
+
+/**
+ * A Task View that represents and handles the Tasks tab.
+ */
+export class TaskList implements TaskView {
     private taskMgr: TaskManager
 
     constructor (taskMgr: TaskManager) {
         this.taskMgr = taskMgr
     }
 
+    /**
+     * Loads tasks from the List's TaskManager and sorts them into the
+     * completed and current task lists.
+     */
     render() {
         var currentList = document.getElementById("currenttasklist")!
         var completedList = document.getElementById("completedtasklist")!
@@ -26,6 +60,10 @@ export class TaskList {
         }
     }
 
+    /**
+     * Checks to see that all completed and current tasks are sorted into
+     * the correct lists on the Tasks tab.
+     */
     refresh() {
         var currentList = document.getElementById("currenttasklist")!;
         var completedList = document.getElementById("completedtasklist")!;
@@ -51,11 +89,15 @@ export class TaskList {
     }
 }
 
+/** 
+* This class represents a Task.
+*/
 export class Task {
     // id: string
     
     name: string
-    bigness: string
+    size: number
+    importance: number
     category: string
     due: Date
     completed: boolean
@@ -68,9 +110,10 @@ export class Task {
     private listElement: HTMLDivElement | null = null
     private plannerElement: HTMLParagraphElement | null = null
 
-    constructor(name: string, bigness: string, category: string, due: Date, completed: boolean = false) {
+    constructor(name: string, size: string, importance: string, category: string, due: Date, completed: boolean = false) {
         this.name = name
-        this.bigness = bigness
+        this.size = Number(size)
+        this.importance = Number(importance)
         this.category = category
         
         this.due = new Date(due)
@@ -78,16 +121,25 @@ export class Task {
         this.completed = completed
     }
 
+    /**
+     * Returns an Object a la-Map which can be encoded and saved to the disk.
+     * @returns An Object
+     */
     toBasicObject() {
         return {
             "name": this.name,
-            "bigness": this.bigness,
+            "size": this.size,
+            "importance": this.importance,
             "category": this.category,
             "due": this.due,
             "completed": this.completed
         }
     }
 
+    /**
+     * Deletes the Task from both the TaskManager and removes all the relevant
+     * elements.
+     */
     delete() {
         if (this.listElement != null) { this.listElement.remove() }
         if (this.plannerElement != null) { this.plannerElement.remove() }
@@ -99,6 +151,9 @@ export class Task {
         }
     }
 
+    /**
+     * Sets the Task as completed. Updates all HTML elements.
+     */
     toggleCompleted() {
         if (!this.completed) {
             if (this.listElement != null) { this.listElement.className += " completed" }
@@ -115,6 +170,10 @@ export class Task {
         }
     }
 
+    /**
+     * Returns the HTML Element representing this task for the Tasks tab.
+     * @returns A <div class="task"> HTML Element
+     */
     getTaskListElement() {
         if (this.listElement != null) {
             return this.listElement
@@ -124,16 +183,19 @@ export class Task {
         newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="width: 60%;">
+            <div style="width: 50%;">
                 ${this.name}
             </div>
-            <div style="width: 19%;">
+            <div style="width: 10%;">
                 ${this.category}
             </div>
-            <div style="width: 9%;">
-                ${this.bigness}
+            <div style="width: 7.5%;">
+                ${TaskSizes[this.size]}
             </div>
-            <div style="width: 19%;">
+            <div style="width: 12.5%;">
+                ${TaskImportances[this.importance]}
+            </div>
+            <div style="width: 16%;">
                 ${this.due.toDateString()}
             </div>
             <button style="background: none; border: 0;" class="deletetask">
@@ -161,6 +223,11 @@ export class Task {
         this.listElement = newElement
         return newElement
     }
+
+    /**
+     * Returns the HTML Element representing this task for the Planner tab
+     * @returns A <p> HTML Element with a square checkbox.
+     */
 
     getPlannerElement() {
         if (this.plannerElement != null) {
@@ -192,6 +259,15 @@ export class Task {
     }
 }
 
+// export class TheAlgorithm {
+//     private static taskDueInXDays(task: Task) {
+//         return task.due.valueOf() - (new Date()).valueOf()
+//     }
+// }
+
+/**
+ * This enum documents task category colors
+ */
 export const CAT_COLORS: {  } = {
     "Red": "var(--cat1-color)",
     "Orange": "var(--cat2-color)",
@@ -201,6 +277,27 @@ export const CAT_COLORS: {  } = {
     "Purple": "var(--cat6-color)"
 }
 
+/**
+ * This enum documents task sizes
+ */
+export enum TaskSizes {
+    "Tiny",
+    "Small",
+    "Medium",
+    "Big",
+    "Huge"
+}
+
+/**
+ * This enum documents task importance
+ */
+export enum TaskImportances {
+    "Trivial",
+    "Unimportant",
+    "Average",
+    "Important",
+    "Vital"
+}
 
 function getColor(color: string) {
     switch (color) {

@@ -1,7 +1,7 @@
 import { onLoad, DayCols } from "./utils";
 import { TaskManager, changeTheme } from "./main";
-import { addPlannerTask, switchPlannerOrientation } from "./planner"
-import { getSettings, loadTasks, saveTasks, SettingsChanged, getTasksChanged, saveReminderSettings } from "./storage"
+import { switchPlannerOrientation } from "./planner"
+import { getSettings, saveReminderSettings } from "./storage"
 import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks, changeTab } from "./setup"
 import { Task } from "./task"
 import { sendNotif, CheckInHandler } from "./notifications"
@@ -16,10 +16,11 @@ function createTaskCallback(event) {
     window.test = form
     var title = form.titleinput.value
     var cat = form.catinput.value
-    var date = form.deadlineinput.value
-    var bigness = form.bignessinput.selectedOptions.item(0).getAttribute("name")
+    var date = form.deadlineinput.valueAsDate
+    var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
+    var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
 
-    var task = new Task(title, bigness, cat, date, false)
+    var task = new Task(title, size, importance, cat, date, false)
     taskMgr.addTask(task)
 }
 window.createTaskCallback = createTaskCallback
@@ -35,6 +36,7 @@ async function changeNotifSettingsCallback(event) {
         checkInHandler.setStartTime(startTime)
         checkInHandler.setEndTime(endTime)
         checkInHandler.setInterval(Number(sliderValue) * 60_000)
+        checkInHandler.start()
     } else {
         checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000)
         checkInHandler.start()
@@ -62,6 +64,9 @@ onLoad(async () => {
             await sendNotif("urmom", "gottem lolololololololol")
         }
     )
+
+    document.getElementById("deadlineinput").valueAsDate = new Date()
+    document.getElementById("tpdeadlineinput").valueAsDate = new Date()
 
     var settings = await getSettings()
 

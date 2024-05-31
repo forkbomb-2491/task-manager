@@ -1,6 +1,6 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS } from "./utils"
 import { savePlannerFlip } from "./storage"
-import { Task } from "./task"
+import { Task, TaskView } from "./task"
 import { TaskManager } from "./main"
 
 const isSameDay = (d1: Date, d2: Date) => {
@@ -9,7 +9,10 @@ const isSameDay = (d1: Date, d2: Date) => {
     d1.getDate() == d2.getDate())
 }
 
-export class Planner {
+/**
+ * The TaskView that represents the Planner tab.
+ */
+export class Planner implements TaskView {
     private startDate: Date
     private taskMgr: TaskManager
 
@@ -53,7 +56,11 @@ export class Planner {
     }
 }
 
-class DayColumn {
+/**
+ * Represents the Planner's Day Columns. This View handles rendering and
+ * displaying the day's tasks.
+ */
+class DayColumn implements TaskView {
     private taskMgr: TaskManager
     private _date: Date
 

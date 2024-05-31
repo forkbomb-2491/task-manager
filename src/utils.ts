@@ -15,6 +15,9 @@ export function todayDateString() {
     // return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
 
+/**
+ * An enum for the daycolumns' IDs in the HTML.
+ */
 export enum DayCols {
     "suncol",
     "moncol",

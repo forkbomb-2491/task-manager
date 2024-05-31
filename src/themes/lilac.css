@@ -14,6 +14,12 @@
     /* Text Color */
     --primary-text-color: rgb(154,114,166);
     --secondary-text-color: rgb(127, 94, 159);
+    --cat1-color: #e60000;
+    --cat2-color: #ff8e00;
+    --cat3-color: rgb(221, 207, 8);
+    --cat4-color: #00821b;
+    --cat5-color: #004bff;
+    --cat6-color: #780089;
 }
 
 .tabbutton.active {
@@ -22,7 +28,7 @@
 }
 
 .tabbutton {
-    color: rgb(154,114,166);
+    color: rgb(255, 255, 255);
 }
 
 .helpbutton {
@@ -34,3 +40,10 @@
     color: #ffffff;
 }
 
+.tpdate {
+    color: white;
+}
+
+.tpdate.hastask {
+    color: white;
+}

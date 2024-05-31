@@ -8,6 +8,9 @@ const TASKS_FN = "tasks.json"
 export const SettingsChanged = new Event("settingschanged")
 export const getTasksChanged = (tasks: Array<Task>) => { return new CustomEvent("taskschanged", {"detail": tasks}) }
 
+/**
+ * Checks to make sure the AppData folder for the App exists.
+ */
 async function checkAppDataValid() {
     var dirExists = await exists(".", {
         baseDir: BaseDirectory.AppData
@@ -17,6 +20,12 @@ async function checkAppDataValid() {
     }
 }
 
+/**
+ * Loads JSON Data from the disk.
+ * @param fn File Name
+ * @param defaultdata Default Object
+ * @returns Parsed JSON Object
+ */
 async function loadFile(fn: string, defaultdata: Object) {
     try {
         await checkAppDataValid()
@@ -30,6 +39,11 @@ async function loadFile(fn: string, defaultdata: Object) {
     }
 }
 
+/**
+ * Saves the Object to the disk. 
+ * @param data Object
+ * @param fn File Name
+ */
 async function saveFile(data: Object, fn: string) {
     await checkAppDataValid()
     var text = JSON.stringify(data)
@@ -109,7 +123,8 @@ export async function loadTasks() {
         const t = loadedJSON[i];
         tasks.push(new Task(
             t.name,
-            t.bigness,
+            t.size,
+            t.importance,
             t.category,
             t.due,
             t.completed

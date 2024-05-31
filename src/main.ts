@@ -24,6 +24,9 @@ export async function changeTheme(theme: string) {
     await setLastTheme(theme)
 }
 
+/**
+ * The Task Manager. The closest we have to a class representing the whole app.
+ */
 export class TaskManager {
     private tasks: Task[] = []
 

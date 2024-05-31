@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="/src/settings.css" />
         <link rel="stylesheet" href="/src/tasks.css" />
         <!-- LINE 7: For live editing themes... -->
-        <!-- <link rel="stylesheet" href="/src/themes/dark.css" /> -->
+        <!-- <link rel="stylesheet" href="/src/themes/danishpastel.css" /> -->
 
         <!-- .... -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,14 +44,23 @@
         <div class="tabcontainer">
             <div class="tab visible" name="tasks" id="tasktab">
                 <h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
-                <div class="task">
+                <div style="display: flex; padding: 0.75rem;">
+                    <div style="width: 2rem;"></div>
+                    <div style="width: 60%;">task name</div>
+                    <div style="width: 10%;">category</div>
+                    <div style="width: 5%;">size</div>
+                    <div style="width: 5%;">importance</div>
+                    <div style="width: 16%;">deadline</div>
+                    <div style="background: none; border: 0;" class="deletetask"></div>
+                </div>
+                <div class="task" style="justify-content: left;">
                     <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
-                        <input type="submit" style="background: none; border: none;" value="➕">
-                        <div style="width: 60%;">
-                            <input type = "text" id = "titleinput" name="titleinput" required style="width: 90%;">
+                        <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+                        <div style="width: 50%;">
+                            <input type = "text" id = "titleinpdut" name="titleinput" required>
                         </div>
-                        <div style="width: 19%;">
-                            <select id = "catinput" name = "catinput" required style="width: 90%;">
+                        <div style="width: 10%; display: flex;">
+                            <select id = "catinput" name = "catinput" required>
                                 <option name="default">Default</option>
                                 <option name="red">Red</option>
                                 <option name="orange">Orange</option>
@@ -61,20 +70,29 @@
                                 <option name="purple">Purple</option>
                             </select>
                         </div>
-                        <div style="width: 9%;">
-                            <select id = "bignessinput" name = "bignessinput" required style="width: 90%;">
-                                <option name="1">1</option>
-                                <option name="2">2</option>
-                                <option name="3">3</option>
-                                <option name="4">4</option>
-                                <option name="5">5</option>
+                        <div style="width: 7.5%; display: flex;">
+                            <select id = "sizeinput" name = "sizeinput" required>
+                                <option name="0">Tiny</option>
+                                <option name="1">Small</option>
+                                <option name="2">Medium</option>
+                                <option name="3">Big</option>
+                                <option name="4">Huge</option>
                             </select>
                         </div>
-                        <div style="width: 16%;">
-                            <input id="deadlineinput" type="date" value="2024-01-01">
+                        <div style="width: 12.5%; display: flex;">
+                            <select id = "importanceinput" name = "importanceinput" required>
+                                <option name="0">Trivial</option>
+                                <option name="1">Unimportant</option>
+                                <option name="2">Average</option>
+                                <option name="3">Important</option>
+                                <option name="4">Vital</option>
+                            </select>
                         </div>
+                        <div style="width: 16%; display: flex;">
+                            <input id="deadlineinput" type="date" required>
+                        </div>
+                        <div style="background: none; border: 0;" class="deletetask"></div>
                     </form>
-                    <div style="background: none; min-width: 2rem; border: 0;"></div>
                 </div>
                 <div>
                     <div style="display: flex;">
@@ -105,29 +123,46 @@
                 <div style="display: flex; justify-content: space-between;">
                     <div class="tpcontainer" style="width: 30%;">
                         <h2>Task</h2>
+                        <h3>Filter Tasks</h3>
+                        <div style="display: flex; justify-content: space-between;">
+                            <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
+                                <option name="0">Tiny and up</option>
+                                <option name="1">Small and up</option>
+                                <option name="2">Medium and up</option>
+                                <option name="3">Big and up</option>
+                                <option name="4">Huge and up</option>
+                            </select>
+                            <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
+                                <option name="0">Trivial and up</option>
+                                <option name="1">Unimportant and up</option>
+                                <option name="2">Average and up</option>
+                                <option name="3">Important and up</option>
+                                <option name="4">Vital and up</option>
+                            </select>
+                        </div>
                         <h3>Choose Task</h3>
                         <div>
                             <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required>
                                 <option name="t1">t1</option>
                                 <option name="t2">t2</option>
-                                <option name="t3">t3</option>
                             </select>
                         </div>
                         <h3>Select Start Date</h3>
-                        <!-- <p>between currdate and task.deadline</p> -->
+                        <!-- <p>default is today. between currdate and task.deadline</p> -->
                         <div>
-                            <input type="date" id="deadlineinput" value="2024-01-01" style="width: 100%;" required>
+                            <input type="date" id="tpdeadlineinput" style="width: 100%;" required>
                         </div>
                         <h3>Make Subtasks</h3>
                         <h4>Maybe assign them a day?</h4>
                         <form name="subtaskcreate" autocomplete="off">
                             <div class="subtask" style="display:flex; justify-content: space-between;">
                                 <input type="submit" style="background: none; border: none;" value="➕">
-                                <input type="text" id="subtasktitleinput" name="subtasktitleinput" style="width: 50%;">
-                                <input type="date" id="deadlineinput" value="2024-01-01">
+                                <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%;">
+                                <input type="date" id="tpsubtaskdateinput" style="width:45%">
                             </div>
                         </form>
-                        <p>Task Deadline</p>
+                        <div name="subtasklist">dom sub</div>
+                        <p>Deadline: [display task's due date]</p>
                     </div>
                     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
                         <h2>Your Task Calendar</h2>
@@ -140,7 +175,6 @@
                             <div class="tpday">Mon
                                 <div class="tpdate hastask">6/3<br>...
                                     <div class="expanded">
-                                        
                                         subtaskiiiiiiiiiiiiiiii<br>
                                         subtask<br>
                                         subtask<br>
@@ -170,7 +204,7 @@
                 <h1>Time Block</h1>
                 <div style="display: flex; justify-content: space-between;">
                     <div class="helpcontainer">
-                        <h2>TIMER</h2>
+                        <h2>Timer</h2>
                         <div>
                             Work Time for <b><label for="worktimeslider" id="worktime">75</label></b> minutes <br>
                             <input type="range" class="slider" id="worktimeslider" name = "worktime" min="30" max="120" value="75" step="5" oninput="worktime.innerText=this.value">
@@ -186,7 +220,7 @@
                         </div>
                     </div>
                     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
-                        <h2>Pomodoro</h2>
+                        <h3>Pomodoro</h3>
                         <ul>
                             <li>Choose a task to focus on</li>
                             <li>Choose a length for worktime (recommended: 25-30 minutes)</li>
@@ -291,7 +325,7 @@
                             <h2>Desserts</h2>
                             <h3>Things that are good in moderation</h3>
                             <ul>
-                                <li>Scrolling through Social Media</li>
+                                <li>Scrolling through social media</li>
                                 <li>Binge watching a show</li>
                             </ul>
                         </div>
@@ -333,19 +367,21 @@
                             <h2>Feeling Overwhelmed?</h2>
                             <p>Try breaking larger tasks down to smaller, more bite-sized tasks</p>
                             <p>Or, alternatively, here are some of your smaller upcoming tasks!</p>
-                            <p>#Not Urgent - (not big, soon) here</p>
+                            <p>Smallish tasks due soon</p>
+                            <div id="overwhelmedtasks"></div>
                         </div>
                         <div class="helpcontent" name="cantstart">
                             <h2>Can't Get Started?</h2>
                             <p>Here are some of your tasks you can get started on to get in the groove.</p>
-                            <p>Here are some significant things coming up.</p>
-                            <p>#Significant - (big, not soon) here</p>
+                            <p>Smallish tasks due soon</p>
+                            <div id="cantstarttasks"></div>
                         </div>
                         <div class="helpcontent" name="sidetracked">
                             <h2>Getting Sidetracked?</h2>
                             <p>Remember that these things are coming up super soon!</p>
                             <p>#Not Urgent - (not big, soon) here</p>
                             <p>#Urgent - (big, soon) here</p>
+                            <div id="sidetrackedtasks"></div>
                         </div>
                         <div class="helpcontent" name="frog">
                             <h2>Eat That Frog!</h2>
@@ -381,7 +417,15 @@
 
                 <h2>Reminder Settings</h2>
                 <form name="remindersettings" id="remindersettings">
-                    You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> <br>
+                    You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> 
+                    <select id = "reminderdays" name = "reminderdays" required style="width: 10%;">
+                        <option name="everyday">every day</option>
+                        <option name="weekdays">on weekdays</option>
+                        <option name="weekends">on weekends</option>
+                        <option name="today">just today</option>
+                        <!-- <option name="weeklyspec">weekly on:</option> -->
+                    </select>
+                    <br>
                     with the average time between notifs being
                     <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
                     <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 50%;" oninput="notifinterval.innerText=this.value">

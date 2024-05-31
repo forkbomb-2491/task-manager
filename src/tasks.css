@@ -1,12 +1,5 @@
-.tasklist {
-    /* display: flex;
-    border-radius:0.5rem;
-    background-color: var(--primary-color); */
-}
-
 .task {
     display: flex;
-    /* width: 100%; */
     background-color: var(--secondary-color);
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
@@ -16,6 +9,8 @@
 
     padding: 0.75rem;
     margin-bottom: 0.5rem;
+
+    word-break: break-all;
 }
 
 .task input {
@@ -28,6 +23,8 @@
     font-family: var(--primary-font-family);
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
     border-radius: 5px;
+
+    width: calc(100% - 1ch);
 }
 
 .task select {
@@ -41,6 +38,8 @@
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
     background-color: rgba(0, 0, 0, 0);
     border-radius: 5px;
+
+    width: calc(100% - 1ch);
 }
 
 .task select:focus-within {
@@ -49,12 +48,10 @@
     font-size: medium;
     font-family: var(--primary-font-family);
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    /* background-color: rgba(0, 0, 0, 0); */
 }
 
 .task form {
     display: flex;
-    justify-content: space-between;
     font-family: var(--primary-font-family);
     color: var(--primary-text-color);
     
@@ -66,8 +63,10 @@
     z-index: 10;
 }
 
-.task.button.deletetask {
+.deletetask {
     text-decoration: none;
+    width: 2rem;
+    padding: 0;
 }
 
 .completed {
@@ -78,7 +77,6 @@
 .task.completed button.complete {
     background-color: var(--container-background);
 }
-
 
 button.complete {
     background-color: rgba(0, 0, 0, 0);

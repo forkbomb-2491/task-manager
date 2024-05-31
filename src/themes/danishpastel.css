@@ -14,6 +14,12 @@
     /* Text Color */
     --primary-text-color: rgb(33,91,142);
     --secondary-text-color: #9579db;
+    --cat1-color: #ff6663;
+    --cat2-color: #feb144;
+    --cat3-color: #fdfd97;
+    --cat4-color: #9ee90e;
+    --cat5-color: #9ec1cf;
+    --cat6-color: #cc99c9;
 }
 
 .tabbutton.active {
@@ -25,6 +31,14 @@
 }
 .helpbutton:hover {
     background-color: rgba(136, 181, 255, 0.743);
+}
+
+.task {
+    background-color: rgb(251, 242, 246);
+}
+
+.showhidebutton {
+    color: white;
 }
 
 
