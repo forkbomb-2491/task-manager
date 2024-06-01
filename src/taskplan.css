@@ -35,7 +35,7 @@
 
 .tpdate {
     z-index: 0;
-    word-break: break-all;
+    overflow-wrap: break-word;
     
     /* width: 80%; */
     margin-left: 0.75rem;

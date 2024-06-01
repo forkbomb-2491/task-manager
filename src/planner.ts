@@ -154,7 +154,6 @@ export function switchPlannerOrientation() {
 }
 
 function findFirstPrecedingDay(date: Date, day: Weekdays) {
-    console.log(`preceding weekday: ${day}`)
     var ret = new Date(date.valueOf())
     while (ret.getDay() != day) {
         ret = new Date(ret.valueOf() - 86_400_000)

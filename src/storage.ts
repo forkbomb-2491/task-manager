@@ -148,7 +148,6 @@ export async function saveTasks(tasks: Array<Task>) {
 window.addEventListener(
     "taskschanged", 
     async (e: CustomEventInit) => {
-        console.log("h")
         await saveTasks(e.detail)
     }
 )

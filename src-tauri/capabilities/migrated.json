@@ -10,7 +10,6 @@
     "event:default",
     "window:default",
     "app:default",
-    "resources:default",
     "menu:default",
     "tray:default",
     "fs:allow-read-file",
@@ -27,7 +26,6 @@
     {
       "identifier": "fs:scope",
       "allow": [
-        "$RESOURCE/**",
         "$APPCONFIG/*",
         "$APPCONFIG/**",
         "$APPCONFIG"

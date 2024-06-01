@@ -1,24 +1,19 @@
-import { resolveResource } from '@tauri-apps/api/path'
-import { readTextFile } from '@tauri-apps/plugin-fs'
 import { setLastTheme, getTasksChanged, loadTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner } from './planner'
 import { onLoad } from './utils'
 
 export async function changeTheme(theme: string) {
-    const previousTheme = document.getElementById("themesheet")
-    if (previousTheme != null) {
-        document.head.removeChild(previousTheme)
-    }
-
-    if (theme != "light") {
-        const themeFile = await resolveResource(`../src/themes/${theme}.css`)
-        const themeCode = await readTextFile(themeFile) 
-
-        var newTheme = document.createElement("style")
-        newTheme.id = "themesheet"
-        newTheme.innerHTML = themeCode
-        document.head.appendChild(newTheme)
+    var themes = document.getElementsByClassName("theme")
+    for (let i = 0; i < themes.length; i++) {
+        const themeSheet = themes[i];
+        if (themeSheet.getAttribute("name") != theme && !themeSheet.hasAttribute("disabled")) {
+            themeSheet.setAttribute("disabled", "")
+        } else if (themeSheet.getAttribute("name") == theme) {
+            document.head.removeChild(themeSheet)
+            themeSheet.removeAttribute("disabled")
+            document.head.appendChild(themeSheet)
+        }
     }
 
     await setLastTheme(theme)
