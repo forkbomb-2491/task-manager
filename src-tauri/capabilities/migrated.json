@@ -28,7 +28,8 @@
       "allow": [
         "$APPCONFIG/*",
         "$APPCONFIG/**",
-        "$APPCONFIG"
+        "$APPCONFIG",
+        "src/**"
       ]
     },
     "shell:allow-open",

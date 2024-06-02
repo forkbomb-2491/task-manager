@@ -1,14 +1,14 @@
 import { onLoad, DayCols } from "./utils";
 import { TaskManager, changeTheme } from "./main";
 import { switchPlannerOrientation } from "./planner"
-import { getSettings, saveReminderSettings } from "./storage"
+import { getSettings, saveReminderSettings, loadTabs } from "./storage"
 import { addThemeButtonCallbacks, addTabButtonCallbacks, addHelpButtonCallbacks, changeTab } from "./setup"
 import { Task } from "./task"
 import { sendNotif, CheckInHandler } from "./notifications"
 
 var checkInHandler = null
 
-var taskMgr = new TaskManager()
+var taskMgr
 
 function createTaskCallback(event) {
     event.preventDefault()
@@ -43,12 +43,18 @@ async function changeNotifSettingsCallback(event) {
     }
     await saveReminderSettings(startTime, endTime, sliderValue)
 }
-document.getElementById("remindersettings").addEventListener(
-    "submit",
-    changeNotifSettingsCallback
-)
 
 onLoad(async () => {
+    console.log("h")
+    await loadTabs()
+    taskMgr = new TaskManager()
+    await taskMgr.onLoadCallback()
+    
+    document.getElementById("remindersettings").addEventListener(
+        "submit",
+        changeNotifSettingsCallback
+    )
+
     addThemeButtonCallbacks()
     addTabButtonCallbacks()
     addHelpButtonCallbacks()

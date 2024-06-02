@@ -1,0 +1,67 @@
+<h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
+<!-- <div style="display: flex; padding: 0.75rem;">
+    <div style="width: 2rem;"></div>
+    <div style="width: 60%;">task name</div>
+    <div style="width: 10%;">category</div>
+    <div style="width: 5%;">size</div>
+    <div style="width: 5%;">importance</div>
+    <div style="width: 16%;">deadline</div>
+    <div style="background: none; border: 0;" class="deletetask"></div>
+</div> -->
+<div class="task" style="justify-content: left;">
+    <form onsubmit="createTaskCallback(event)" name="taskcreate" autocomplete="off">
+        <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+        <div style="width: 50%;">
+            <input type = "text" id = "titleinpdut" name="titleinput" required>
+        </div>
+        <div style="width: 10%; display: flex;">
+            <select id = "catinput" name = "catinput" required>
+                <option name="default">Default</option>
+                <option name="red">Red</option>
+                <option name="orange">Orange</option>
+                <option name="yellow">Yellow</option>
+                <option name="green">Grehen</option>
+                <option name="blue">Blue</option>
+                <option name="purple">Purple</option>
+            </select>
+        </div>
+        <div style="width: 7.5%; display: flex;">
+            <select id = "sizeinput" name = "sizeinput" required>
+                <option name="0">Tiny</option>
+                <option name="1">Small</option>
+                <option name="2">Medium</option>
+                <option name="3">Big</option>
+                <option name="4">Huge</option>
+            </select>
+        </div>
+        <div style="width: 12.5%; display: flex;">
+            <select id = "importanceinput" name = "importanceinput" required>
+                <option name="0">Trivial</option>
+                <option name="1">Unimportant</option>
+                <option name="2">Average</option>
+                <option name="3">Important</option>
+                <option name="4">Vital</option>
+            </select>
+        </div>
+        <div style="width: 16%; display: flex;">
+            <input id="deadlineinput" type="date" required>
+        </div>
+        <div style="background: none; border: 0;" class="deletetask"></div>
+    </form>
+</div>
+<div>
+    <div style="display: flex;">
+        <button class="showhidebutton">S/H</button>
+        <h2>Current Tasks</h2>
+    </div>
+    <div class="tasklist" id="currenttasklist">
+    </div>
+</div>
+<div>
+    <div style="display: flex;">
+        <button class="showhidebutton">S/H</button>
+        <h2>Completed Tasks</h2>
+    </div>
+    <div class="tasklist" id="completedtasklist">
+    </div>
+</div>

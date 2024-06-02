@@ -1,0 +1,33 @@
+<h1>Time Block</h1>
+<div style="display: flex; justify-content: space-between;">
+    <div class="helpcontainer">
+        <h2>Timer</h2>
+        <div>
+            Work Time for <b><label for="worktimeslider" id="worktime">75</label></b> minutes <br>
+            <input type="range" class="slider" id="worktimeslider" name = "worktime" min="30" max="120" value="75" step="5" oninput="worktime.innerText=this.value">
+        </div>
+        <div>
+            Break Time for <b><label for="breaktimeslider" id="breaktime">25</label></b> minutes <br>
+            <input type="range" class="slider" id="breaktimeslider" name = "breaktime" min="5" max="45" value="25" step="5" oninput="breaktime.innerText=this.value">
+        </div>
+        <div style="display:flex; justify-content: space-between; margin-top: 0.75rem">
+            <button class="settingsbutton" name="start" style="width: 30%;">Start</button>
+            <button class="settingsbutton" name="pause" style="width: 30%;">Pause</button>
+            <button class="settingsbutton" name="stop" style="width: 30%;">Stop</button>
+        </div>
+    </div>
+    <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
+        <h3>Pomodoro</h3>
+        <ul>
+            <li>Choose a task to focus on</li>
+            <li>Choose a length for worktime (recommended: 25-30 minutes)</li>
+            <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
+            <li>Alternate between the two.</li>
+        </ul>
+        <h3>Minute Focus Block</h3>
+        <ul>
+            <li>Block out a larger time in your day to work on tasks, in order to minimize distractions for an extended period of time </li>
+            <li>Schedule 60-90 minute-long blocks during your most productive hours</li>
+        </ul>                        
+    </div>
+</div>

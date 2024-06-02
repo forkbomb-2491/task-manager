@@ -37,7 +37,7 @@ export class TaskManager {
         })
     }
 
-    private async onLoadCallback() {
+    async onLoadCallback() {
         await this.loadTasks()
         this.render()
     }

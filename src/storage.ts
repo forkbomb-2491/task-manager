@@ -8,6 +8,16 @@ const TASKS_FN = "tasks.json"
 export const SettingsChanged = new Event("settingschanged")
 export const getTasksChanged = (tasks: Array<Task>) => { return new CustomEvent("taskschanged", {"detail": tasks}) }
 
+export async function loadTabs() {
+    var tabs = [...document.getElementsByClassName("tab")]
+    for (let i = 0; i < tabs.length; i++) {
+        const tab = tabs[i];
+        const tabName = tab.getAttribute("name")
+        var tabHTML = await (await fetch(`src/tabs/${tabName}.html`)).text()
+        tab.innerHTML = tabHTML
+    }
+}
+
 /**
  * Checks to make sure the AppData folder for the App exists.
  */
