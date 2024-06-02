@@ -75,7 +75,7 @@
 }
 
 .task.completed button.complete {
-    background-color: var(--container-background);
+    background-color: var(--primary-color);
 }
 
 button.complete {

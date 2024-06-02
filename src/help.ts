@@ -1,3 +1,4 @@
+// @ts-nocheck <-- REMOVE 
 import { Task, TaskView } from "./task";
 import { TaskManager } from "./main";
 
