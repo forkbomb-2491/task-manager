@@ -2,6 +2,7 @@ import { path } from "@tauri-apps/api"
 import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { Task } from "./task";
 
+// LEGACY:
 const SETTINGS_FN = "settings.json"
 const TASKS_FN = "tasks.json"
 

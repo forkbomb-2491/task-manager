@@ -23,6 +23,11 @@
     height: 1rem;
     border-radius: 0.125em;
 }
+.helpcontainer button.complete {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.125em;
+}
 
 .daycolumn .completed button.complete {
     background-color: var(--primary-color);

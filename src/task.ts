@@ -102,13 +102,19 @@ export class Task {
     due: Date
     completed: boolean
 
+    public get dueIn() {
+        var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
+        var now = new Date()
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        return Math.round((due.valueOf() - today.valueOf()) / 84_600_000)
+    }
+
     deleted: boolean = false
 
     completeCallback: (() => void) | null = null
     deleteCallback: (() => void) | null = null
 
-    private listElement: HTMLDivElement | null = null
-    private plannerElement: HTMLParagraphElement | null = null
+    private elements: HTMLElement[] = []
 
     constructor(name: string, size: string, importance: string, category: string, due: Date, completed: boolean = false) {
         this.name = name
@@ -141,8 +147,9 @@ export class Task {
      * elements.
      */
     delete() {
-        if (this.listElement != null) { this.listElement.remove() }
-        if (this.plannerElement != null) { this.plannerElement.remove() }
+        this.elements.forEach(element => {
+            element.remove()
+        })
 
         this.deleted = true
 
@@ -156,11 +163,13 @@ export class Task {
      */
     toggleCompleted() {
         if (!this.completed) {
-            if (this.listElement != null) { this.listElement.className += " completed" }
-            if (this.plannerElement != null) { this.plannerElement.className += " completed" }
+            this.elements.forEach(element => {
+                element.className += " completed"
+            })
         } else {
-            if (this.listElement != null) { this.listElement.className = this.listElement.className.replace(" completed", "") }
-            if (this.plannerElement != null) { this.plannerElement.className = this.plannerElement.className.replace(" completed", "") }
+            this.elements.forEach(element => {
+                element.className = element.className.replace(" completed", "")
+            })
         }
 
         this.completed = !this.completed
@@ -175,10 +184,6 @@ export class Task {
      * @returns A <div class="task"> HTML Element
      */
     getTaskListElement() {
-        if (this.listElement != null) {
-            return this.listElement
-        }
-
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = `
@@ -198,7 +203,7 @@ export class Task {
             <div style="width: 16%;">
                 ${this.due.toDateString()}
             </div>
-            <button style="background: none; border: 0;" class="deletetask">
+            <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
             </button>
         `
@@ -220,7 +225,7 @@ export class Task {
             newElement.style.color = getColor(this.category)
         }
 
-        this.listElement = newElement
+        this.elements.push(newElement)
         return newElement
     }
 
@@ -230,10 +235,6 @@ export class Task {
      */
 
     getPlannerElement() {
-        if (this.plannerElement != null) {
-            return this.plannerElement
-        }
-
         var newElement = document.createElement("p")
         if (this.completed) {
             newElement.className = " completed"
@@ -254,7 +255,7 @@ export class Task {
             newElement.style.color = getColor(this.category)
         }
 
-        this.plannerElement = newElement
+        this.elements.push(newElement)
         return newElement
     }
 }

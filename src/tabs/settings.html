@@ -1,14 +1,21 @@
 <h1 style="margin-top: 0;">Settings</h1>
 <h2>Reminder Settings</h2>
 <form name="remindersettings" id="remindersettings">
-    You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> 
-    <select id = "reminderdays" name = "reminderdays" required style="width: 10%;">
-        <option name="everyday">every day</option>
-        <option name="weekdays">on weekdays</option>
-        <option name="weekends">on weekends</option>
-        <option name="today">just today</option>
-        <!-- <option name="weeklyspec">weekly on:</option> -->
-    </select>
+    You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
+    <input type="checkbox" id="remindersun" name="remindermon" value=0>
+    <label for="remindersun">Sunday</label>
+    <input type="checkbox" id="remindermon" name="remindermon" value=1>
+    <label for="remindermon">Monday</label>
+    <input type="checkbox" id="remindertue" name="remindertue" value=2>
+    <label for="remindertue">Tuesday</label>
+    <input type="checkbox" id="reminderwed" name="reminderwed" value=3>
+    <label for="reminderwed">Wedesday</label>
+    <input type="checkbox" id="reminderthu" name="reminderthu" value=4>
+    <label for="reminderthu">Thursday</label>
+    <input type="checkbox" id="reminderfri" name="reminderfri" value=5>
+    <label for="reminderfri">Friday</label>
+    <input type="checkbox" id="remindersat" name="remindersat" value=6>
+    <label for="remindersat">Saturday</label>
     <br>
     with the average time between notifs being
     <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
@@ -25,7 +32,6 @@
 <label for="timervolumeslider" id="timervolume">25</label>
 
 <h2>Themes</h2>
-<p><i>⚠️ Uncomment line 7 of index.html and set the link to point to your sheet to edit in real time!</i></p>
 <button class="themebutton" name="light">Normal (Light)</button>
 <button class="themebutton" name="dark">Normal (Dark)</button>
 <button class="themebutton" name="gray">Grayscale</button>

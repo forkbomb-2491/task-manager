@@ -20,7 +20,7 @@
                 <option name="red">Red</option>
                 <option name="orange">Orange</option>
                 <option name="yellow">Yellow</option>
-                <option name="green">Grehen</option>
+                <option name="green">Green</option>
                 <option name="blue">Blue</option>
                 <option name="purple">Purple</option>
             </select>
@@ -51,7 +51,7 @@
 </div>
 <div>
     <div style="display: flex;">
-        <button class="showhidebutton">S/H</button>
+        <!-- <button class="showhidebutton" id="currenttasksbutton">S/H</button> -->
         <h2>Current Tasks</h2>
     </div>
     <div class="tasklist" id="currenttasklist">
@@ -59,7 +59,7 @@
 </div>
 <div>
     <div style="display: flex;">
-        <button class="showhidebutton">S/H</button>
+        <button class="showhidebutton" onclick="toggleCompletedVisibility()" id="completedtasksbutton" style="color: var(--primary-text-color);">S/H</button>
         <h2>Completed Tasks</h2>
     </div>
     <div class="tasklist" id="completedtasklist">

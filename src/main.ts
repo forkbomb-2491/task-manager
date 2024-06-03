@@ -2,6 +2,7 @@ import { setLastTheme, getTasksChanged, loadTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner } from './planner'
 import { onLoad } from './utils'
+import { HelpManager } from './help'
 
 export async function changeTheme(theme: string) {
     var themes = document.head.getElementsByClassName("theme")
@@ -25,10 +26,12 @@ export class TaskManager {
 
     private taskList: TaskList
     private planner: Planner
+    private helpMgr: HelpManager
 
     constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
+        this.helpMgr = new HelpManager(this)
 
         onLoad(async () => {
             await this.onLoadCallback()
@@ -58,11 +61,13 @@ export class TaskManager {
     private render() {
         this.taskList.render()
         this.planner.render()
+        this.helpMgr.render()
     }
 
     private refresh() {
         this.taskList.refresh()
         this.planner.refresh()
+        this.helpMgr.render()
 
         this.saveTasksViaEvent()
     }

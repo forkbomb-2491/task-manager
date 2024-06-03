@@ -44,6 +44,16 @@ async function changeNotifSettingsCallback(event) {
     await saveReminderSettings(startTime, endTime, sliderValue)
 }
 
+function toggleCompletedVisibility() {
+    var list = document.getElementById("completedtasklist")
+    if (list.style.display == "none") {
+        list.style.display = "block"
+    } else {
+        list.style.display = "none"
+    }
+}
+window.toggleCompletedVisibility = toggleCompletedVisibility
+
 onLoad(async () => {
     console.log("h")
     await loadTabs()
