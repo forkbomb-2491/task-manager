@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run build && echo hi",
     "frontendDist": ["../dist", "../src/themes", "../src/tabs"],
     "devUrl": "http://localhost:1420"
   },
