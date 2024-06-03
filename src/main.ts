@@ -10,9 +10,11 @@ export async function changeTheme(theme: string) {
         if (themeSheet.getAttribute("name") != theme && !themeSheet.hasAttribute("disabled")) {
             themeSheet.setAttribute("disabled", "")
         } else if (themeSheet.getAttribute("name") == theme) {
-            document.head.removeChild(themeSheet)
             themeSheet.removeAttribute("disabled")
-            document.head.appendChild(themeSheet)
+            try {
+                document.head.removeChild(themeSheet)
+                document.head.appendChild(themeSheet)
+            } catch (error) {}
         }
     }
 

@@ -5,6 +5,12 @@ function getRollupInputs(): string[] {
     // Always include index
     var inputs = ["index.html"]
 
+    // // Bundle themes
+    // var themes = readdirSync("src/styles/themes")
+    // themes.forEach((file) => {
+    //     inputs.push(`src/styles/themes/${file}`)
+    // })
+
     // Bundle tabs
     var themes = readdirSync("src/tabs")
     themes.forEach((file) => {
