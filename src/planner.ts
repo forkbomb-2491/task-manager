@@ -1,5 +1,4 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS } from "./utils"
-import { savePlannerFlip } from "./storage"
 import { Task, TaskView } from "./task"
 import { TaskManager } from "./main"
 
@@ -123,12 +122,11 @@ export function addPlannerTask(task: HTMLElement, dayId: string) {
     day?.appendChild(task)
 }
 
-export function switchPlannerOrientation() {
+export function switchPlannerOrientation(): boolean {
     var previousElement = document.getElementById("plannervertical")
     if (previousElement != null) {
         previousElement.remove()
-        savePlannerFlip(false)
-        return
+        return false
     }
     var newElement = document.createElement("style")
     newElement.id = "plannervertical"
@@ -149,8 +147,8 @@ export function switchPlannerOrientation() {
     .daycolumn h4 {
         text-align: left;
     }`
-    savePlannerFlip(true)
     document.head.appendChild(newElement)
+    return true
 }
 
 function findFirstPrecedingDay(date: Date, day: Weekdays) {

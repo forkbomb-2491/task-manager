@@ -35,6 +35,11 @@ export class TaskList implements TaskView {
 
     constructor (taskMgr: TaskManager) {
         this.taskMgr = taskMgr
+
+        document.getElementById("completedtasksbutton")!.addEventListener(
+            "click",
+            (_) => { this.toggleCompletedVisibility() }
+        )
     }
 
     /**
@@ -86,6 +91,15 @@ export class TaskList implements TaskView {
 
     addTask(task: Task) {
         document.getElementById("currenttasklist")!.appendChild(task.getTaskListElement())
+    }
+
+    private toggleCompletedVisibility() {
+        var list = document.getElementById("completedtasklist")!
+        if (list.style.display == "none") {
+            list.style.display = "block"
+        } else {
+            list.style.display = "none"
+        }
     }
 }
 

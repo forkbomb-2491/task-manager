@@ -23,6 +23,15 @@
     "fs:allow-exists",
     "fs:allow-app-write",
     "path:allow-resolve-directory",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-load",
+    "store:allow-clear",
+    "store:allow-keys",
+    "store:allow-length",
+    "store:allow-reset",
+    "store:allow-values",
     {
       "identifier": "fs:scope",
       "allow": [
@@ -36,6 +45,7 @@
     "notification:default",
     "notification:default",
     "fs:default",
-    "shell:default"
+    "shell:default",
+    "store:default"
   ]
 }

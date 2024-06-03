@@ -31,7 +31,22 @@
 <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 50%;" oninput="timervolume.innerText = this.value">            
 <label for="timervolumeslider" id="timervolume">25</label>
 
-<h2>Themes</h2>
+<h2>Display</h2>
+<h3>Tab Display</h3>
+<p><i>Hide tabs you find unnecessary.</i></p>
+<form name="tabsettings" id="tabsettings">
+    <input type="checkbox" id="tpactive" name="tpactive">
+    <label for="tpactive">Taskplanner</label>
+    <input type="checkbox" id="tbactive" name="tbactive">
+    <label for="tbactive">Time Block</label>
+    <input type="checkbox" id="eisenhoweractive" name="eisenhoweractive">
+    <label for="eisenhoweractive">Eisenhower</label>
+    <input type="checkbox" id="dopamenuactive" name="dopamenuactive">
+    <label for="dopamenuactive">Dopamenu</label>
+    <input type="checkbox" id="remindersactive" name="remindersactive">
+    <label for="remindersactive">Reminders</label>
+</form>
+<h3>Themes</h3>
 <button class="themebutton" name="light">Normal (Light)</button>
 <button class="themebutton" name="dark">Normal (Dark)</button>
 <button class="themebutton" name="gray">Grayscale</button>

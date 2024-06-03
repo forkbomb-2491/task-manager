@@ -1,10 +1,97 @@
 import { path } from "@tauri-apps/api"
 import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { Task } from "./task";
+import { Store } from "@tauri-apps/plugin-store";
+import { appDataDir, resolve } from "@tauri-apps/api/path";
+
+const TASKS_FN = "tasks.json"
+
+// Checks to make sure the AppData folder for the App exists.
+var dirExists = await exists(".", {
+    baseDir: BaseDirectory.AppData
+})
+if (!dirExists) {
+    await mkdir(await path.appDataDir())
+}
+
+const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json"
+
+export class StorageManager {
+    private settings: Store
+
+    constructor() {
+        this.settings = new Store(SETTINGS_PATH)
+        this.settings.load().then()
+    }
+
+    async saveSettings() {
+        await this.settings.save()
+    }
+
+    async getCheckInSettings() {
+        return {
+            startTime: await this.settings.get("checkInStart"),
+            endTime: await this.settings.get("checkInEnd"),
+            interval: await this.settings.get("checkInInterval")
+        }
+    }
+
+    async setCheckInSettings(startTime: string | null = null, endTime: string | null = null, interval: number | null = null) {
+        if (startTime != null) {
+            await this.settings.set("checkInStart", startTime)
+        }
+        if (endTime != null) {
+            await this.settings.set("checkInEnd", endTime)
+        }
+        if (interval != null) {
+            await this.settings.set("checkInInterval", interval)
+        }
+
+        await this.saveSettings()
+    }
+
+    async getLastTheme(): Promise<string> {
+        var theme = await this.settings.get("theme")
+        if (theme == null) {
+            return "light"
+        }
+        // @ts-ignore; At this point, type will always be correct.
+        return theme
+    }
+
+    async setLastTheme(theme: string) {
+        await this.settings.set("theme", theme)
+    }
+
+    async getPlannerFlipped(): Promise<boolean> {
+        var ret = await this.settings.get("plannerFlipped")
+        console.log(ret)
+        if (ret == null) {
+            return false
+        }
+        // @ts-ignore; At this point, type will always be correct.
+        return ret
+    }
+
+    async setPlannerFlipped(flipped: boolean) {
+        await this.settings.set("plannerFlipped", flipped)
+    }
+
+    async getLastTab(): Promise<string> {
+        var ret = await this.settings.get("lastTab")
+        if (ret == null) {
+            return "tasks"
+        }
+        // @ts-ignore; At this point, type will always be correct.
+        return ret
+    }
+
+    async setLastTab(tab: string) {
+        await this.settings.set("lastTab", tab)
+    }
+}
 
 // LEGACY:
-const SETTINGS_FN = "settings.json"
-const TASKS_FN = "tasks.json"
 
 export const SettingsChanged = new Event("settingschanged")
 export const getTasksChanged = (tasks: Array<Task>) => { return new CustomEvent("taskschanged", {"detail": tasks}) }
@@ -19,17 +106,7 @@ export async function loadTabs() {
     }
 }
 
-/**
- * Checks to make sure the AppData folder for the App exists.
- */
-async function checkAppDataValid() {
-    var dirExists = await exists(".", {
-        baseDir: BaseDirectory.AppData
-    })
-    if (!dirExists) {
-        await mkdir(await path.appDataDir())
-    }
-}
+
 
 /**
  * Loads JSON Data from the disk.
@@ -39,7 +116,6 @@ async function checkAppDataValid() {
  */
 async function loadFile(fn: string, defaultdata: Object) {
     try {
-        await checkAppDataValid()
         var text = await readTextFile(fn, {
             baseDir: BaseDirectory.AppConfig
         })
@@ -56,75 +132,10 @@ async function loadFile(fn: string, defaultdata: Object) {
  * @param fn File Name
  */
 async function saveFile(data: Object, fn: string) {
-    await checkAppDataValid()
     var text = JSON.stringify(data)
     await writeTextFile(fn, text, {
         baseDir: BaseDirectory.AppConfig
     })
-}
-
-var settingsLoaded = false
-
-var settings = {
-    "lastTheme": "light",
-    "plannerflipped": false,
-    "lasttab": "tasks",
-    "checkIns": {
-        "start": "",
-        "end": "",
-        "interval": ""
-    }
-}
-
-async function saveSettings() {
-    await saveFile(settings, SETTINGS_FN)
-}
-
-export async function loadSettings() {
-    settingsLoaded = true
-    settings = await loadFile(SETTINGS_FN, settings)
-}
-
-export async function savePlannerFlip(flipped: boolean) {
-    settings.plannerflipped = flipped
-    await saveSettings()
-}
-
-export function setCurrentTab(tab: string) {
-    settings.lasttab = tab
-}
-
-export async function saveReminderSettings(start: string, end: string, interval: string) {
-    if (settings.checkIns == undefined) {
-        settings.checkIns = {
-            "start": "",
-            "end": "",
-            "interval": ""
-        }
-    }
-
-    settings.checkIns.start = start
-    settings.checkIns.end = end
-    settings.checkIns.interval = interval
-
-    await saveSettings()
-}
-
-export async function saveCurrentTab(tab: string) {
-    settings.lasttab = tab
-    await saveSettings()
-}
-
-export async function setLastTheme(theme: string) {
-    settings.lastTheme = theme
-    await saveSettings()
-}
-
-export async function getSettings() {
-    if (!settingsLoaded) {
-        await loadSettings()
-    }
-    return settings
 }
 
 export async function loadTasks() {
@@ -160,12 +171,5 @@ window.addEventListener(
     "taskschanged", 
     async (e: CustomEventInit) => {
         await saveTasks(e.detail)
-    }
-)
-
-window.addEventListener(
-    "settingschanged",
-    async (_) => {
-        await saveSettings()
     }
 )

@@ -1,25 +1,228 @@
-import { setLastTheme, getTasksChanged, loadTasks } from './storage'
+import { StorageManager, getTasksChanged, loadTasks, loadTabs } from './storage'
 import { Task, TaskList } from './task'
-import { Planner } from './planner'
-import { onLoad } from './utils'
-import { HelpManager } from './help'
+import { Planner, switchPlannerOrientation } from './planner'
+import { HelpManager, changeHelpStuff } from './help'
+import { CheckInHandler } from './notifications'
 
-export async function changeTheme(theme: string) {
-    var themes = document.head.getElementsByClassName("theme")
-    for (let i = 0; i < themes.length; i++) {
-        const themeSheet = themes[i];
-        if (themeSheet.getAttribute("name") != theme && !themeSheet.hasAttribute("disabled")) {
-            themeSheet.setAttribute("disabled", "")
-        } else if (themeSheet.getAttribute("name") == theme) {
-            themeSheet.removeAttribute("disabled")
+var app: App
+
+await loadTabs()
+
+class App {
+    private taskMgr: TaskManager
+    private checkInHandler: CheckInHandler | undefined
+    private storageMgr: StorageManager
+
+    constructor() {
+        this.taskMgr = new TaskManager()
+        this.storageMgr = new StorageManager()
+    }
+    
+    async main() {
+        this.loadCheckInHandler().then()
+        this.taskMgr.start().then()
+
+        // Register callbacks
+        document.getElementById("taskcreateform")!.addEventListener(
+            "submit",
+            (e) => { this.createTaskCallback(e) }
+        )
+        document.getElementById("remindersettings")!.addEventListener(
+            "submit",
+            (e) => { this.changeNotifSettingsCallback(e) }
+        )
+        document.getElementById("switchplanner")!.addEventListener(
+            "click",
+            (_) => { this.switchPlannerCallback() }
+        )
+
+        this.addThemeButtonCallbacks()
+        this.addTabButtonCallbacks()
+        this.addHelpButtonCallbacks()
+
+        // @ts-ignore; Populate fields' default values
+        document.getElementById("deadlineinput")!.valueAsDate = new Date()
+        // @ts-ignore
+        document.getElementById("tpdeadlineinput")!.valueAsDate = new Date()
+
+        // Apply settings
+        this.storageMgr.getLastTheme().then((theme: string) => {
+            this.changeTheme(theme)
+        })
+
+        this.storageMgr.getPlannerFlipped().then((flipped: boolean) => {
+            if (flipped) { switchPlannerOrientation() }
+        })
+
+        this.storageMgr.getLastTab().then((tab: string) => {
+            this.changeTab(tab)
+        })
+
+        document.body.style.display = "block"
+    }
+
+    private async loadCheckInHandler(): Promise<boolean> {
+        var stgs = await this.storageMgr.getCheckInSettings()
+        if (Object.values(stgs).includes(null)) {
+            return false
+        }
+        
+        this.checkInHandler = new CheckInHandler(
+            // @ts-ignore; If it isn't null, it's the right type
+            stgs.startTime,
+            stgs.endTime,
+            stgs.interval
+        )
+        return true
+    }
+
+    private createTaskCallback(event: SubmitEvent) {
+        event.preventDefault()
+
+        // @ts-ignore; Necessary to make this whole darn thing work
+        var form: HTMLFormElement = event.target
+        var title = form.titleinput.value
+        var cat = form.catinput.value
+        var date = form.deadlineinput.valueAsDate
+        var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
+        var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
+    
+        var task = new Task(title, size, importance, cat, date, false)
+        this.taskMgr.addTask(task)
+    }
+
+    private changeNotifSettingsCallback(event: SubmitEvent) {
+        event.preventDefault()
+
+        // @ts-ignore
+        var form: HTMLFormElement = event.target
+        var startTime = form.notifstart.value
+        var endTime = form.notifend.value
+        var sliderValue = form.notifintervalslider.value
+    
+        if (this.checkInHandler != null) {
+            this.checkInHandler.setStartTime(startTime)
+            this.checkInHandler.setEndTime(endTime)
+            this.checkInHandler.setInterval(Number(sliderValue) * 60_000)
+            this.checkInHandler.start()
+        } else {
+            this.checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000)
+            this.checkInHandler.start()
+        }
+
+        this.storageMgr.setCheckInSettings(startTime, endTime, sliderValue).then()
+    }
+
+    private switchPlannerCallback() {
+        this.storageMgr.setPlannerFlipped(switchPlannerOrientation()).then(async () => {
+            await this.storageMgr.saveSettings()
+        })
+    }
+
+    /**
+     * Switches displayed tab to the target.
+     * @param {string} tab Tab Name
+     */
+    private changeTab(tab: string) {
+        var buttons = document.getElementsByClassName("tabbutton")
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
+            if (button.getAttribute("name") == tab) {
+                button.className = "tabbutton active"
+            } else if (button.className == "tabbutton active") {
+                button.className = "tabbutton"
+            }
+        }
+    
+        var tabs = document.getElementsByClassName("tab")
+        for (let i = 0; i < tabs.length; i++) {
+            const tabElement = tabs[i];
+            if (tabElement.getAttribute("name") == tab) {
+                tabElement.className = "tab visible"
+            } else if (tabElement.className == "tab visible") {
+                tabElement.className = "tab"
+            }
         }
     }
 
-    await setLastTheme(theme)
+    private changeTheme(theme: string) {
+        var themes = document.head.getElementsByClassName("theme")
+        for (let i = 0; i < themes.length; i++) {
+            const themeSheet = themes[i];
+            if (themeSheet.getAttribute("name") != theme && !themeSheet.hasAttribute("disabled")) {
+                themeSheet.setAttribute("disabled", "")
+            } else if (themeSheet.getAttribute("name") == theme) {
+                themeSheet.removeAttribute("disabled")
+            }
+        }
+    }
+
+    /** Assign as click callback to theme buttons. */
+    async themeButtonCallback(event: Event) {
+        // @ts-ignore
+        var theme: string = event.currentTarget!.name
+        this.changeTheme(theme)
+        this.storageMgr.setLastTheme(theme).then(
+            async () => {
+                await this.storageMgr.saveSettings()
+            }
+        )
+    }
+
+    /** Assign as click callback to tab change buttons. */
+    private tabChangeCallback(event: Event) {
+        // @ts-ignore
+        var button: HTMLButtonElement = event.currentTarget
+        var tab = button.name
+        this.changeTab(tab)
+        this.storageMgr.setLastTab(tab).then(
+            async () => {
+                await this.storageMgr.saveSettings()
+            }
+        )
+    }
+
+    private addThemeButtonCallbacks() {
+        var themeButtonCallback = (e: Event) => {
+            this.themeButtonCallback(e)
+        }
+
+        var themeButtons = document.getElementsByClassName("themebutton");
+        for (let i = 0; i < themeButtons.length; i++) {
+            const button = themeButtons[i];
+            button.addEventListener("click", themeButtonCallback);
+        }
+    }
+
+    private addTabButtonCallbacks() {
+        var tabChangeCallback = (e: Event) => {
+            this.tabChangeCallback(e)
+        }
+
+        var tabButtons = document.getElementsByClassName("tabbutton");
+        for (let i = 0; i < tabButtons.length; i++) {
+            const button = tabButtons[i];
+            button.addEventListener("click", tabChangeCallback);
+        }
+    }
+
+    private addHelpButtonCallbacks() {
+        var helpButtons = document.getElementsByClassName("helpbutton")
+        for (let i = 0; i < helpButtons.length; i++) {
+            const button = helpButtons[i];
+            button.addEventListener(
+                "click",
+                (e) => {
+                    // @ts-ignore
+                    changeHelpStuff(e.currentTarget!.getAttribute("name"))
+                }
+            )
+        }
+    }
 }
 
 /**
- * The Task Manager. The closest we have to a class representing the whole app.
+ * The Task Manager.
  */
 export class TaskManager {
     private tasks: Task[] = []
@@ -32,13 +235,9 @@ export class TaskManager {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
-
-        onLoad(async () => {
-            await this.onLoadCallback()
-        })
     }
 
-    async onLoadCallback() {
+    async start() {
         await this.loadTasks()
         this.render()
     }
@@ -88,3 +287,6 @@ export class TaskManager {
         this.saveTasksViaEvent()
     }
 }
+
+app = new App()
+await app.main()
