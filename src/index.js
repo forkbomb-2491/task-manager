@@ -98,5 +98,7 @@ onLoad(async () => {
     if (settings.plannerflipped) {
         switchPlannerOrientation()
     }
+
+    document.body.style.display = "block"
 })
 

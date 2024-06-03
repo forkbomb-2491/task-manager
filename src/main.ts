@@ -4,17 +4,13 @@ import { Planner } from './planner'
 import { onLoad } from './utils'
 
 export async function changeTheme(theme: string) {
-    var themes = document.getElementsByClassName("theme")
+    var themes = document.head.getElementsByClassName("theme")
     for (let i = 0; i < themes.length; i++) {
         const themeSheet = themes[i];
         if (themeSheet.getAttribute("name") != theme && !themeSheet.hasAttribute("disabled")) {
             themeSheet.setAttribute("disabled", "")
         } else if (themeSheet.getAttribute("name") == theme) {
             themeSheet.removeAttribute("disabled")
-            try {
-                document.head.removeChild(themeSheet)
-                document.head.appendChild(themeSheet)
-            } catch (error) {}
         }
     }
 

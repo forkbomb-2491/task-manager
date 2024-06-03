@@ -32,8 +32,8 @@ export function changeTab(tab) {
 }
 
 /** Assign as click callback to theme buttons. */
-function themeButtonCallback(event) {
-    changeTheme(event.currentTarget.name)
+async function themeButtonCallback(event) {
+    await changeTheme(event.currentTarget.name)
 }
 
 /** Assign as click callback to tab change buttons. */
