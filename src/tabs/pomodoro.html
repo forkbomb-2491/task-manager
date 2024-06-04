@@ -4,15 +4,15 @@
         <h2>Timer</h2>
         <div>
             Work duration of <b><label for="workduratslider" id="workdurat">60</label></b> minutes,<br>
-            <input type="range" class="slider" id="workduratslider" name = "workdurat" min="1" max="90" value="60" step="5" oninput="workdurat.innerText=this.value">
+            <input type="range" class="slider" id="workduratslider" name = "workdurat" min="15" max="90" value="60" step="5" oninput="workdurat.innerText=this.value">
         </div>
         <div>
             Break duration of <b><label for="breakduratslider" id="breakdurat">15</label></b> minutes,<br>
-            <input type="range" class="slider" id="breakduratslider" name = "breakdurat" min="1" max="25" value="15" step="5" oninput="breakdurat.innerText=this.value">
+            <input type="range" class="slider" id="breakduratslider" name = "breakdurat" min="5" max="25" value="15" step="5" oninput="breakdurat.innerText=this.value">
         </div>
         <div>
             and repeat <b><label for="repeatslider" id="repeat">5</label></b> times.<br>
-            <input type="range" class="slider" id="repeatslider" name = "repeat" min="1" max="30" value="5" step="1" oninput="repeat.innerText=this.value">
+            <input type="range" class="slider" id="repeatslider" name = "repeat" min="1" max="10" value="3" step="1" oninput="repeat.innerText=this.value">
         </div>
         <div style="display:flex; justify-content: space-between; margin-top: 0.75rem">
             <button class="settingsbutton" id="pomostart" style="width: 30%;">Start</button>
