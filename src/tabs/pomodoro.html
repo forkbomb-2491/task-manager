@@ -10,10 +10,17 @@
             Break Time for <b><label for="breaktimeslider" id="breaktime">25</label></b> minutes <br>
             <input type="range" class="slider" id="breaktimeslider" name = "breaktime" min="5" max="45" value="25" step="5" oninput="breaktime.innerText=this.value">
         </div>
+        <div>
+            Repeat for <b><label for="repeattimerslider" id="repeattimer">10</label></b> times <br>
+            <input type="range" class="slider" id="repeattimerslider" name = "repeattimer" min="1" max="20" value="10" step="0" oninput="repeattimer.innerText=this.value">
+        </div>
         <div style="display:flex; justify-content: space-between; margin-top: 0.75rem">
             <button class="settingsbutton" name="start" style="width: 30%;">Start</button>
             <button class="settingsbutton" name="pause" style="width: 30%;">Pause</button>
             <button class="settingsbutton" name="stop" style="width: 30%;">Stop</button>
+        </div>
+        <div id="timer">
+            <h1>00:00 left in this work block</h1>
         </div>
     </div>
     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
