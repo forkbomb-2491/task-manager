@@ -1,4 +1,5 @@
 # taskmgr.exe
+This app helps people with ADHD (or those prone to procrastination) get more done, thus alleviating anxiety and pressure. The program’s killer features include the “Help!” tab that suggests tasks when you’re overwhelmed or having trouble getting started, a notification system that checks in on you and keeps you focused, and the task/project planner for breaking down bigger projects into smaller tasks.
 ## Download Rust
 1. Go to https://www.rust-lang.org/learn/get-started
 2. Download RustUp
