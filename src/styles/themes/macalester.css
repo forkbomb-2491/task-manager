@@ -14,6 +14,18 @@
     /* Text Color */
     --primary-text-color: rgb(33,91,142);
     --secondary-text-color: rgb(237, 139, 20);
+    /* Category Color */
+    --cat1-color: #dd3838;
+    --cat2-color: #fa9f2f;
+    --cat3-color: #ffee00;
+    --cat4-color: #01b925;
+    --cat5-color: #2969ff;
+    --cat6-color: #b200c9;
+    /*Help page*/
+    --help-button: rgb(33,91,142);
+    --help-button-text: rgb(255, 128, 60);
+    --help-button-hover: rgb(255, 128, 60);
+    --help-button-text-hover: rgb(11, 60, 98);
 }
 
 .tabbutton.active {
@@ -25,13 +37,9 @@
     color: #ffffff;
 }
 
-.helpbutton {
-    color: #ffffff;
-    box-shadow: 0px 0px 0.2rem 0.10rem var(--secondary-shadow-color);
-}
-.helpbutton:hover {
-    background-color: rgba(219, 95, 0, 0.743);
-    color: #ffffff;
+.helpbutton.top:hover {
+    background-color: var(--primary-text-color);
+    color: var(--secondary-text-color);
 }
 
 

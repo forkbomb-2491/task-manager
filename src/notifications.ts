@@ -16,15 +16,34 @@ export class CheckInHandler {
     private startTime: string
     private endTime: string
 
+    private daysEnabled: boolean[] = [false, false, false, false, false, false, false]
+
     private interval: number // milliseconds
 
     private scheduledReminder: NodeJS.Timeout | null = null
-    private isRunning: boolean = false
+    public get isRunning(): boolean {
+        return this.scheduledReminder != null
+    }
+    public set isRunning(value: boolean) {
+        if (value) {
+            this.start()
+        } else {
+            this.stop()
+        }
+    }
 
-    constructor(startTime: string, endTime: string, interval: number) {
+    constructor(
+        startTime: string, 
+        endTime: string, 
+        interval: number,
+        daysEnabled: boolean[]
+    ) {
         this.startTime = startTime
         this.endTime = endTime
         this.interval = interval
+        if (daysEnabled.length == 7) {
+            this.daysEnabled = daysEnabled
+        }
     }
 
     private getStartTimestamp() {
@@ -39,6 +58,10 @@ export class CheckInHandler {
 
     private checkIsInTimeRange(interval: number) {
         var now = Date.now() // Local
+        if (!this.daysEnabled[new Date().getDay()]) {
+            console.log("hi")
+            return false
+        }
         if (now + interval > this.getStartTimestamp() && now + interval < this.getEndTimestamp()) {
             return true
         }
@@ -55,6 +78,7 @@ export class CheckInHandler {
             this.stop()
             return
         }
+        console.log(interval)
         this.scheduledReminder = setTimeout(() => { this.sendReminder() }, interval)
     }
 
@@ -70,48 +94,52 @@ export class CheckInHandler {
         }
     }
 
+    private restart() {
+        if (this.isRunning || this.scheduledReminder) {
+            this.stop()
+            this.start()
+        }
+    }
+
     remindersActive() {
         return this.isRunning
     }
 
     setStartTime(time: string) {
         this.startTime = time
-        if (this.isRunning) {
-            this.stop()
-            this.start()
-        }
+        this.restart()
     }
 
     setEndTime(time: string) {
         this.endTime = time
-        if (this.isRunning) {
-            this.stop()
-            this.start()
+        this.restart()
+    }
+
+    setDaysEnabled(daysEnabled: boolean[]) {
+        if (daysEnabled.length == 7) {
+            this.daysEnabled = daysEnabled
+            this.restart()
         }
     }
     
     setInterval(interval: number) {
         this.interval = interval
-        if (this.isRunning) {
-            this.stop()
-            this.start()
-        }
+        this.restart()
     }
 
     start() {
-        if (this.isRunning || this.scheduledReminder != null) {
+        if (this.isRunning) {
             return
         }
 
-        this.isRunning = true
         this.scheduleReminder()
     }
 
     stop() {
-        if (!this.isRunning && this.scheduledReminder != null) {
+        if (!this.isRunning) {
             return
         }
-        this.isRunning = false
+
         if (this.scheduledReminder != null) {
             window.clearTimeout(this.scheduledReminder)
         }

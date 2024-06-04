@@ -14,12 +14,18 @@
     /* Text Color */
     --primary-text-color: rgb(33,91,142);
     --secondary-text-color: #9579db;
+    /* Category Color */
     --cat1-color: #ff6663;
     --cat2-color: #feb144;
     --cat3-color: #fdfd97;
     --cat4-color: #9ee90e;
     --cat5-color: #9ec1cf;
     --cat6-color: #cc99c9;
+    /*Help page*/
+    --help-button: rgb(191, 166, 221);
+    --help-button-text: white;
+    --help-button-hover: rgb(131, 97, 168);
+    --help-button-text-hover: white;
 }
 
 .tabbutton.active {

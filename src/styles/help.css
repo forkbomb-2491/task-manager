@@ -46,15 +46,15 @@
 
 .helpbutton.bottom {
     display: flex;
-    background-color: var(--container-background);
+    background-color: var(--help-button);
 
-    color: var(--secondary-text-color);
+    color: var(--help-button-text);
 
     font-family: var(--primary-font-family);
     font-size: medium;
     text-align: center;
     width: 100%;
-    text-shadow: 0 0 0.25rem var(--secondary-shadow-color);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
     border: 0;
 
@@ -68,8 +68,8 @@
 }
 
 .helpbutton.bottom:hover {
-    background-color: var(--tab-hover);
-    color: var(--secondary-text-color);
+    background-color: var(--help-button-hover);
+    color: var(--help-button-text-hover);
     cursor: pointer;
 
     box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);

@@ -2,7 +2,7 @@
 <h2>Reminder Settings</h2>
 <form name="remindersettings" id="remindersettings">
     You will receive notifications between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
-    <input type="checkbox" id="remindersun" name="remindermon" value=0>
+    <input type="checkbox" id="remindersun" name="remindersun" value=0>
     <label for="remindersun">Sunday</label>
     <input type="checkbox" id="remindermon" name="remindermon" value=1>
     <label for="remindermon">Monday</label>
@@ -47,24 +47,39 @@
     <label for="remindersactive">Reminders</label>
 </form>
 <h3>Themes</h3>
-<button class="themebutton" name="light">Normal (Light)</button>
-<button class="themebutton" name="dark">Normal (Dark)</button>
-<button class="themebutton" name="gray">Grayscale</button>
-<button class="themebutton" name="danishpastel">Danish Pastel</button>
-<br>
-<button class="themebutton" name="vampire">Vampire</button>
-<br>
-<!-- <button class="themebutton" name="gay">Gay</button>
-<button class="themebutton" name="bisexual">Bisexual</button>
-<br> -->
-<button class="themebutton" name="barbie">Barbie</button>
-<button class="themebutton" name="strawberry">Strawberry</button>
-<button class="themebutton" name="lilac">Lilac</button>
-<button class="themebutton" name="blueberry">Blueberry</button>
-<button class="themebutton" name="matcha">Matcha</button>
-<button class="themebutton" name="lemon">Lemon</button> 
-<button class="themebutton" name="tangerine">Tangerine</button> 
-<br>
-<button class="themebutton" name="macalester">Macalester</button>
-<button class="themebutton" name="umn">UMN</button>
-<button class="themebutton" name="olaf">St. Olaf</button> <br>
+
+<form id="themeselector">
+    <input type="radio" name="theme" value="light">
+    <label for="light">Default (Light)</label>
+    <input type="radio" name="theme" value="dark">
+    <label for="dark">Default (Dark)</label>
+    <input type="radio" name="theme" value="gray">
+    <label for="gray">Grayscale</label>
+    <br>
+    <input type="radio" name="theme" value="vampire">
+    <label for="vampire">Vampire</label>
+    <input type="radio" name="theme" value="danishpastel">
+    <label for="danishpastel">Danish Pastel</label>
+    <input type="radio" name="theme" value="barbie">
+    <label for="barbie">Barbie</label>
+    <br>
+    <input type="radio" name="theme" value="strawberry">
+    <label for="strawberry">Strawberry</label>
+    <input type="radio" name="theme" value="tangerine">
+    <label for="tangerine">Tangerine</label>
+    <input type="radio" name="theme" value="lemon">
+    <label for="lemon">Lemon</label>
+    <input type="radio" name="theme" value="matcha">
+    <label for="matcha">Matcha</label>
+    <input type="radio" name="theme" value="blueberry">
+    <label for="blueberry">Blueberry</label>
+    <input type="radio" name="theme" value="lilac">
+    <label for="lilac">Lilac</label>
+    <br>
+    <input type="radio" name="theme" value="macalester">
+    <label for="macalester">Macalester</label>
+    <input type="radio" name="theme" value="umn">
+    <label for="umn">University of Minnesota</label>
+    <input type="radio" name="theme" value="olaf">
+    <label for="olaf">St. Olaf</label>
+</form>

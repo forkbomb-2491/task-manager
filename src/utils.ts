@@ -15,6 +15,30 @@ export function todayDateString() {
     // return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
 
+function padWithLeftZeroes(numString: string, numDigits: number) {
+    var ret = numString
+    while (ret.length < numDigits) {
+        ret = "0" + ret
+    }
+    return ret
+}
+
+export function getTimeString(time: number) {
+    var hours = Math.floor(time / 3600)
+    var mins = Math.floor(time / 60 - hours * 60)
+    var secs = Math.floor(time - mins * 60 - hours * 3600)
+
+    var ret = ""
+    if (hours > 0) {
+        ret += `${hours}:`
+    }
+    
+    ret += padWithLeftZeroes(`${mins}`, 2) + ":"
+    ret += padWithLeftZeroes(`${secs}`, 2)
+
+    return ret
+}
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */

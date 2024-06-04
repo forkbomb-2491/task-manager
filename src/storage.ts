@@ -32,11 +32,17 @@ export class StorageManager {
         return {
             startTime: await this.settings.get("checkInStart"),
             endTime: await this.settings.get("checkInEnd"),
-            interval: await this.settings.get("checkInInterval")
+            interval: await this.settings.get("checkInInterval"),
+            daysEnabled: await this.settings.get("checkInDaysEnabled")
         }
     }
 
-    async setCheckInSettings(startTime: string | null = null, endTime: string | null = null, interval: number | null = null) {
+    async setCheckInSettings(
+        startTime: string | null = null, 
+        endTime: string | null = null, 
+        interval: number | null = null,
+        daysEnabled: boolean[] | null = null
+    ) {
         if (startTime != null) {
             await this.settings.set("checkInStart", startTime)
         }
@@ -44,7 +50,10 @@ export class StorageManager {
             await this.settings.set("checkInEnd", endTime)
         }
         if (interval != null) {
-            await this.settings.set("checkInInterval", interval)
+            await this.settings.set("checkInInterval", interval * 60_000)
+        }
+        if (daysEnabled != null && daysEnabled.length == 7) {
+            await this.settings.set("checkInDaysEnabled", daysEnabled)
         }
 
         await this.saveSettings()

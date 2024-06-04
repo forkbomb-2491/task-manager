@@ -22,6 +22,16 @@
     --cat4-color: #01b925;
     --cat5-color: #2969ff;
     --cat6-color: #b200c9;
+    /*Help page*/
+    --help-button: rgba(0, 43, 57, 0.743);
+    --help-button-text: white;
+    --help-button-hover: rgb(0, 0, 0);
+    --help-button-text-hover: white;
+}
+
+.helpbutton.top:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .tabbutton.active {

@@ -1,3 +1,4 @@
+/* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
     --primary-color: rgb(154,114,166);
@@ -20,6 +21,11 @@
     --cat4-color: #00821b;
     --cat5-color: #004bff;
     --cat6-color: #780089;
+    /*Help page*/
+    --help-button: rgb(154,114,166);
+    --help-button-text: #ffffff;
+    --help-button-hover: rgb(212,184,219);
+    --help-button-text-hover: #ffffff;
 }
 
 .tabbutton.active {

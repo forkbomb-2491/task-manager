@@ -1,3 +1,4 @@
+/* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
     --primary-color: #ed8b00;
@@ -21,4 +22,9 @@
     --cat4-color: #00821b;
     --cat5-color: #004bff;
     --cat6-color: #780089;
+    /*Help page*/
+    --help-button: rgb(82, 85, 85);
+    --help-button-text: white;
+    --help-button-hover: white;
+    --help-button-text-hover: black;
 }

@@ -3,24 +3,25 @@
     <div class="helpcontainer">
         <h2>Timer</h2>
         <div>
-            Work Time for <b><label for="worktimeslider" id="worktime">75</label></b> minutes <br>
-            <input type="range" class="slider" id="worktimeslider" name = "worktime" min="30" max="120" value="75" step="5" oninput="worktime.innerText=this.value">
+            Work duration of <b><label for="workduratslider" id="workdurat">60</label></b> minutes,<br>
+            <input type="range" class="slider" id="workduratslider" name = "workdurat" min="1" max="90" value="60" step="5" oninput="workdurat.innerText=this.value">
         </div>
         <div>
-            Break Time for <b><label for="breaktimeslider" id="breaktime">25</label></b> minutes <br>
-            <input type="range" class="slider" id="breaktimeslider" name = "breaktime" min="5" max="45" value="25" step="5" oninput="breaktime.innerText=this.value">
+            Break duration of <b><label for="breakduratslider" id="breakdurat">15</label></b> minutes,<br>
+            <input type="range" class="slider" id="breakduratslider" name = "breakdurat" min="1" max="25" value="15" step="5" oninput="breakdurat.innerText=this.value">
         </div>
         <div>
-            Repeat for <b><label for="repeattimerslider" id="repeattimer">10</label></b> times <br>
-            <input type="range" class="slider" id="repeattimerslider" name = "repeattimer" min="1" max="20" value="10" step="0" oninput="repeattimer.innerText=this.value">
+            and repeat <b><label for="repeatslider" id="repeat">5</label></b> times.<br>
+            <input type="range" class="slider" id="repeatslider" name = "repeat" min="1" max="30" value="5" step="1" oninput="repeat.innerText=this.value">
         </div>
         <div style="display:flex; justify-content: space-between; margin-top: 0.75rem">
-            <button class="settingsbutton" name="start" style="width: 30%;">Start</button>
-            <button class="settingsbutton" name="pause" style="width: 30%;">Pause</button>
-            <button class="settingsbutton" name="stop" style="width: 30%;">Stop</button>
+            <button class="settingsbutton" id="pomostart" style="width: 30%;">Start</button>
+            <button class="settingsbutton" id="pomopause" style="width: 30%;">Pause</button>
+            <button class="settingsbutton" id="pomostop" style="width: 30%;">Stop</button>
         </div>
-        <div id="timer">
-            <h1>00:00 left in this work block</h1>
+        <div style="display: flex; justify-content: space-between;">
+            <h2 id="pomodorotimer">0:00:00</h2>
+            <h2 id="pomodorostatus">Not Running</h2>
         </div>
     </div>
     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">

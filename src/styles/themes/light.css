@@ -22,4 +22,9 @@
     --cat4-color: #00821b;
     --cat5-color: #004bff;
     --cat6-color: #780089;
+    /*Help page*/
+    --help-button: rgb(110, 165, 184);
+    --help-button-text: black;
+    --help-button-hover: rgb(82, 120, 141);
+    --help-button-text-hover: black;
 }

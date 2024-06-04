@@ -1,3 +1,4 @@
+/* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
     --primary-color: #e88b4d;
@@ -12,8 +13,8 @@
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
     /* Text Color */
-    --primary-text-color: black;
-    --secondary-text-color: black;
+    --primary-text-color: #e88b4d;
+    --secondary-text-color: #f0a56c91;
     /* Category Color */
     --cat1-color: #e60000;
     --cat2-color: #ff8e00;
@@ -21,4 +22,9 @@
     --cat4-color: #00821b;
     --cat5-color: #004bff;
     --cat6-color: #780089;
+    /*Help page*/
+    --help-button: #e88b4d;
+    --help-button-text: #f0e1c4;
+    --help-button-hover: #f0e1c4;
+    --help-button-text-hover: #e88b4d;
 }

@@ -21,4 +21,9 @@
     --cat4-color: #00821b;
     --cat5-color: #004bff;
     --cat6-color: #780089;
+    /*Help page*/
+    --help-button: #064490;
+    --help-button-text: #aeecfb;
+    --help-button-hover: #aeecfb;
+    --help-button-text-hover: #064490;
 }

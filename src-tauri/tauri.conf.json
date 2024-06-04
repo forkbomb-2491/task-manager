@@ -1,38 +1,51 @@
 {
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build && echo hi",
-    "frontendDist": ["../dist", "../src/styles/themes", "../src/tabs"],
-    "devUrl": "http://localhost:1420"
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
-  },
-  "productName": "task-manager",
-  "version": "0.1.0",
-  "identifier": "dev.pgil.forkbomb.taskmgr",
-  "plugins": {},
-  "app": {
-    "withGlobalTauri": true,
-    "windows": [
-      {
-        "title": "task-manager",
-        "width": 1080,
-        "height": 700,
-        "minWidth": 1080,
-        "minHeight": 700
-      }
-    ],
-    "security": {
-      "csp": null
+    "build": {
+        "beforeDevCommand": "npm run dev",
+        "beforeBuildCommand": "npm run build && echo hi",
+        "frontendDist": [
+            "../dist",
+            "../src/styles/themes",
+            "../src/tabs"
+        ],
+        "devUrl": "http://localhost:1420"
+    },
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ]
+    },
+    "productName": "task-manager",
+    "version": "0.1.0",
+    "identifier": "dev.pgil.forkbomb.taskmgr",
+    "plugins": {
+        "updater": {
+            "active": false,
+            "dialog": true,
+            "endpoints": [
+                "https://gist.githubusercontent.com/monsieurjonees/f307f935c5c26f5817a947df95cf8b12/raw/taskMgrUpdates.json"
+            ],
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg1RTg4NUE1RkY4RkE4QUQKUldTdHFJLy9wWVhvaGVKb1BGcFMyUHdWN1UxK2pHd0ZjVGQvYXBKNVZ5TVpOaU4zWUFPY3lhLzcK"
+        }
+    },
+    "app": {
+        "withGlobalTauri": true,
+        "windows": [
+            {
+                "title": "task-manager",
+                "width": 1080,
+                "height": 700,
+                "minWidth": 1080,
+                "minHeight": 700
+            }
+        ],
+        "security": {
+            "csp": null
+        }
     }
-  }
 }

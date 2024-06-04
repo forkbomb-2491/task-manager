@@ -1,3 +1,4 @@
+/* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
     --primary-color: rgb(35, 55, 70);
@@ -14,6 +15,18 @@
     /* Text Color */
     --primary-text-color: rgb(35, 55, 70);
     --secondary-text-color: rgb(228, 160, 27);
+    /* Category Color */
+    --cat1-color: #dd3838;
+    --cat2-color: #fa9f2f;
+    --cat3-color: #ffee00;
+    --cat4-color: #01b925;
+    --cat5-color: #2969ff;
+    --cat6-color: #b200c9;
+    /*Help page*/
+    --help-button: rgb(35, 55, 70);
+    --help-button-text: rgb(246, 193, 103);
+    --help-button-hover: rgb(246, 193, 103);
+    --help-button-text-hover: rgb(35, 55, 70);
 }
 
 .tabbutton.active {
@@ -26,14 +39,9 @@
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
 }
 
-.helpbutton {
-    color: rgb(35, 55, 70);
-    box-shadow: 0px 0px 0.2rem 0.10rem var(--secondary-shadow-color);
-    text-shadow: none;
-}
-.helpbutton:hover {
-    background-color: rgb(228, 160, 27);
-    color: rgb(35, 55, 70);
+.helpbutton.top:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-text-color);
 }
 
 .eisenquad {

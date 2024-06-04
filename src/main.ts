@@ -3,6 +3,7 @@ import { Task, TaskList } from './task'
 import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
 import { CheckInHandler } from './notifications'
+import { TimerHandler } from "./pomodoro";
 
 var app: App
 
@@ -12,6 +13,8 @@ class App {
     private taskMgr: TaskManager
     private checkInHandler: CheckInHandler | undefined
     private storageMgr: StorageManager
+
+    private pomodoro: TimerHandler | null = null
 
     constructor() {
         this.taskMgr = new TaskManager()
@@ -40,6 +43,26 @@ class App {
         this.addTabButtonCallbacks()
         this.addHelpButtonCallbacks()
 
+        document.getElementById("pomostart")!.addEventListener(
+            "click",
+            _ => this.pomoStart()
+        )
+
+        document.getElementById("pomopause")!.addEventListener(
+            "click",
+            _ => this.pomoStop(true)
+        )
+
+        document.getElementById("pomostop")!.addEventListener(
+            "click",
+            _ => {
+                this.pomoStop()
+                this.pomodoro = null
+                document.getElementById("pomodorotimer")!.innerHTML = "00:00"
+                document.getElementById("pomodorostatus")!.innerHTML = "Cancelled"
+            }
+        )
+
         // @ts-ignore; Populate fields' default values
         document.getElementById("deadlineinput")!.valueAsDate = new Date()
         // @ts-ignore
@@ -58,6 +81,8 @@ class App {
             this.changeTab(tab)
         })
 
+        this.setSettingsFieldsToSavedValues().then()
+
         document.body.style.display = "block"
     }
 
@@ -71,9 +96,64 @@ class App {
             // @ts-ignore; If it isn't null, it's the right type
             stgs.startTime,
             stgs.endTime,
-            stgs.interval
+            stgs.interval,
+            stgs.daysEnabled
         )
+
+        this.checkInHandler.start()
+
+        // @ts-ignore
+        window.cih = this.checkInHandler
         return true
+    }
+
+    private async setSettingsFieldsToSavedValues() {
+        var reminderStgs = await this.storageMgr.getCheckInSettings()
+        if (reminderStgs.startTime != null) {
+            // @ts-ignore
+            document.getElementById("notifstart")!.value = reminderStgs.startTime
+        }
+        if (reminderStgs.endTime != null) {
+            // @ts-ignore
+            document.getElementById("notifend")!.value = reminderStgs.endTime
+        }
+
+        if (reminderStgs.daysEnabled != null) {
+            var daysEnabled = reminderStgs.daysEnabled
+            // @ts-ignore
+            document.getElementById("remindersun")!.checked = daysEnabled[0]
+            // @ts-ignore
+            document.getElementById("remindermon")!.checked = daysEnabled[1]
+            // @ts-ignore
+            document.getElementById("remindertue")!.checked = daysEnabled[2]
+            // @ts-ignore
+            document.getElementById("reminderwed")!.checked = daysEnabled[3]
+            // @ts-ignore
+            document.getElementById("reminderthu")!.checked = daysEnabled[4]
+            // @ts-ignore
+            document.getElementById("reminderfri")!.checked = daysEnabled[5]
+            // @ts-ignore
+            document.getElementById("remindersat")!.checked = daysEnabled[6]
+            // @ts-ignore
+        }
+
+        if (reminderStgs.interval != null) {
+            // @ts-ignore
+            document.getElementById("notifintervalslider")!.value = reminderStgs.interval / 60_000
+            // @ts-ignore
+            document.getElementById("notifinterval")!.innerHTML = reminderStgs.interval / 60_000
+        }
+
+        this.storageMgr.getLastTheme().then(theme => {
+            var selector = document.getElementById("themeselector")
+            for (let i = 0; i < selector!.getElementsByTagName("input").length; i++) {
+                const element = selector!.getElementsByTagName("input")[i];
+                if (element.value == theme) {
+                    element.checked = true
+                    break
+                }
+            }
+        })
     }
 
     private createTaskCallback(event: SubmitEvent) {
@@ -99,6 +179,16 @@ class App {
         var startTime = form.notifstart.value
         var endTime = form.notifend.value
         var sliderValue = form.notifintervalslider.value
+
+        var daysEnabled = [
+            form.remindersun.checked,
+            form.remindermon.checked,
+            form.remindertue.checked,
+            form.reminderwed.checked,
+            form.reminderthu.checked,
+            form.reminderfri.checked,
+            form.remindersat.checked,
+        ]
     
         if (this.checkInHandler != null) {
             this.checkInHandler.setStartTime(startTime)
@@ -106,11 +196,11 @@ class App {
             this.checkInHandler.setInterval(Number(sliderValue) * 60_000)
             this.checkInHandler.start()
         } else {
-            this.checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000)
+            this.checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000, daysEnabled)
             this.checkInHandler.start()
         }
 
-        this.storageMgr.setCheckInSettings(startTime, endTime, sliderValue).then()
+        this.storageMgr.setCheckInSettings(startTime, endTime, sliderValue, daysEnabled).then()
     }
 
     private switchPlannerCallback() {
@@ -157,10 +247,44 @@ class App {
         }
     }
 
+    private pomoStart() {
+        if (this.pomodoro != null && !this.pomodoro.complete) {
+            this.pomodoro.start()
+        } else {
+            // @ts-ignore 2339
+            var workTime = Number(document.getElementById("workduratslider")!.value)
+            // @ts-ignore 2339
+            var breakTime = Number(document.getElementById("breakduratslider")!.value)
+            // @ts-ignore 2339
+            var repeatTimes = Number(document.getElementById("repeatslider")!.value)
+
+            this.pomodoro = new TimerHandler(repeatTimes, workTime, breakTime, () => {this.pomodoro = null})
+            this.pomodoro.start()
+        }
+    }
+
+    private pomoStop(pausing: boolean = false) {
+        if (this.pomodoro == null || this.pomodoro.complete) { return }
+        this.pomodoro.stop()
+        if (pausing) {
+            document.getElementById("pomodorotimer")!.innerHTML += " ⏸️"
+        }
+    }
+
     /** Assign as click callback to theme buttons. */
     async themeButtonCallback(event: Event) {
+        var theme: string = ""
+
         // @ts-ignore
-        var theme: string = event.currentTarget!.name
+        var elements = event.currentTarget!.getElementsByTagName("input")!
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            if (element.checked) {
+                theme = element.value
+                break
+            }
+        }
+
         this.changeTheme(theme)
         this.storageMgr.setLastTheme(theme).then(
             async () => {
@@ -187,11 +311,8 @@ class App {
             this.themeButtonCallback(e)
         }
 
-        var themeButtons = document.getElementsByClassName("themebutton");
-        for (let i = 0; i < themeButtons.length; i++) {
-            const button = themeButtons[i];
-            button.addEventListener("click", themeButtonCallback);
-        }
+        document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
+        
     }
 
     private addTabButtonCallbacks() {
