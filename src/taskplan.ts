@@ -1,11 +1,12 @@
 import { TaskManager } from "./main";
 import { Task, TaskView } from "./task";
-import { WEEKDAY_STRINGS, Weekdays } from "./utils";
+import { WEEKDAY_STRINGS } from "./utils";
 
 
 export class TaskPlanner implements TaskView {
     private calStartDate: Date = new Date()
 
+    // @ts-ignore
     private taskMgr: TaskManager
 
     constructor(taskMgr: TaskManager) {

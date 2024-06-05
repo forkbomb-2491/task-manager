@@ -5,7 +5,8 @@
         "frontendDist": [
             "../dist",
             "../src/styles/themes",
-            "../src/tabs"
+            "../src/tabs",
+            "../src/fonts"
         ],
         "devUrl": "http://localhost:1420"
     },
