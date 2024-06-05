@@ -1,20 +1,20 @@
 /* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
-    --primary-color: #ed8b00;
-    --secondary-color: #f3f3f3;
-    --container-background: #fceaa3;
-    --unselected-tab-and-shadow: #ffdd40;
-    --tab-hover: lightcyan;
+    --primary-color: #efcb13;
+    --secondary-color: #e7da80;
+    --container-background: #fef05f;
+    --unselected-tab-and-shadow: #d3bd50;
+    --tab-hover: e7da80;
     /* Shadow colors */
-    --primary-shadow-color: rgba(156, 209, 226, 0.801);
-    --secondary-shadow-color: rgba(112, 201, 230, 0.743);
+    --primary-shadow-color: #a79364;
+    --secondary-shadow-color: #b08309;
     /* Fonts */
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
     /* Text Color */
-    --primary-text-color: #538401;
-    --secondary-text-color: black;
+    --primary-text-color: #b08309;
+    --secondary-text-color: #b08309;
     /* Category Color */
     --cat1-color: #e60000;
     --cat2-color: #ff8e00;
@@ -23,8 +23,13 @@
     --cat5-color: #004bff;
     --cat6-color: #780089;
     /*Help page*/
-    --help-button: rgb(82, 85, 85);
-    --help-button-text: white;
-    --help-button-hover: white;
-    --help-button-text-hover: black;
+    --help-button: #efcb13;
+    --help-button-text: #b08309;
+    --help-button-hover: #fef05f;
+    --help-button-text-hover: #b08309;
+}
+
+.helpbutton.top:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-text-color);
 }

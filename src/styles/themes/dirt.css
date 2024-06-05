@@ -1,19 +1,19 @@
 :root {
     /* Various fill colors */
-    --primary-color: #0855b1;
-    --secondary-color: #41a8f9;
-    --container-background: #4fa5d8;
-    --unselected-tab-and-shadow: #0855b1;
-    --tab-hover: #daeaf7;
+    --primary-color: #5e3e17;
+    --secondary-color: #986931;
+    --container-background: #b8884e;
+    --unselected-tab-and-shadow: #b8884e;
+    --tab-hover: #d6b575;
     /* Shadow colors */
-    --primary-shadow-color: #010e54;
-    --secondary-shadow-color: #010e54;
+    --primary-shadow-color: #36220b;
+    --secondary-shadow-color: #5e3e17;
     /* Fonts */
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
     /* Text Color */
-    --primary-text-color: #daeaf7;
-    --secondary-text-color: #daeaf7;
+    --primary-text-color: #36220b;
+    --secondary-text-color: #d6b575;
     /* Category Color */
     --cat1-color: #e60000;
     --cat2-color: #ff8e00;
@@ -22,10 +22,10 @@
     --cat5-color: #004bff;
     --cat6-color: #780089;
     /*Help page*/
-    --help-button: #0855b1;
-    --help-button-text: #daeaf7;
-    --help-button-hover: #4fa5d8;
-    --help-button-text-hover: #0855b1;
+    --help-button: #986931;
+    --help-button-text: #d6b575;
+    --help-button-hover: #d6b575;
+    --help-button-text-hover: #36220b;
 }
 
 .helpbutton.top:hover {
