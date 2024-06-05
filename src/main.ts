@@ -352,7 +352,6 @@ export class TaskManager {
     private taskList: TaskList
     private planner: Planner
     private helpMgr: HelpManager
-
     private taskPlanner: TaskPlanner
 
     constructor() {
@@ -423,6 +422,7 @@ export class TaskManager {
 
         this.planner.addTask(task)
         this.taskList.addTask(task)
+        this.taskPlanner.refresh()
         this.helpMgr.refresh()
 
         this.saveTasksViaEvent()

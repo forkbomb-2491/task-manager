@@ -49,12 +49,30 @@ export class TaskPlanner implements TaskView {
 
             date = new Date(date.valueOf() + 86_400_000)
         }
+
+        this.refresh()
     }
+
     refresh(): void {
-        
+        var tasks = this.taskMgr.getTasks().filter(t => {
+            return !t.completed && !t.deleted
+        })
+
+        var selector = document.getElementById("tptask")!
+        selector.innerHTML = ""
+
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            var element = document.createElement("option")
+            element.setAttribute("name", task.id)
+            element.innerHTML = task.name
+
+            selector.appendChild(element)
+        }
     }
+
     addTask(_: Task): void {
-        
+        this.refresh()
     }
 
 }
