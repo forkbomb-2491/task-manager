@@ -55,7 +55,6 @@ export class StorageManager {
         if (daysEnabled != null && daysEnabled.length == 7) {
             await this.settings.set("checkInDaysEnabled", daysEnabled)
         }
-
         await this.saveSettings()
     }
 
@@ -74,7 +73,6 @@ export class StorageManager {
 
     async getPlannerFlipped(): Promise<boolean> {
         var ret = await this.settings.get("plannerFlipped")
-        console.log(ret)
         if (ret == null) {
             return false
         }
@@ -158,7 +156,10 @@ export async function loadTasks() {
             t.importance,
             t.category,
             t.due,
-            t.completed
+            t.completed,
+            t.id,
+            t.children,
+            t.parentId
         ))
     }
 

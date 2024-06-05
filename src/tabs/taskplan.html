@@ -3,78 +3,67 @@
     <div class="tpcontainer" style="width: 30%;">
         <h2>Task</h2>
         <h3>Filter Tasks</h3>
-        <div style="display: flex; justify-content: space-between;">
-            <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
-                <option name="0">Tiny and up</option>
-                <option name="1">Small and up</option>
-                <option name="2">Medium and up</option>
-                <option name="3">Big and up</option>
-                <option name="4">Huge and up</option>
-            </select>
-            <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
-                <option name="0">Trivial and up</option>
-                <option name="1">Unimportant and up</option>
-                <option name="2">Average and up</option>
-                <option name="3">Important and up</option>
-                <option name="4">Vital and up</option>
-            </select>
-        </div>
-        <h3>Choose Task</h3>
-        <div>
-            <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required>
-                <option name="t1">t1</option>
-                <option name="t2">t2</option>
-            </select>
-        </div>
-        <h3>Select Start Date</h3>
-        <!-- <p>default is today. between currdate and task.deadline</p> -->
-        <div>
-            <input type="date" id="tpdeadlineinput" style="width: 100%;" required>
-        </div>
-        <h3>Make Subtasks</h3>
-        <h4>Maybe assign them a day?</h4>
-        <form name="subtaskcreate" autocomplete="off">
-            <div class="subtask" style="display:flex; justify-content: space-between;">
-                <input type="submit" style="background: none; border: none;" value="➕">
-                <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%;">
-                <input type="date" id="tpsubtaskdateinput" style="width:45%">
+        <form name="tpform" id="tpform">
+            <div style="display: flex; justify-content: space-between;">
+                <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
+                    <option name="0">Tiny and up</option>
+                    <option name="1">Small and up</option>
+                    <option name="2">Medium and up</option>
+                    <option name="3">Big and up</option>
+                    <option name="4">Huge and up</option>
+                </select>
+                <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
+                    <option name="0">Trivial and up</option>
+                    <option name="1">Unimportant and up</option>
+                    <option name="2">Average and up</option>
+                    <option name="3">Important and up</option>
+                    <option name="4">Vital and up</option>
+                </select>
             </div>
+            <h3>Choose Task</h3>
+            <div>
+                <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required>
+                    <option name="t1">t1</option>
+                    <option name="t2">t2</option>
+                </select>
+            </div>
+            <h3>Select Start Date</h3>
+            <!-- <p>default is today. between currdate and task.deadline</p> -->
+            <div>
+                <input type="date" id="tpdeadlineinput" style="width: 100%;" required>
+            </div>
+            <h3>Make Subtasks</h3>
+            <h4>Maybe assign them a day?</h4>
+            <form name="subtaskcreate" autocomplete="off">
+                <div class="subtask" style="display:flex; justify-content: space-between;">
+                    <input type="submit" style="background: none; border: none;" value="➕">
+                    <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%;">
+                    <input type="date" id="tpsubtaskdateinput" style="width:45%">
+                </div>
+            </form>
+            <div name="subtasklist"></div>
+            <p>Deadline: [display task's due date]</p>
         </form>
-        <div name="subtasklist">dom sub</div>
-        <p>Deadline: [display task's due date]</p>
     </div>
     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
-        <h2>Your Task Calendar</h2>
-        <p>columns contain dates, which contain subtasks are slightly bigger squares</p>
         <div class="tpcalendar" style="display:flex; justify-content: space-between;">
-            <div class="tpday">Sun
-                <div class="tpdate">6/2</div>
-                <div class="tpdate">6/2</div>
+            <div class="tpday" id="tpsun">Sun
             </div>
-            <div class="tpday">Mon
-                <div class="tpdate hastask">6/3<br>...
+            <div class="tpday" id="tpmon">Mon
+                <!-- <div class="tpdate hastask">6/3<br>...
                     <div class="expanded">
-                        subtaskiiiiiiiiiiiiiiii<br>
-                        subtask<br>
-                        subtask<br>
-                        subtask<br>
-                        subtask<br>
-                        subtask<br>
+                        subtasksubtasksubtasksubtasksubtasksubtask<br>
                         subtask<br>
                         subtask<br>
                         subtask<br>
                     </div>
-                </div>
-                <div class="tpdate">6/2</div>
-                <div class="tpdate">6/2</div>
-                <div class="tpdate">6/2</div>
-                <div class="tpdate">6/2</div>
+                </div> -->
             </div>
-            <div class="tpday">Tue</div>
-            <div class="tpday">Wed</div>
-            <div class="tpday">Thu</div>
-            <div class="tpday">Fri</div>
-            <div class="tpday">Sat</div>
+            <div class="tpday" id="tptue"></div>
+            <div class="tpday" id="tpwed"></div>
+            <div class="tpday" id="tpthu"></div>
+            <div class="tpday" id="tpfri"></div>
+            <div class="tpday" id="tpsat"></div>
         </div>
     </div>
 </div>

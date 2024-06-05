@@ -1,4 +1,5 @@
 import { TaskManager } from "./main"
+import { padWithLeftZeroes } from "./utils"
 
 const TaskChanged = new Event("taskchanged")
 
@@ -107,7 +108,7 @@ export class TaskList implements TaskView {
 * This class represents a Task.
 */
 export class Task {
-    // id: string
+    id: string
     
     name: string
     size: number
@@ -115,6 +116,9 @@ export class Task {
     category: string
     due: Date
     completed: boolean
+
+    children: string[] = []
+    parentId: string | null
 
     public get dueIn() {
         var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
@@ -130,7 +134,17 @@ export class Task {
 
     private elements: HTMLElement[] = []
 
-    constructor(name: string, size: string, importance: string, category: string, due: Date, completed: boolean = false) {
+    constructor(
+        name: string, 
+        size: string, 
+        importance: string, 
+        category: string, 
+        due: Date, 
+        completed: boolean = false,
+        id: string | null = null,
+        children: string[] = [],
+        parentId: string | null = null
+    ) {
         this.name = name
         this.size = Number(size)
         this.importance = Number(importance)
@@ -139,6 +153,18 @@ export class Task {
         this.due = new Date(due)
         this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
         this.completed = completed
+
+        if (id == null) {
+            this.id = Task.generateId()
+        } else {
+            this.id = id
+        }
+        this.children = children
+        this.parentId = parentId
+    }
+
+    static generateId() {
+        return padWithLeftZeroes(`${Math.round(999999 * Math.random())}`, 6)
     }
 
     /**
@@ -152,8 +178,16 @@ export class Task {
             "importance": this.importance,
             "category": this.category,
             "due": this.due,
-            "completed": this.completed
+            "completed": this.completed,
+            "id": this.id,
+            "chilren": this.children,
+            "parentId": this.parentId
         }
+    }
+
+    adoptChild(task: Task) {
+        this.children.push(task.id)
+        task.parentId = this.id
     }
 
     /**

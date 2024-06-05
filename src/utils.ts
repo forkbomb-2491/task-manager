@@ -15,7 +15,7 @@ export function todayDateString() {
     // return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
 
-function padWithLeftZeroes(numString: string, numDigits: number) {
+export function padWithLeftZeroes(numString: string, numDigits: number) {
     var ret = numString
     while (ret.length < numDigits) {
         ret = "0" + ret

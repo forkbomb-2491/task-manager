@@ -4,6 +4,7 @@ import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
 import { CheckInHandler } from './notifications'
 import { TimerHandler } from "./pomodoro";
+import { TaskPlanner } from './taskplan'
 
 var app: App
 
@@ -352,10 +353,13 @@ export class TaskManager {
     private planner: Planner
     private helpMgr: HelpManager
 
+    private taskPlanner: TaskPlanner
+
     constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
+        this.taskPlanner = new TaskPlanner(this)
 
         window.addEventListener(
             "taskchanged",
@@ -387,18 +391,31 @@ export class TaskManager {
         this.taskList.render()
         this.planner.render()
         this.helpMgr.render()
+        this.taskPlanner.render()
     }
 
     private refresh() {
         this.taskList.refresh()
         this.planner.refresh()
         this.helpMgr.render()
+        this.taskPlanner.refresh()
 
         this.saveTasksViaEvent()
     }
 
     getTasks() {
         return [...this.tasks]
+    }
+
+    getTask(id: string): Task | null {
+        for (let i = 0; i < this.tasks.length; i++) {
+            const task = this.tasks[i];
+            if (task.id == id) {
+                return task
+            }
+        }
+
+        return null
     }
 
     addTask(task: Task) {
