@@ -356,6 +356,11 @@ export class TaskManager {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
+
+        window.addEventListener(
+            "taskchanged",
+            () => { this.refresh() }
+        )
     }
 
     async start() {
@@ -399,11 +404,9 @@ export class TaskManager {
     addTask(task: Task) {
         this.tasks.push(task)
 
-        task.completeCallback = () => { this.refresh() }
-        task.deleteCallback = () => { this.refresh() }
-
         this.planner.addTask(task)
         this.taskList.addTask(task)
+        this.helpMgr.refresh()
 
         this.saveTasksViaEvent()
     }

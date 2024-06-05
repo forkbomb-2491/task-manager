@@ -1,6 +1,6 @@
 import { TaskManager } from "./main"
 
-// const ALGO_CONST = 1
+const TaskChanged = new Event("taskchanged")
 
 /**
  * A View for Tasks. It displays, sorts, and processes user input for
@@ -161,15 +161,19 @@ export class Task {
      * elements.
      */
     delete() {
-        this.elements.forEach(element => {
+        while (this.elements.length > 0) {
+            var element = this.elements.pop()!
+            element.style.display = "none"
             element.remove()
-        })
+        }
 
         this.deleted = true
 
         if (this.deleteCallback != null) {
             this.deleteCallback()
         }
+
+        window.dispatchEvent(TaskChanged)
     }
 
     /**
@@ -191,6 +195,8 @@ export class Task {
         if (this.completeCallback != null) {
             this.completeCallback()
         }
+
+        window.dispatchEvent(TaskChanged)
     }
 
     /**
@@ -273,12 +279,6 @@ export class Task {
         return newElement
     }
 }
-
-// export class TheAlgorithm {
-//     private static taskDueInXDays(task: Task) {
-//         return task.due.valueOf() - (new Date()).valueOf()
-//     }
-// }
 
 /**
  * This enum documents task category colors

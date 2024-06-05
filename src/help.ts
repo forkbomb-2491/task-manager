@@ -64,7 +64,7 @@ export class HelpManager implements TaskView {
                     return true
                 },
             ),
-        ] 
+        ]
     }
 
     render(): void {
@@ -99,13 +99,19 @@ class HelpPane {
         this.taskFilter = filter
         this.taskMgr = taskMgr
         this.element = element
+
+        window.addEventListener(
+            "taskchanged",
+            () => {
+                this.render()
+            }
+        )
     }
 
     private getTasks(nTasks: number = 4) {
         var tasks = this.taskMgr.getTasks().filter((t) => {
-            return !t.completed && this.taskFilter(t)
-        }
-        )
+            return !t.completed && !t.deleted && this.taskFilter(t)
+        })
         tasks = tasks.sort((t1, t2) => {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
