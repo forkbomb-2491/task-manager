@@ -233,11 +233,27 @@ export class Task {
         window.dispatchEvent(TaskChanged)
     }
 
+    private cleanUpElements() {
+        var newElements = []
+        for (let i = 0; i < this.elements.length; i++) {
+            const element = this.elements[i];
+            if (element.parentElement == null) {
+                element.remove()
+                continue
+            }
+            
+            newElements.push(element)
+        }
+        this.elements = newElements
+    }
+
     /**
      * Returns the HTML Element representing this task for the Tasks tab.
      * @returns A <div class="task"> HTML Element
      */
     getTaskListElement() {
+        this.cleanUpElements()
+
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = `
@@ -289,6 +305,8 @@ export class Task {
      */
 
     getPlannerElement() {
+        this.cleanUpElements()
+
         var newElement = document.createElement("p")
         if (this.completed) {
             newElement.className = " completed"

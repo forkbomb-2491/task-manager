@@ -15,10 +15,13 @@ export class Planner implements TaskView {
     private startDate: Date
     private taskMgr: TaskManager
 
+    private startDay: Weekdays
+
     private dayColumns: DayColumn[] = []
 
     constructor(taskMgr: TaskManager, startDay: Weekdays = Weekdays.sunday) {
         this.taskMgr = taskMgr
+        this.startDay = startDay
 
         var today = new Date()
         this.startDate = findFirstPrecedingDay(today, startDay)
@@ -26,6 +29,47 @@ export class Planner implements TaskView {
         for (let i = 0; i < 7; i++) {
             this.dayColumns.push(new DayColumn(this.taskMgr, today))
         }
+
+        document.getElementById("planneryesterday")!.addEventListener(
+            "click",
+            (_) => this.shiftLeft(1)
+        )
+
+        document.getElementById("plannernextweek")!.addEventListener(
+            "click",
+            (_) => this.shiftRight(7)
+        )
+
+        document.getElementById("plannerlastweek")!.addEventListener(
+            "click",
+            (_) => this.shiftLeft(7)
+        )
+
+        document.getElementById("plannertomorrow")!.addEventListener(
+            "click",
+            (_) => this.shiftRight(1)
+        )
+
+        document.getElementById("plannerthisweek")!.addEventListener(
+            "click",
+            (_) => this.centerThisWeek()
+        )
+    }
+
+    private shiftLeft(nDays: number) {
+        this.startDate = new Date(this.startDate.valueOf() - nDays * 86_400_000)
+        this.render()
+    }
+
+    private shiftRight(nDays: number) {
+        this.startDate = new Date(this.startDate.valueOf() + nDays * 86_400_000)
+        this.render()
+    }
+
+    private centerThisWeek() {
+        var today = new Date()
+        this.startDate = findFirstPrecedingDay(today, this.startDay)
+        this.render()
     }
 
     render() {
@@ -35,6 +79,10 @@ export class Planner implements TaskView {
             col.date = date
             date = new Date(date.valueOf() + 86_400_000)
         }
+
+        var differentYears = this.startDate.getFullYear() != date.getFullYear()
+
+        document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate() + 1}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate()}${differentYears ? `/${date.getFullYear()}` : ""}`
     }
 
     refresh() {
@@ -96,6 +144,10 @@ class DayColumn implements TaskView {
         var heading = document.createElement("h4")
         heading.innerHTML = WEEKDAY_STRINGS[this._date.getDay()]
         this.element.appendChild(heading)
+
+        var dateHeading = document.createElement("h5")
+        dateHeading.innerHTML = `${this.date.getMonth() + 1}/${this.date.getDate()}`
+        this.element.appendChild(dateHeading)
 
         var tasks = this.taskMgr.getTasks().filter((t) => {
             return isSameDay(this._date, t.due)

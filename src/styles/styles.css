@@ -8,6 +8,30 @@ button {
     transition: ease-in-out 200ms;
 }
 
+button.small {
+    background-color: var(--secondary-color);
+
+    color: var(--primary-text-color);
+
+    font-size: small;
+
+    border: none;
+    border-radius: 0.5rem;
+
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
+}
+
+button.small:hover {
+    background-color: var(--container-background);
+    box-shadow: 0px 0px 0.5rem 0.33rem var(--primary-shadow-color);
+}
+
 .settingsbutton:hover {
     cursor: pointer;
 }

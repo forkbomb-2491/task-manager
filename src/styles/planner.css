@@ -41,4 +41,25 @@
 .daycolumn h4 {
     text-align: center;
     margin-top: 0;
+    margin-bottom: 0;
+}
+
+.daycolumn h5 {
+    text-align: center;
+    margin-top: 0;
+}
+
+button.plannershift {
+    background: none;
+    font-size: xx-large;
+
+    color: var(--primary-text-color);
+
+    border: none;
+
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+}
+
+button.plannershift:hover {
+    text-shadow: 0 0 0.5rem var(--primary-shadow-color);
 }
