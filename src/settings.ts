@@ -18,7 +18,7 @@ export class SettingsView {
         window.addEventListener(
             "focus",
             _ => {
-                if (this.checkInHandler != undefined) {
+                if (this.checkInHandler != undefined && !this.checkInHandler.isRunning) {
                     this.checkInHandler.start()
                 }
             }

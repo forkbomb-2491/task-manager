@@ -20,6 +20,12 @@ export class CheckInHandler {
 
     private interval: number // milliseconds
 
+    private notiftitle: string[] = ["1. Just checking in!", "2. You're doing great!", "3. Don't give up!"]
+    private notifbody: string[] = ["1. Are you finding it hard to be productive? Open Task Manager for some help!", "2. Need any suggestions for what to do?  Open Task Manager for some help!", "3. Struggling to stay motivated? Open Task Manager for some help!"]
+
+    private notifnum: number = 0
+
+    
     private scheduledReminder: NodeJS.Timeout | null = null
     public get isRunning(): boolean {
         return this.scheduledReminder != null
@@ -84,10 +90,11 @@ export class CheckInHandler {
 
     private sendReminder() {
         this.scheduledReminder = null
-
+        this.notifnum = Math.floor(Math.random()*this.notiftitle.length)
+        
         sendNotification({
-            title: "Just Checking In!",
-            body: "Are you finding it hard to be productive? Open Task Manager for some help!"
+            title: this.notiftitle[this.notifnum],
+            body: this.notifbody[this.notifnum]
         })
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
