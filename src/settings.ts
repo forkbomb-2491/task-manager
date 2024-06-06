@@ -14,6 +14,15 @@ export class SettingsView {
 
     constructor(storageMgr: StorageManager) {
         this.storageMgr = storageMgr
+
+        window.addEventListener(
+            "focus",
+            _ => {
+                if (this.checkInHandler != undefined) {
+                    this.checkInHandler.start()
+                }
+            }
+        )
     }
 
     load() {

@@ -213,7 +213,12 @@ export class TaskManager {
 
         window.addEventListener(
             "taskchanged",
-            () => { this.refresh() }
+            _ => this.refresh()
+        )
+
+        window.addEventListener(
+            "focus",
+            _ => this.refresh()
         )
     }
 
