@@ -119,6 +119,7 @@ header button {
     padding-bottom: 2rem;
 
     padding-left: 2rem;
+    overscroll-behavior: auto;
 }
 
 .tab {

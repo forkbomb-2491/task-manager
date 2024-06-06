@@ -198,7 +198,13 @@ export function switchPlannerOrientation(): boolean {
     
     .daycolumn h4 {
         text-align: left;
-    }`
+    }
+
+    .daycolumn h5 {
+        text-align: left;
+    }
+    
+    `
     document.head.appendChild(newElement)
     return true
 }
