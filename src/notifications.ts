@@ -20,8 +20,11 @@ export class CheckInHandler {
 
     private interval: number // milliseconds
 
-    private notiftitle: string[] = ["1. Just checking in!", "2. You're doing great!", "3. Don't give up!"]
-    private notifbody: string[] = ["1. Are you finding it hard to be productive? Open Task Manager for some help!", "2. Need any suggestions for what to do?  Open Task Manager for some help!", "3. Struggling to stay motivated? Open Task Manager for some help!"]
+    private notifcontent: Object = {
+        "1. Just checking in!": "1. Are you finding it hard to be productive? Open Task Manager for some help!",
+        "2. You're doing great!": "2. Need any suggestions for what to do?  Open Task Manager for some help!",
+        "3. Don't give up!": "3. Struggling to stay motivated? Open Task Manager for some help!"
+    }
 
     private notifnum: number = 0
 
@@ -90,11 +93,13 @@ export class CheckInHandler {
 
     private sendReminder() {
         this.scheduledReminder = null
-        this.notifnum = Math.floor(Math.random()*this.notiftitle.length)
+        this.notifnum = Math.floor(Math.random()*Object.keys(this.notifcontent).length)
         
+        const notifTitle = Object.keys(this.notifcontent)[this.notifnum];
         sendNotification({
-            title: this.notiftitle[this.notifnum],
-            body: this.notifbody[this.notifnum]
+            title: notifTitle,
+            // @ts-ignore
+            body: this.notifcontent[notifTitle]
         })
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()

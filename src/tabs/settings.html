@@ -27,8 +27,7 @@
     </div>
 </form>
 
-<h2>Sound Settings</h2>
-<h3>Time Block Volume</h3>
+<h3>Time Block Notif Count</h3>
 <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 50%;" oninput="timervolume.innerText = this.value">            
 <label for="timervolumeslider" id="timervolume">25</label>
 
@@ -36,15 +35,15 @@
 <h3>Tab Display</h3>
 <p><i>Hide tabs you find unnecessary.</i></p>
 <form name="tabsettings" id="tabsettings">
-    <input type="checkbox" id="tpactive" name="tpactive">
+    <input type="checkbox" id="tpactive" name="taskplan">
     <label for="tpactive">Task Planner</label>
-    <input type="checkbox" id="tbactive" name="tbactive">
+    <input type="checkbox" id="tbactive" name="pomodoro">
     <label for="tbactive">Time Block</label>
-    <input type="checkbox" id="eisenhoweractive" name="eisenhoweractive">
+    <input type="checkbox" id="eisenhoweractive" name="eisenhower">
     <label for="eisenhoweractive">Eisenhower</label>
-    <input type="checkbox" id="dopamenuactive" name="dopamenuactive">
+    <input type="checkbox" id="dopamenuactive" name="dopamenu">
     <label for="dopamenuactive">Dopamenu</label>
-    <input type="checkbox" id="remindersactive" name="remindersactive">
+    <input type="checkbox" id="remindersactive" name="reminders">
     <label for="remindersactive">Reminders</label>
 </form>
 <h3>Themes</h3>

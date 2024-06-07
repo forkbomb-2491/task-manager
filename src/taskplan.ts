@@ -6,6 +6,8 @@ import { WEEKDAY_STRINGS } from "./utils";
 export class TaskPlanner implements TaskView {
     private calStartDate: Date = new Date()
 
+    filter: (t: Task) => boolean = _ => true
+
     // @ts-ignore
     private taskMgr: TaskManager
 
@@ -22,6 +24,17 @@ export class TaskPlanner implements TaskView {
             element.innerHTML = `${WEEKDAY_STRINGS[i].slice(0, 3)}`
         }
     }
+
+    // private updateFilter() {
+    //     var sizeSelector = document.getElementById("tpsizefilter")!
+    //     var size: number
+    //     for (let i = 0; i < sizeSelector.children.length; i++) {
+    //         const element = sizeSelector.children[i];
+    //         if (element.selected) {
+
+    //         }
+    //     }
+    // }
 
     render(): void {
         this.clearDayElements()
@@ -55,7 +68,7 @@ export class TaskPlanner implements TaskView {
 
     refresh(): void {
         var tasks = this.taskMgr.getTasks().filter(t => {
-            return !t.completed && !t.deleted
+            return !t.completed && !t.deleted && this.filter(t)
         })
 
         var selector = document.getElementById("tptask")!
