@@ -149,8 +149,10 @@ class DayColumn implements TaskView {
         dateHeading.innerHTML = `${this.date.getMonth() + 1}/${this.date.getDate()}`
         this.element.appendChild(dateHeading)
 
+        this.element.appendChild(document.createElement("div"))
+
         var tasks = this.taskMgr.getTasks().filter((t) => {
-            return isSameDay(this._date, t.due)
+            return isSameDay(this._date, t.due) && !t.deleted
         }, this)
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];

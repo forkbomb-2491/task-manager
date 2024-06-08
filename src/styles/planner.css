@@ -7,7 +7,7 @@
 .daycolumn {
     width: calc(13% - 2rem);
     background-color: var(--secondary-color);
-    min-height: 37vmax;
+    min-height: calc(96vh - 20rem);
     overflow-wrap: break-word;
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);

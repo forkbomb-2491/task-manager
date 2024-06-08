@@ -16,6 +16,16 @@ export class TaskPlanner implements TaskView {
         
         this.calStartDate = new Date()
         this.calStartDate.setDate(1)
+
+        document.getElementById("tpsizefilter")!.addEventListener(
+            "change",
+            _ => this.updateFilter()
+        )
+
+        document.getElementById("tpimportancefilter")!.addEventListener(
+            "change",
+            _ => this.updateFilter()
+        )
     }
 
     private clearDayElements() {
@@ -25,16 +35,26 @@ export class TaskPlanner implements TaskView {
         }
     }
 
-    // private updateFilter() {
-    //     var sizeSelector = document.getElementById("tpsizefilter")!
-    //     var size: number
-    //     for (let i = 0; i < sizeSelector.children.length; i++) {
-    //         const element = sizeSelector.children[i];
-    //         if (element.selected) {
+    private updateFilter() {
+        var sizeSelector = document.getElementById("tpsizefilter")!
+        var sizeOption = [...sizeSelector.children].filter(e => {
+            // @ts-ignore
+            return e.selected
+        })[0]
+        var size = Number(sizeOption.getAttribute("name"))
 
-    //         }
-    //     }
-    // }
+        var importanceSelector = document.getElementById("tpimportancefilter")!
+        var importanceOption = [...importanceSelector.children].filter(e => {
+            // @ts-ignore
+            return e.selected
+        })[0]
+        var importance = Number(importanceOption.getAttribute("name"))
+
+        this.filter = t => {
+            return t.importance >= importance && t.size >= size
+        }
+        this.refresh()
+    }
 
     render(): void {
         this.clearDayElements()
@@ -63,7 +83,7 @@ export class TaskPlanner implements TaskView {
             date = new Date(date.valueOf() + 86_400_000)
         }
 
-        this.refresh()
+        this.updateFilter()
     }
 
     refresh(): void {
