@@ -5,14 +5,14 @@
         <h3>Filter Tasks</h3>
         <form name="tpform" id="tpform">
             <div style="display: flex; justify-content: space-between;">
-                <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required>
+                <select style="width: 47%;" id = "tpsizefilter" name = "sizeinput" required style="font-size: small">
                     <option name="0">Tiny and up</option>
                     <option name="1">Small and up</option>
                     <option name="2" selected="true">Medium and up</option>
                     <option name="3">Big and up</option>
                     <option name="4">Huge and up</option>
                 </select>
-                <select style="width: 47%;" id = "tpimportancefilter" name = "importanceinput" required>
+                <select style="width: 47%;" id = "tpimportancefilter" name = "importanceinput" required style="font-size: small">
                     <option name="0">Trivial and up</option>
                     <option name="1">Unimportant and up</option>
                     <option name="2" selected="true">Average and up</option>
@@ -25,21 +25,21 @@
                 <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required></select>
             </div>
             <h3>Select Start Date</h3>
-            <!-- <p>default is today. between currdate and task.deadline</p> -->
             <div>
                 <input type="date" id="tpdeadlineinput" style="width: 100%;" required>
             </div>
             <h3>Make Subtasks</h3>
-            <h4>Maybe assign them a day?</h4>
             <form name="subtaskcreate" autocomplete="off">
                 <div class="subtask" style="display:flex; justify-content: space-between;">
                     <input type="submit" style="background: none; border: none;" value="➕">
-                    <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%;">
-                    <input type="date" id="tpsubtaskdateinput" style="width:45%">
+                    <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%; font-size: small;">
+                    <input type="date" id="tpsubtaskdateinput" style="width:45%; font-size: small;">
                 </div>
             </form>
             <div name="subtasklist"></div>
-            <p>Deadline: [display task's due date]</p>
+            <p>Deadline:</p>
+            <div id="tpdeadlinedisplay">
+            </div>
         </form>
     </div>
     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
