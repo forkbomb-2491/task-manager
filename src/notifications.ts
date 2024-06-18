@@ -1,5 +1,6 @@
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
+import { Task } from "./task";
 
 export async function sendNotif(title: string, body: string) {
     if (!(await isPermissionGranted())) {
@@ -105,10 +106,10 @@ export class CheckInHandler {
         }
     }
 
-    private sendTaskReminder() {
+    private sendTaskReminder(task: Task) {
         sendNotification({
-            title: "Checking on " + "!",
-            body: "Have you made any progress on " + "? You have " + " until it's due!"
+            title: "Checking on " + task.name + "!",
+            body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
         })
     }
 

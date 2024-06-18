@@ -128,7 +128,9 @@ export class Task {
         return this.parentId != null
     }
     
-
+    /**
+     * How many days until this task is due (rounded to nearest integer)
+     */
     public get dueIn() {
         var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
         var now = new Date()

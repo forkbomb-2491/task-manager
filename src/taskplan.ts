@@ -20,15 +20,6 @@ export class TaskPlanner implements TaskView {
         this.calStartDate = new Date()
         this.calStartDate.setDate(1)
 
-        for (let i = 0; i < 7; i++) {
-            this.dayColumns.push(
-                new CalendarDayColumn(
-                    this.taskMgr, i, 
-                    this.calStartDate
-                )
-            )
-        }
-
         document.getElementById("tpsizefilter")!.addEventListener(
             "change",
             _ => this.updateFilter()
@@ -38,31 +29,12 @@ export class TaskPlanner implements TaskView {
             "change",
             _ => this.updateFilter()
         )
-
-        document.getElementById("tptask")!.addEventListener(
-            "change",
-            e => {
-                // @ts-ignore
-                this.onTaskSelect(e.currentTarget)
-            }
-        )
     }
 
     private clearDayElements() {
         for (let i = 0; i < 7; i++) {
             const element = document.getElementById(`${TaskPlanDays[i]}`)!
             element.innerHTML = `${WEEKDAY_STRINGS[i].slice(0, 3)}`
-        }
-    }
-
-    private onTaskSelect(selector: HTMLSelectElement) {
-        for (let i = 0; i < selector.children.length; i++) {
-            const element = selector.children[i];
-            // @ts-ignore
-            if (element.selected) {
-                this.selectedTask = this.taskMgr.getTask(element.getAttribute("name")!)
-                return
-            }
         }
     }
 
@@ -87,16 +59,37 @@ export class TaskPlanner implements TaskView {
         this.refresh()
     }
 
-    private addSubtask(t: Task) {
-        
-    }
-
     render(): void {
         this.clearDayElements()
 
         for (let i = 0; i < this.dayColumns.length; i++) {
             const col = this.dayColumns[i];
             col.render()
+        }
+
+        this.updateFilter()
+        var date = new Date(this.calStartDate)
+        var month = date.getMonth()
+        
+        for (let i = 0; i < date.getDay(); i++) {
+            var day = document.getElementById(`${TaskPlanDays[i]}`)
+
+            var element = document.createElement("div")
+            element.className = "tpspacer"
+
+            day!.appendChild(element)
+        }
+
+        while (date.getMonth() == month) {
+            var day = document.getElementById(`${TaskPlanDays[date.getDay()]}`)
+            
+            var element = document.createElement("div")
+            element.className = "tpdate"
+            element.innerHTML = `${month + 1}/${date.getDate()}`
+            
+            day!.appendChild(element)
+
+            date = new Date(date.valueOf() + 86_400_000)
         }
 
         this.updateFilter()
@@ -187,8 +180,6 @@ class CalendarDayColumn implements TaskView {
 
     refresh() {}
 }
-
-
 
 enum TaskPlanDays {
     "tpsun",
