@@ -24,11 +24,7 @@
             <div>
                 <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required></select>
             </div>
-            <h3>Select Start Date</h3>
-            <div>
-                <input type="date" id="tpdeadlineinput" style="width: 100%;" required>
-            </div>
-            <h3>Make Subtasks</h3>
+            <h3>Make Subtasks<h3>
             <form name="subtaskcreate" autocomplete="off">
                 <div class="subtask" style="display:flex; justify-content: space-between;">
                     <input type="submit" style="background: none; border: none;" value="➕">
@@ -39,23 +35,14 @@
             <div name="subtasklist"></div>
             <p>Deadline:</p>
             <div id="tpdeadlinedisplay">
+                Due DATE
             </div>
         </form>
     </div>
     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
         <div class="tpcalendar" style="display:flex; justify-content: space-between;">
-            <div class="tpday" id="tpsun">Sun
-            </div>
-            <div class="tpday" id="tpmon">Mon
-                <!-- <div class="tpdate hastask">6/3<br>...
-                    <div class="expanded">
-                        subtasksubtasksubtasksubtasksubtasksubtask<br>
-                        subtask<br>
-                        subtask<br>
-                        subtask<br>
-                    </div>
-                </div> -->
-            </div>
+            <div class="tpday" id="tpsun"></div>
+            <div class="tpday" id="tpmon"></div>
             <div class="tpday" id="tptue"></div>
             <div class="tpday" id="tpwed"></div>
             <div class="tpday" id="tpthu"></div>

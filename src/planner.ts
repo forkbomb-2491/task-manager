@@ -1,12 +1,6 @@
-import { Weekdays, DayCols, WEEKDAY_STRINGS } from "./utils"
+import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
 import { Task, TaskView } from "./task"
 import { TaskManager } from "./main"
-
-const isSameDay = (d1: Date, d2: Date) => {
-    return (d1.getFullYear() == d2.getFullYear() &&
-    d1.getMonth() == d2.getMonth() &&
-    d1.getDate() == d2.getDate())
-}
 
 /**
  * The TaskView that represents the Planner tab.
@@ -211,11 +205,3 @@ export function switchPlannerOrientation(): boolean {
     return true
 }
 
-function findFirstPrecedingDay(date: Date, day: Weekdays) {
-    var ret = new Date(date.valueOf())
-    while (ret.getDay() != day) {
-        ret = new Date(ret.valueOf() - 86_400_000)
-    }
-
-    return ret
-}

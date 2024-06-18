@@ -39,6 +39,21 @@ export function getTimeString(time: number) {
     return ret
 }
 
+export function findFirstPrecedingDay(date: Date, day: Weekdays) {
+    var ret = new Date(date.valueOf())
+    while (ret.getDay() != day) {
+        ret = new Date(ret.valueOf() - 86_400_000)
+    }
+
+    return ret
+}
+
+export const isSameDay = (d1: Date, d2: Date) => {
+    return (d1.getFullYear() == d2.getFullYear() &&
+    d1.getMonth() == d2.getMonth() &&
+    d1.getDate() == d2.getDate())
+}
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */

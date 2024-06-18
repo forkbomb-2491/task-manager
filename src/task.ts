@@ -120,6 +120,15 @@ export class Task {
     children: string[] = []
     parentId: string | null
 
+    get hasSubtasks() : boolean {
+        return this.children.length > 0
+    }
+
+    get isSubtask() : boolean {
+        return this.parentId != null
+    }
+    
+
     public get dueIn() {
         var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
         var now = new Date()

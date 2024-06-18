@@ -1,6 +1,6 @@
 import { TaskManager } from "./main";
 import { Task, TaskView } from "./task";
-import { WEEKDAY_STRINGS } from "./utils";
+import { WEEKDAY_STRINGS, Weekdays, findFirstPrecedingDay, isSameDay } from "./utils";
 
 
 export class TaskPlanner implements TaskView {
@@ -8,9 +8,10 @@ export class TaskPlanner implements TaskView {
 
     private selectedTask: Task | null = null
 
+    private dayColumns: CalendarDayColumn[] = []
+
     filter: (t: Task) => boolean = _ => true
 
-    // @ts-ignore
     private taskMgr: TaskManager
 
     constructor(taskMgr: TaskManager) {
@@ -18,6 +19,15 @@ export class TaskPlanner implements TaskView {
         
         this.calStartDate = new Date()
         this.calStartDate.setDate(1)
+
+        for (let i = 0; i < 7; i++) {
+            this.dayColumns.push(
+                new CalendarDayColumn(
+                    this.taskMgr, i, 
+                    this.calStartDate
+                )
+            )
+        }
 
         document.getElementById("tpsizefilter")!.addEventListener(
             "change",
@@ -29,7 +39,7 @@ export class TaskPlanner implements TaskView {
             _ => this.updateFilter()
         )
 
-        document.getElementById("tptask")?.addEventListener(
+        document.getElementById("tptask")!.addEventListener(
             "change",
             e => {
                 // @ts-ignore
@@ -77,31 +87,16 @@ export class TaskPlanner implements TaskView {
         this.refresh()
     }
 
+    private addSubtask(t: Task) {
+        
+    }
+
     render(): void {
         this.clearDayElements()
 
-        var date = new Date(this.calStartDate)
-        var month = date.getMonth()
-        
-        for (let i = 0; i < date.getDay(); i++) {
-            var day = document.getElementById(`${TaskPlanDays[i]}`)
-
-            var element = document.createElement("div")
-            element.className = "tpspacer"
-
-            day!.appendChild(element)
-        }
-
-        while (date.getMonth() == month) {
-            var day = document.getElementById(`${TaskPlanDays[date.getDay()]}`)
-            
-            var element = document.createElement("div")
-            element.className = "tpdate"
-            element.innerHTML = `${month + 1}/${date.getDate()}`
-            
-            day!.appendChild(element)
-
-            date = new Date(date.valueOf() + 86_400_000)
+        for (let i = 0; i < this.dayColumns.length; i++) {
+            const col = this.dayColumns[i];
+            col.render()
         }
 
         this.updateFilter()
@@ -111,6 +106,12 @@ export class TaskPlanner implements TaskView {
         var tasks = this.taskMgr.getTasks().filter(t => {
             return !t.completed && !t.deleted && this.filter(t)
         })
+
+        if (this.selectedTask != null) {
+            if (this.selectedTask.hasSubtasks) {
+                // Render subtasks
+            }
+        }
 
         var selector = document.getElementById("tptask")!
         selector.innerHTML = ""
@@ -125,10 +126,69 @@ export class TaskPlanner implements TaskView {
         }
     }
 
-    addTask(_: Task): void {
-        this.refresh()
+    addTask(t: Task): void {
+        if (this.selectedTask != null && t.parentId == t.id) {
+            // Add
+        } else {
+            this.refresh()
+        }
     }
 }
+
+class CalendarDayColumn implements TaskView {
+    private taskMgr: TaskManager
+
+    private calStartDate: Date
+    private day: Weekdays
+
+    private element: HTMLDivElement
+
+    constructor(taskMgr: TaskManager, day: Weekdays, calStartDate: Date) {
+        this.taskMgr = taskMgr
+
+        this.day = day
+
+        // Trusts the caller that they're passing the first day of the month
+        this.calStartDate = calStartDate 
+
+        // @ts-ignore (force div)
+        this.element = document.getElementById(TaskPlanDays[day])!
+
+        var container = document.getElementsByClassName("tpcalendar")[0]
+        container.appendChild(this.element)
+    }
+
+    addTask(task: Task) {
+        return
+    }
+
+    render() {
+        var date = new Date(this.calStartDate)
+        var month = this.calStartDate.getMonth()
+
+        if (this.calStartDate.getDay() != this.day) {
+            date = findFirstPrecedingDay(this.calStartDate, this.day)
+        }
+
+        while (date.getMonth() <= month) {
+            if (date.getMonth() < month) {
+                var element = document.createElement("div")
+                element.className = "tpspacer"
+            } else {
+                var element = document.createElement("div")
+                element.className = "tpdate"
+                element.innerHTML = `${month + 1}/${date.getDate()}`
+            }
+            this.element.appendChild(element)
+
+            date = new Date(date.valueOf() + 7 * 86_400_000)
+        }
+    }
+
+    refresh() {}
+}
+
+
 
 enum TaskPlanDays {
     "tpsun",

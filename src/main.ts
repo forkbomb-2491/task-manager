@@ -68,9 +68,6 @@ class App {
 
         // @ts-ignore; Populate fields' default values
         document.getElementById("deadlineinput")!.valueAsDate = new Date()
-        // @ts-ignore
-        document.getElementById("tpdeadlineinput")!.valueAsDate = new Date()
-
         // Apply settings
         this.storageMgr.getPlannerFlipped().then((flipped: boolean) => {
             if (flipped) { switchPlannerOrientation() }

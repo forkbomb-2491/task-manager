@@ -28,7 +28,6 @@ export class CheckInHandler {
 
     private notifnum: number = 0
 
-    
     private scheduledReminder: NodeJS.Timeout | null = null
     public get isRunning(): boolean {
         return this.scheduledReminder != null
@@ -104,6 +103,13 @@ export class CheckInHandler {
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
         }
+    }
+
+    private sendTaskReminder() {
+        sendNotification({
+            title: "Checking on " + "!",
+            body: "Have you made any progress on " + "? You have " + " until it's due!"
+        })
     }
 
     private restart() {
