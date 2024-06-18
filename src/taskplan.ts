@@ -8,8 +8,6 @@ export class TaskPlanner implements TaskView {
 
     private selectedTask: Task | null = null
 
-    private dayColumns: CalendarDayColumn[] = []
-
     filter: (t: Task) => boolean = _ => true
 
     private taskMgr: TaskManager
@@ -61,11 +59,6 @@ export class TaskPlanner implements TaskView {
 
     render(): void {
         this.clearDayElements()
-
-        for (let i = 0; i < this.dayColumns.length; i++) {
-            const col = this.dayColumns[i];
-            col.render()
-        }
 
         this.updateFilter()
         var date = new Date(this.calStartDate)
@@ -128,58 +121,7 @@ export class TaskPlanner implements TaskView {
     }
 }
 
-class CalendarDayColumn implements TaskView {
-    private taskMgr: TaskManager
 
-    private calStartDate: Date
-    private day: Weekdays
-
-    private element: HTMLDivElement
-
-    constructor(taskMgr: TaskManager, day: Weekdays, calStartDate: Date) {
-        this.taskMgr = taskMgr
-
-        this.day = day
-
-        // Trusts the caller that they're passing the first day of the month
-        this.calStartDate = calStartDate 
-
-        // @ts-ignore (force div)
-        this.element = document.getElementById(TaskPlanDays[day])!
-
-        var container = document.getElementsByClassName("tpcalendar")[0]
-        container.appendChild(this.element)
-    }
-
-    addTask(task: Task) {
-        return
-    }
-
-    render() {
-        var date = new Date(this.calStartDate)
-        var month = this.calStartDate.getMonth()
-
-        if (this.calStartDate.getDay() != this.day) {
-            date = findFirstPrecedingDay(this.calStartDate, this.day)
-        }
-
-        while (date.getMonth() <= month) {
-            if (date.getMonth() < month) {
-                var element = document.createElement("div")
-                element.className = "tpspacer"
-            } else {
-                var element = document.createElement("div")
-                element.className = "tpdate"
-                element.innerHTML = `${month + 1}/${date.getDate()}`
-            }
-            this.element.appendChild(element)
-
-            date = new Date(date.valueOf() + 7 * 86_400_000)
-        }
-    }
-
-    refresh() {}
-}
 
 enum TaskPlanDays {
     "tpsun",
