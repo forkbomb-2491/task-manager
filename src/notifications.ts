@@ -1,6 +1,7 @@
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
 import { Task } from "./task";
+import { TaskManager } from "./main";
 
 export async function sendNotif(title: string, body: string) {
     if (!(await isPermissionGranted())) {
@@ -106,12 +107,7 @@ export class CheckInHandler {
         }
     }
 
-    private sendTaskReminder(task: Task) {
-        sendNotification({
-            title: "Checking on " + task.name + "!",
-            body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
-        })
-    }
+
 
     private restart() {
         if (this.isRunning || this.scheduledReminder) {
@@ -163,4 +159,27 @@ export class CheckInHandler {
             window.clearTimeout(this.scheduledReminder)
         }
     }
+}
+
+
+class TaskNotifier {
+    private taskMgr: TaskManager
+    
+    constructor(taskMgr: TaskManager){
+        this.taskMgr = taskMgr
+    }
+    // private sendTaskReminder(task: Task) {
+    //     // remove me from list
+    //     sendNotification({
+    //         title: "Checking on " + task.name + "!",
+    //         body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
+    //     })
+    //     // schedule the next notification in list to be day before due date
+    // }
+
+    // public refresh() {
+    //     cancel schedueled notification
+    //     pulls and resorts notif list
+    //     reschedule first notifications to be noon day before due date
+    // }
 }

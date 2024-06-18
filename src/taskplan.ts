@@ -121,7 +121,68 @@ export class TaskPlanner implements TaskView {
     }
 }
 
+// class TaskPlannerDate implements TaskView {
+//     private taskMgr: TaskManager
+//     private _date: Date
 
+//     get date(): Date {
+//         return new Date(this._date)
+//     }
+
+//     set date(value: Date) {
+//         this._date = value
+//         this.render()
+//     }
+
+//     private element: HTMLDivElement
+
+//     constructor(taskMgr: TaskManager, date: Date) {
+//         this.taskMgr = taskMgr
+//         this._date = date
+
+//         this.element = document.createElement("div")
+//         this.element.className = "tpdate"
+
+//         var container = document.getElementById(TaskPlanDays[date.getDay()])!
+//         container.appendChild(this.element)
+//     }
+
+//     addTask(task: Task) {
+//         this.element.appendChild(task.getPlannerElement())
+//     }
+
+//     render() {
+//         this.element.innerHTML = ""
+
+//         var heading = document.createElement("h4")
+//         heading.innerHTML = WEEKDAY_STRINGS[this._date.getDay()]
+//         this.element.appendChild(heading)
+
+//         var dateHeading = document.createElement("h5")
+//         dateHeading.innerHTML = `${this.date.getMonth() + 1}/${this.date.getDate()}`
+//         this.element.appendChild(dateHeading)
+
+//         this.element.appendChild(document.createElement("div"))
+
+//         var tasks = this.taskMgr.getTasks().filter((t) => {
+//             return isSameDay(this._date, t.due) && !t.deleted
+//         }, this)
+//         for (let index = 0; index < tasks.length; index++) {
+//             const task = tasks[index];
+//             this.element.appendChild(task.getPlannerElement())
+//         }
+
+//         this.refresh()
+//     }
+
+//     refresh() {
+//         if (isSameDay(new Date(), this._date)) {
+//             this.element.className = "daycolumn today"
+//         } else {
+//             this.element.className = "daycolumn"
+//         }
+//     }
+// }
 
 enum TaskPlanDays {
     "tpsun",

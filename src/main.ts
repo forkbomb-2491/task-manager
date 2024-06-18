@@ -277,6 +277,7 @@ export class TaskManager {
         this.taskList.addTask(task)
         this.taskPlanner.refresh()
         this.helpMgr.refresh()
+        //notif.refresh()
 
         this.saveTasksViaEvent()
     }
