@@ -24,20 +24,18 @@
             <div>
                 <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required></select>
             </div>
-            <h3>Make Subtasks<h3>
-            <form name="subtaskcreate" autocomplete="off">
-                <div class="subtask" style="display:flex; justify-content: space-between;">
-                    <input type="submit" style="background: none; border: none;" value="➕">
-                    <input type="text" id="tpsubtasktitleinput" name="tpsubtasktitleinput" style="width: 45%; font-size: small;">
-                    <input type="date" id="tpsubtaskdateinput" style="width:45%; font-size: small;">
-                </div>
-            </form>
-            <div name="subtasklist"></div>
-            <p>Deadline:</p>
             <div id="tpdeadlinedisplay">
                 Due DATE
             </div>
         </form>
+        <h3>Make Subtasks</h3><br>
+        <form name="subtaskcreate" autocomplete="off" id="tpsubtaskcreate" class="task" style="display:flex; justify-content: space-between;">
+            <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+            <input type="text" id="tpsubtasktitleinput" name="titleinput" style="width: 45%; font-size: small;">
+            <input type="date" id="tpsubtaskdateinput" name="deadlineinput" style="width:45%; font-size: small;">
+        </form>
+        <div name="subtasklist" id="tpsubtasklist">
+        </div>
     </div>
     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">
         <div class="tpcalendar" style="display:flex; justify-content: space-between;">

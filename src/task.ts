@@ -129,13 +129,13 @@ export class Task {
     }
     
     /**
-     * How many days until this task is due (rounded to nearest integer)
+     * How many days until this task is due (rounded DOWN to nearest integer)
      */
     public get dueIn() {
         var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
         var now = new Date()
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-        return Math.round((due.valueOf() - today.valueOf()) / 84_600_000)
+        return Math.floor((due.valueOf() - today.valueOf()) / 84_600_000)
     }
 
     deleted: boolean = false
@@ -147,8 +147,8 @@ export class Task {
 
     constructor(
         name: string, 
-        size: string, 
-        importance: string, 
+        size: string | number, 
+        importance: string | number, 
         category: string, 
         due: Date, 
         completed: boolean = false,

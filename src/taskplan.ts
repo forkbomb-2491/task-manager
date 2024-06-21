@@ -1,10 +1,11 @@
 import { TaskManager } from "./main";
 import { Task, TaskView } from "./task";
-import { WEEKDAY_STRINGS, Weekdays, findFirstPrecedingDay, isSameDay } from "./utils";
+import { WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged } from "./utils";
 
 
 export class TaskPlanner implements TaskView {
     private calStartDate: Date = new Date()
+    private dates: TaskPlannerDate[] = []
 
     private selectedTask: Task | null = null
 
@@ -27,6 +28,25 @@ export class TaskPlanner implements TaskView {
             "change",
             _ => this.updateFilter()
         )
+
+        document.getElementById("tpsubtaskcreate")!.addEventListener(
+            "submit",
+            e => this.createSubtaskCallback(e)
+        )
+
+        onTasksChanged(() => { this.refresh(); console.log("tp 37") })
+
+        var taskSelect = document.getElementById("tptask")!
+        taskSelect.addEventListener(
+            "change",
+            e => {
+                var task = this.taskMgr.getTask(
+                    // @ts-ignore
+                    getFirstSelected(e.currentTarget)!.getAttribute("name")!
+                )
+                this.selectTask(task!)
+            }
+        )
     }
 
     private clearDayElements() {
@@ -34,6 +54,7 @@ export class TaskPlanner implements TaskView {
             const element = document.getElementById(`${TaskPlanDays[i]}`)!
             element.innerHTML = `${WEEKDAY_STRINGS[i].slice(0, 3)}`
         }
+        this.dates = []
     }
 
     private updateFilter() {
@@ -57,6 +78,38 @@ export class TaskPlanner implements TaskView {
         this.refresh()
     }
 
+    private createSubtaskCallback(event: SubmitEvent) {
+        event.preventDefault()
+
+        if (this.selectedTask == null) { return }
+
+        // @ts-ignore; Necessary to make this whole darn thing work
+        var form: HTMLFormElement = event.target
+        var title = form.titleinput.value
+        var date = form.deadlineinput.valueAsDate
+    
+        var task = new Task(
+            title, 
+            0, // Size presumed to be tiny
+            this.selectedTask.importance, // Inherit importance
+            this.selectedTask.category, // Inherit category
+            date, 
+            false
+        )
+        this.selectedTask.adoptChild(task)
+        this.taskMgr.addTask(task)
+    }
+
+    private selectTask(task: Task) {
+        this.selectedTask = task
+        if (this.dates.length > 0) {
+            for (let i = 0; i < this.dates.length; i++) {
+                const date = this.dates[i];
+                date.selectedTask = task
+            }
+        }
+    }
+
     render(): void {
         this.clearDayElements()
 
@@ -76,11 +129,9 @@ export class TaskPlanner implements TaskView {
         while (date.getMonth() == month) {
             var day = document.getElementById(`${TaskPlanDays[date.getDay()]}`)
             
-            var element = document.createElement("div")
-            element.className = "tpdate"
-            element.innerHTML = `${month + 1}/${date.getDate()}`
-            
-            day!.appendChild(element)
+            const newDate = new TaskPlannerDate(this.taskMgr, this.selectedTask, date);
+            this.dates.push(newDate)
+            newDate.render()
 
             date = new Date(date.valueOf() + 86_400_000)
         }
@@ -99,6 +150,10 @@ export class TaskPlanner implements TaskView {
             }
         }
 
+        this.dates.forEach(date => {
+            date.refresh()
+        });
+
         var selector = document.getElementById("tptask")!
         selector.innerHTML = ""
 
@@ -108,81 +163,102 @@ export class TaskPlanner implements TaskView {
             element.setAttribute("name", task.id)
             element.innerHTML = task.name
 
+            if (this.selectedTask == task) {
+                element.selected = true
+            }
+
             selector.appendChild(element)
+        }
+
+        if (tasks.length > 0 && (this.selectedTask == null || !tasks.includes(this.selectedTask!))) {
+            this.selectTask(tasks[0])
         }
     }
 
     addTask(t: Task): void {
-        if (this.selectedTask != null && t.parentId == t.id) {
-            // Add
+        if (this.selectedTask != null && t.parentId == this.selectedTask.id) {
+            var subtaskList = document.getElementById("tpsubtasklist")!
+            subtaskList.appendChild(t.getTaskListElement())
+
+            for (let i = 0; i < this.dates.length; i++) {
+                const date = this.dates[i];
+                date.addTask(t)
+            }
         } else {
             this.refresh()
         }
     }
 }
 
-// class TaskPlannerDate implements TaskView {
-//     private taskMgr: TaskManager
-//     private _date: Date
+class TaskPlannerDate implements TaskView {
+    private taskMgr: TaskManager
+    private _selectedTask: Task | null
+    private _date: Date
 
-//     get date(): Date {
-//         return new Date(this._date)
-//     }
+    get date(): Date {
+        return new Date(this._date)
+    }
 
-//     set date(value: Date) {
-//         this._date = value
-//         this.render()
-//     }
+    get selectedTask(): Task | null {
+        return this._selectedTask
+    }
 
-//     private element: HTMLDivElement
+    set selectedTask(t: Task) {
+        this._selectedTask = t
+        this.refresh()
+    }
 
-//     constructor(taskMgr: TaskManager, date: Date) {
-//         this.taskMgr = taskMgr
-//         this._date = date
+    set date(value: Date) {
+        this._date = value
+        this.render()
+    }
 
-//         this.element = document.createElement("div")
-//         this.element.className = "tpdate"
+    private element: HTMLDivElement
 
-//         var container = document.getElementById(TaskPlanDays[date.getDay()])!
-//         container.appendChild(this.element)
-//     }
+    constructor(taskMgr: TaskManager, selectedTask: Task | null, date: Date) {
+        this.taskMgr = taskMgr
+        this._selectedTask = selectedTask
+        this._date = date
 
-//     addTask(task: Task) {
-//         this.element.appendChild(task.getPlannerElement())
-//     }
+        this.element = document.createElement("div")
+        this.element.className = "tpdate"
 
-//     render() {
-//         this.element.innerHTML = ""
+        var container = document.getElementById(TaskPlanDays[date.getDay()])!
+        container.appendChild(this.element)
+    }
 
-//         var heading = document.createElement("h4")
-//         heading.innerHTML = WEEKDAY_STRINGS[this._date.getDay()]
-//         this.element.appendChild(heading)
+    addTask(task: Task) {
+        if (!isSameDay(task.due, this.date)) {
+            return
+        }
+        this.element.appendChild(task.getPlannerElement())
+        this.refresh()
+    }
 
-//         var dateHeading = document.createElement("h5")
-//         dateHeading.innerHTML = `${this.date.getMonth() + 1}/${this.date.getDate()}`
-//         this.element.appendChild(dateHeading)
+    render() {
+        this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
 
-//         this.element.appendChild(document.createElement("div"))
+        if (this.selectedTask != null) {
+            for (let i = 0; i < this.selectedTask.children.length; i++) {
+                const child = this.taskMgr.getTask(this.selectedTask.children[i])
+                if (child == null || child.deleted) continue
+                if (isSameDay(this._date, child.due)) {
+                    this.element.appendChild(child.getPlannerElement())
+                }
+            }
+        }
 
-//         var tasks = this.taskMgr.getTasks().filter((t) => {
-//             return isSameDay(this._date, t.due) && !t.deleted
-//         }, this)
-//         for (let index = 0; index < tasks.length; index++) {
-//             const task = tasks[index];
-//             this.element.appendChild(task.getPlannerElement())
-//         }
+        this.refresh()
+    }
 
-//         this.refresh()
-//     }
-
-//     refresh() {
-//         if (isSameDay(new Date(), this._date)) {
-//             this.element.className = "daycolumn today"
-//         } else {
-//             this.element.className = "daycolumn"
-//         }
-//     }
-// }
+    refresh() {
+        if (this.element.children.length > 0) {
+            this.element.className = "tpdate hastask"
+        } else {
+            this.element.className = "tpdate"
+        }
+    }
+}
 
 enum TaskPlanDays {
     "tpsun",

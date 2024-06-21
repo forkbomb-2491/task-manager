@@ -34,6 +34,7 @@ export class CheckInHandler {
     public get isRunning(): boolean {
         return this.scheduledReminder != null
     }
+
     public set isRunning(value: boolean) {
         if (value) {
             this.start()
@@ -162,24 +163,70 @@ export class CheckInHandler {
 }
 
 
-class TaskNotifier {
+export class TaskNotifier {
     private taskMgr: TaskManager
-    
+    private tasks: Task[]
+    private notifList: Task[]
+
+    private scheduledReminder: NodeJS.Timeout | null = null
+    public get isRunning(): boolean {
+        return this.scheduledReminder != null
+    }
+
     constructor(taskMgr: TaskManager){
         this.taskMgr = taskMgr
+        this.tasks = this.taskMgr.getTasks()
+        this.notifList = []
     }
-    // private sendTaskReminder(task: Task) {
-    //     // remove me from list
-    //     sendNotification({
-    //         title: "Checking on " + task.name + "!",
-    //         body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
-    //     })
-    //     // schedule the next notification in list to be day before due date
-    // }
+    
+    private sendTaskReminder() {
+        var task = this.tasks[0]
 
-    // public refresh() {
-    //     cancel schedueled notification
-    //     pulls and resorts notif list
+        // If you haven't already gotten a notif, send notif
+        if (!this.notifList.includes(task)){
+            sendNotification({
+                title: "Checking on " + task.name + "!",
+                body: "Have you made any progress on " + this.tasks[0].name + "? You have " + task.dueIn + " days until it's due!"
+            })
+            this.notifList.push(task)
+            // remove me from list
+            this.tasks.shift()
+        }
+
+        // schedule the next notification in list to be day before due date
+        this.scheduleReminder()
+    }
+
+    private scheduleReminder() {
+        // this.refresh()
+        var interval: number
+
+        if (this.tasks.length == 0) {
+            return
+        }
+        var task = this.tasks[0]
+        
+
+        if (task.dueIn-1 == 0) {
+            interval = (task.dueIn-0.5)*86_400_000
+        }
+        else {
+            interval = (task.dueIn-1)*86_400_000
+        }
+
+        // console.log(interval)
+        this.scheduledReminder = setTimeout(() => { this.sendTaskReminder() }, interval)
+    }
+
+    public refresh() {
+        //     cancel schedueled notification
+        if (this.scheduledReminder != null) {
+            clearTimeout(this.scheduledReminder)
+            this.scheduledReminder = null
+        }
+    //     pulls (make sure contains no overdue tasks) and resorts notif list
+        this.tasks = this.taskMgr.getTasks()
     //     reschedule first notifications to be noon day before due date
-    // }
+        this.scheduleReminder()
+    }
 }

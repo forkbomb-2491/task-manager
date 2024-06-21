@@ -5,6 +5,7 @@ import { HelpManager, changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
 import { TaskPlanner } from './taskplan'
 import { SettingsView } from './settings'
+import { TaskNotifier } from './notifications'
 
 var app: App
 
@@ -17,6 +18,7 @@ class App {
     // Backend
     private taskMgr: TaskManager
     // private checkInHandler: CheckInHandler | undefined
+
     private storageMgr: StorageManager
 
     // Other
@@ -201,12 +203,14 @@ export class TaskManager {
     private planner: Planner
     private helpMgr: HelpManager
     private taskPlanner: TaskPlanner
+    private taskNotifier: TaskNotifier
 
     constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
         this.taskPlanner = new TaskPlanner(this)
+        this.taskNotifier = new TaskNotifier(this)
 
         window.addEventListener(
             "taskchanged",
@@ -244,6 +248,7 @@ export class TaskManager {
         this.planner.render()
         this.helpMgr.render()
         this.taskPlanner.render()
+        this.taskNotifier.refresh()
     }
 
     private refresh() {
@@ -251,6 +256,7 @@ export class TaskManager {
         this.planner.refresh()
         this.helpMgr.render()
         this.taskPlanner.refresh()
+        this.taskNotifier.refresh()
 
         this.saveTasksViaEvent()
     }
@@ -275,8 +281,9 @@ export class TaskManager {
 
         this.planner.addTask(task)
         this.taskList.addTask(task)
-        this.taskPlanner.refresh()
+        this.taskPlanner.addTask(task)
         this.helpMgr.refresh()
+        this.taskNotifier.refresh()
         //notif.refresh()
 
         this.saveTasksViaEvent()

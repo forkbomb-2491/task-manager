@@ -8,6 +8,14 @@ export function onLoad(closure: () => void) {
         "DOMContentLoaded", closure
     )
 }
+
+export function onTasksChanged(closure: () => void) {
+    console.log("utils 13")
+    window.addEventListener(
+        "taskchanged", closure
+    )
+}
+
 /** !!!!! LOCAL LOCAL LOCAL !!!!!! */
 export function todayDateString() {
     var date = new Date()
@@ -46,6 +54,18 @@ export function findFirstPrecedingDay(date: Date, day: Weekdays) {
     }
 
     return ret
+}
+
+export function getFirstSelected(select: HTMLSelectElement): HTMLOptionElement | null {
+    for (let i = 0; i < select.options.length; i++) {
+        const option = select.options[i]
+        if (option.selected) {
+            console.log(option)
+            return option
+        }
+    }
+
+    return null
 }
 
 export const isSameDay = (d1: Date, d2: Date) => {
