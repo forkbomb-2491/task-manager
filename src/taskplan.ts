@@ -214,6 +214,7 @@ class TaskPlannerDate implements TaskView {
     }
 
     private element: HTMLDivElement
+    private hoverElement: HTMLElement | null = null
 
     constructor(taskMgr: TaskManager, selectedTask: Task | null, date: Date) {
         this.taskMgr = taskMgr
@@ -225,6 +226,43 @@ class TaskPlannerDate implements TaskView {
 
         var container = document.getElementById(TaskPlanDays[date.getDay()])!
         container.appendChild(this.element)
+
+        this.element.addEventListener(
+            "mouseenter",
+            () => this.onHover()
+        )
+
+        this.element.addEventListener(
+            "mouseleave",
+            () => this.onHover(false)
+        )
+
+        this.createHoverElement()
+    }
+
+    private onHover(hovered: boolean = true) {
+        if (/*this.element.className == "tpdate hastask" &&*/ hovered) {
+            this.hoverElement!.style.display = "block"
+        } else if (!hovered) {
+            this.hoverElement!.style.display = "none"
+        }
+    }
+
+    private createHoverElement() {
+        if (this.hoverElement != null) {
+            this.hoverElement.remove()
+            this.hoverElement = null
+        }
+
+        this.hoverElement = document.createElement("div")
+        this.hoverElement.className = "tpdate hastask"
+
+        this.hoverElement.style.position = "absolute"
+        this.hoverElement.style.display = "none"
+
+        this.hoverElement.innerHTML = "urmommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+
+        this.element.appendChild(this.hoverElement)
     }
 
     addTask(task: Task) {
@@ -237,6 +275,7 @@ class TaskPlannerDate implements TaskView {
 
     render() {
         this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
+        if (this.hoverElement != null) this.element.appendChild(this.hoverElement)
 
         if (this.selectedTask != null) {
             for (let i = 0; i < this.selectedTask.children.length; i++) {
@@ -252,7 +291,7 @@ class TaskPlannerDate implements TaskView {
     }
 
     refresh() {
-        if (this.element.children.length > 0) {
+        if (this.element.children.length > 1) {
             this.element.className = "tpdate hastask"
         } else {
             this.element.className = "tpdate"
