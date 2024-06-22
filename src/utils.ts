@@ -74,6 +74,33 @@ export const isSameDay = (d1: Date, d2: Date) => {
     d1.getDate() == d2.getDate())
 }
 
+var tooltip: HTMLDivElement = document.createElement("div")
+var ttMoveOnCooldown: boolean = false
+tooltip.style.display = "block"
+tooltip.style.position = "fixed"
+tooltip.className = "tooltip"
+document.body.appendChild(tooltip)
+
+window.addEventListener(
+    "mousemove",
+    e => {
+        if (tooltip.style.display == "none" || ttMoveOnCooldown) return
+        // window.setTimeout(() => { ttMoveOnCooldown = false}, 10000)
+        // ttMoveOnCooldown = true
+        tooltip.style.left = `${e.x + 10}px`
+        tooltip.style.top = `${e.y + 10}px`
+    }
+)
+
+export function showTooltip(text: string) {
+    tooltip.innerHTML = text
+    tooltip.style.display = "block"
+}
+
+export function hideTooltip() {
+    tooltip.style.display = "none"
+}
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */
