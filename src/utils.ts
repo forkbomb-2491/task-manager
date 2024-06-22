@@ -76,7 +76,7 @@ export const isSameDay = (d1: Date, d2: Date) => {
 
 var tooltip: HTMLDivElement = document.createElement("div")
 var ttMoveOnCooldown: boolean = false
-tooltip.style.display = "block"
+tooltip.style.display = "none"
 tooltip.style.position = "fixed"
 tooltip.className = "tooltip"
 document.body.appendChild(tooltip)
