@@ -85,8 +85,6 @@ window.addEventListener(
     "mousemove",
     e => {
         if (tooltip.style.display == "none" || ttMoveOnCooldown) return
-        // window.setTimeout(() => { ttMoveOnCooldown = false}, 10000)
-        // ttMoveOnCooldown = true
         tooltip.style.left = `${e.x + 10}px`
         tooltip.style.top = `${e.y + 10}px`
     }

@@ -178,6 +178,10 @@ export class TaskNotifier {
         this.tasks = this.taskMgr.getTasks()
         this.notifList = []
     }
+
+    getTasks(){
+        return this.tasks
+    }
     
     private sendTaskReminder() {
         var task = this.tasks[0]

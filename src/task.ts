@@ -191,7 +191,7 @@ export class Task {
             "due": this.due,
             "completed": this.completed,
             "id": this.id,
-            "chilren": this.children,
+            "children": this.children,
             "parentId": this.parentId
         }
     }
@@ -199,6 +199,8 @@ export class Task {
     adoptChild(task: Task) {
         this.children.push(task.id)
         task.parentId = this.id
+
+        window.dispatchEvent(TaskChanged)
     }
 
     /**

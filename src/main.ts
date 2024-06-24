@@ -1,4 +1,4 @@
-import { StorageManager, getTasksChanged, loadTasks, loadTabs } from './storage'
+import { StorageManager, getTasksChanged, loadTasks, loadTabs, saveTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
@@ -222,6 +222,14 @@ export class TaskManager {
             "focus",
             _ => this.refresh()
         )
+
+        window.addEventListener(
+            "taskchanged", 
+            async _ => {
+                await saveTasks(this.tasks)
+                await saveTasks(this.tasks) // Duplicate nec. for functionality; fix
+            }
+        )
     }
 
     async start() {
@@ -285,7 +293,6 @@ export class TaskManager {
         this.taskPlanner.addTask(task)
         this.helpMgr.refresh()
         this.taskNotifier.refresh()
-        //notif.refresh()
 
         this.saveTasksViaEvent()
     }

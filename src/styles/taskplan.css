@@ -74,6 +74,17 @@
     border-radius: 0.5rem;
     color: var(--primary-text-color);
 
+    transition: ease-in-out 200ms;
+
+    padding: 0.5rem;
+}
+
+.tphoverelement {
+    z-index: 0;
+    background-color: var(--tab-hover);
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+    color: var(--primary-text-color);
 
     transition: ease-in-out 200ms;
 
@@ -90,21 +101,7 @@
     /* width: fit-content; */
     z-index: 5;
     /* background-color: rgba(0, 0, 0, 0); */
-}
-
-.tpdate.hastask:hover .expanded {
-    display: block;
-    position: absolute;
-    background-color: var(--tab-hover);
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-}
-
-.tpdate.hastask .expanded {
-    display: none;
-    text-align: left;
-    /* background-color: rgba(0, 0, 0, 0); */
+    /* opacity: 0; */
 }
 
 .input {

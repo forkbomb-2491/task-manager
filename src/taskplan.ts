@@ -75,7 +75,38 @@ export class TaskPlanner implements TaskView {
         this.filter = t => {
             return t.importance >= importance && t.size >= size
         }
-        this.refresh()
+
+        this.updateSelector()
+    }
+
+    private updateSelector() {
+        // Apply filter
+        var tasks = this.taskMgr.getTasks().filter(t => {
+            return !t.completed && !t.deleted && this.filter(t)
+        })
+
+        // Clear selector
+        var selector = document.getElementById("tptask")!
+        selector.innerHTML = ""
+
+        // Loop
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            var element = document.createElement("option")
+            element.setAttribute("name", task.id)
+            element.innerHTML = task.name
+
+            if (this.selectedTask == task) {
+                element.selected = true
+            }
+
+            selector.appendChild(element)
+        }
+
+        // Detects change or void task selection and updates accordingly
+        if (tasks.length > 0 && (this.selectedTask == null || !tasks.includes(this.selectedTask))) {
+            this.selectTask(tasks[0])
+        }
     }
 
     private createSubtaskCallback(event: SubmitEvent) {
@@ -102,21 +133,31 @@ export class TaskPlanner implements TaskView {
 
     private selectTask(task: Task) {
         this.selectedTask = task
-        if (this.dates.length > 0) {
-            for (let i = 0; i < this.dates.length; i++) {
-                const date = this.dates[i];
-                date.selectedTask = task
+        console.log(task)
+        for (let i = 0; i < this.dates.length; i++) {
+            const date = this.dates[i];
+            date.selectedTask = task
+        }
+
+        var subtaskList = document.getElementById("tpsubtasklist")!
+        for (let i = 0; i < task.children.length; i++) {
+            const childId = task.children[i];
+            const subtask = this.taskMgr.getTask(childId)
+            if (subtask != null) {
+                subtaskList.appendChild(subtask.getTaskListElement())
             }
         }
     }
 
     render(): void {
+        this.updateFilter() // Also update selector
         this.clearDayElements()
 
-        this.updateFilter()
+        // Assumes current calStartDate is 1st
         var date = new Date(this.calStartDate)
         var month = date.getMonth()
         
+        // Add spacers
         for (let i = 0; i < date.getDay(); i++) {
             var day = document.getElementById(`${TaskPlanDays[i]}`)
 
@@ -126,53 +167,22 @@ export class TaskPlanner implements TaskView {
             day!.appendChild(element)
         }
 
+        // Create date ojects
         while (date.getMonth() == month) {
+            // Get column
             var day = document.getElementById(`${TaskPlanDays[date.getDay()]}`)
             
+            // Create new date
             const newDate = new TaskPlannerDate(this.taskMgr, this.selectedTask, date);
             this.dates.push(newDate)
             newDate.render()
 
             date = new Date(date.valueOf() + 86_400_000)
         }
-
-        this.updateFilter()
     }
 
     refresh(): void {
-        var tasks = this.taskMgr.getTasks().filter(t => {
-            return !t.completed && !t.deleted && this.filter(t)
-        })
-
-        if (this.selectedTask != null) {
-            if (this.selectedTask.hasSubtasks) {
-                // Render subtasks
-            }
-        }
-
-        this.dates.forEach(date => {
-            date.refresh()
-        });
-
-        var selector = document.getElementById("tptask")!
-        selector.innerHTML = ""
-
-        for (let i = 0; i < tasks.length; i++) {
-            const task = tasks[i];
-            var element = document.createElement("option")
-            element.setAttribute("name", task.id)
-            element.innerHTML = task.name
-
-            if (this.selectedTask == task) {
-                element.selected = true
-            }
-
-            selector.appendChild(element)
-        }
-
-        if (tasks.length > 0 && (this.selectedTask == null || !tasks.includes(this.selectedTask!))) {
-            this.selectTask(tasks[0])
-        }
+        this.updateFilter()
     }
 
     addTask(t: Task): void {
@@ -184,8 +194,6 @@ export class TaskPlanner implements TaskView {
                 const date = this.dates[i];
                 date.addTask(t)
             }
-        } else {
-            this.refresh()
         }
     }
 }
@@ -205,16 +213,11 @@ class TaskPlannerDate implements TaskView {
 
     set selectedTask(t: Task) {
         this._selectedTask = t
-        this.refresh()
-    }
-
-    set date(value: Date) {
-        this._date = value
         this.render()
     }
 
     private element: HTMLDivElement
-    private hoverElement: HTMLElement | null = null
+    private hoverElement: HTMLDivElement
 
     constructor(taskMgr: TaskManager, selectedTask: Task | null, date: Date) {
         this.taskMgr = taskMgr
@@ -237,30 +240,26 @@ class TaskPlannerDate implements TaskView {
             () => this.onHover(false)
         )
 
+        onTasksChanged(() => this.refresh())
+
+        this.hoverElement = document.createElement("div") // Nec. to get TS to shut up
         this.createHoverElement()
     }
 
     private onHover(hovered: boolean = true) {
-        if (/*this.element.className == "tpdate hastask" &&*/ hovered) {
-            this.hoverElement!.style.display = "block"
+        if (this.element.className == "tpdate hastask" && hovered) {
+            this.hoverElement.style.display = "block"
         } else if (!hovered) {
-            this.hoverElement!.style.display = "none"
+            this.hoverElement.style.display = "none"
         }
     }
 
     private createHoverElement() {
-        if (this.hoverElement != null) {
-            this.hoverElement.remove()
-            this.hoverElement = null
-        }
-
         this.hoverElement = document.createElement("div")
-        this.hoverElement.className = "tpdate hastask"
+        this.hoverElement.className = "tphoverelement"
 
         this.hoverElement.style.position = "absolute"
         this.hoverElement.style.display = "none"
-
-        this.hoverElement.innerHTML = "urmommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
 
         this.element.appendChild(this.hoverElement)
     }
@@ -269,29 +268,40 @@ class TaskPlannerDate implements TaskView {
         if (!isSameDay(task.due, this.date)) {
             return
         }
-        this.element.appendChild(task.getPlannerElement())
+        this.hoverElement.appendChild(task.getPlannerElement())
         this.refresh()
     }
 
     render() {
         this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
-        if (this.hoverElement != null) this.element.appendChild(this.hoverElement)
 
-        if (this.selectedTask != null) {
-            for (let i = 0; i < this.selectedTask.children.length; i++) {
-                const child = this.taskMgr.getTask(this.selectedTask.children[i])
-                if (child == null || child.deleted) continue
-                if (isSameDay(this._date, child.due)) {
-                    this.element.appendChild(child.getPlannerElement())
+        if (this._selectedTask != null) {
+            var childIds = this._selectedTask.children.filter(
+                t => {
+                    const task = this.taskMgr.getTask(t)
+                    return task != null && isSameDay(this.date, task.due)
                 }
+            )
+
+            var children = childIds.map(
+                t => {
+                    console.log("child!")
+                    return this.taskMgr.getTask(t)!
+                }
+            )
+
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                this.hoverElement.appendChild(child.getPlannerElement())
             }
         }
 
         this.refresh()
+        this.element.appendChild(this.hoverElement)
     }
 
     refresh() {
-        if (this.element.children.length > 1) {
+        if (this.hoverElement.children.length > 0) {
             this.element.className = "tpdate hastask"
         } else {
             this.element.className = "tpdate"
