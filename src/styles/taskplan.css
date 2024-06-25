@@ -64,7 +64,6 @@
     margin-top: 0.75rem;
 
     aspect-ratio: 1/1;
-    padding: 0.5rem;
 }
 
 .tpdate.hastask {
@@ -80,20 +79,28 @@
 }
 
 .tphoverelement {
+    min-width: auto;
+    min-height: auto;
+    text-align: left;
+    
     z-index: 0;
     background-color: var(--tab-hover);
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
     color: var(--primary-text-color);
 
+    align-items: left;
+
     transition: ease-in-out 200ms;
 
     padding: 0.5rem;
 }
 
-.tpdate button.complete {
-    width: 1rem;
-    height: 1rem;
+.tphoverelement button.complete {
+    min-width: 1rem;
+    max-width: 1rem;
+    min-height: 1rem;
+    max-height: 1rem;
     border-radius: 0.125em;
 }
 

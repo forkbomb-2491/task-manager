@@ -150,7 +150,6 @@ export async function loadTasks() {
     var loadedJSON = await loadFile(TASKS_FN, [])
     for (let i = 0; i < loadedJSON.length; i++) {
         const t = loadedJSON[i];
-        console.log(t)
         tasks.push(new Task(
             t.name,
             t.size,

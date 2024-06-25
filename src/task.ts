@@ -51,6 +51,7 @@ export class TaskList implements TaskView {
         var currentList = document.getElementById("currenttasklist")!
         var completedList = document.getElementById("completedtasklist")!
 
+        // Wipe current contents
         currentList.innerHTML = ""
         completedList.innerHTML = ""
 
@@ -145,6 +146,19 @@ export class Task {
 
     private elements: HTMLElement[] = []
 
+    /**
+     * The Task's default constructor. Should be called mainly by UI callbacks
+     * and the Storage Manager.
+     * @param name The Task's Name
+     * @param size The Task's Size [0, 5)
+     * @param importance The Task's Importance [0, 5)
+     * @param category Arbitrary category string
+     * @param due The date the Task is due
+     * @param completed If the Task is completed (default: false)
+     * @param id The Task's unique ID, if any (default: generates new)
+     * @param children A list of *strings*--other Tasks' IDs--of child Tasks
+     * @param parentId The parent Task's ID (as a *string*)
+     */
     constructor(
         name: string, 
         size: string | number, 
@@ -196,6 +210,11 @@ export class Task {
         }
     }
 
+    /**
+     * Makes a Task a child/subtask of this one. (Updates both Tasks'
+     * attributes)
+     * @param task The Task to adopt
+     */
     adoptChild(task: Task) {
         this.children.push(task.id)
         task.parentId = this.id
@@ -246,6 +265,10 @@ export class Task {
         window.dispatchEvent(TaskChanged)
     }
 
+    /**
+     * Removes the the elements list all Elements that have been deleted
+     * from their parent container.
+     */
     private cleanUpElements() {
         var newElements = []
         for (let i = 0; i < this.elements.length; i++) {
@@ -261,36 +284,54 @@ export class Task {
     }
 
     /**
-     * Returns the HTML Element representing this task for the Tasks tab.
-     * @returns A <div class="task"> HTML Element
+     * Returns a div element of class "task" in the style of those on the Tasks
+     * tab.
+     * @param full True: full length Element, with Category, Size, etc. False:
+     * shortened Element with only name and due date.
+     * @returns Div element of class "task"
      */
-    getTaskListElement() {
+    private getTaskListLikeElement(full: boolean): HTMLDivElement {
         this.cleanUpElements()
 
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
-        newElement.innerHTML = `
+        if (full) {
+            newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="width: 50%;">
+            <div style="min-width: 50%; min-width: 50%;">
                 ${this.name}
             </div>
-            <div style="width: 10%;">
+            <div style="min-width: 10%; max-width: 10%;">
                 ${this.category}
             </div>
-            <div style="width: 7.5%;">
+            <div style="min-width: 7.5%; max-width: 7.5%;">
                 ${TaskSizes[this.size]}
             </div>
-            <div style="width: 12.5%;">
+            <div style="min-width: 12.5%; min-width: 12.5%;">
                 ${TaskImportances[this.importance]}
             </div>
-            <div style="width: 16%;">
+            <div style="min-width: 16%; max-width: 16%;">
                 ${this.due.toDateString()}
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
             </button>
-        `
-
+            `
+        } else {
+            newElement.innerHTML = `
+            <button class="complete"></button>
+            <div style="min-width: 60%; max-width: 60%">
+                ${this.name}
+            </div>
+            <div style="min-width: 26%; max-width: 26%">
+                ${this.due.toDateString()}
+            </div>
+            <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
+                🗑️
+            </button>
+            `
+        }
+        
         var deleteTaskCallback = (_: Event) => { this.delete() }
         var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
@@ -313,10 +354,26 @@ export class Task {
     }
 
     /**
+     * Returns the HTML Element representing this task for the Tasks tab.
+     * @returns A <div class="task"> HTML Element
+     */
+    getTaskListElement() {
+        return this.getTaskListLikeElement(true)
+    }
+    
+    /**
+     * Returns the HTML Element representing this task for the Task Planner
+     * tab.
+     * @returns A <div class="task"> HTML Element with fewer details.
+     */
+    getTaskPlannerListElement() {
+        return this.getTaskListLikeElement(false)
+    }
+
+    /**
      * Returns the HTML Element representing this task for the Planner tab
      * @returns A <p> HTML Element with a square checkbox.
      */
-
     getPlannerElement() {
         this.cleanUpElements()
 

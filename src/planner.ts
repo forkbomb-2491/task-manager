@@ -13,6 +13,11 @@ export class Planner implements TaskView {
 
     private dayColumns: DayColumn[] = []
 
+    /**
+     * Initializes the Planner class.
+     * @param taskMgr the TaskManager
+     * @param startDay First day of the week on Planner (default: Sunday)
+     */
     constructor(taskMgr: TaskManager, startDay: Weekdays = Weekdays.sunday) {
         this.taskMgr = taskMgr
         this.startDay = startDay
@@ -50,6 +55,7 @@ export class Planner implements TaskView {
         )
     }
 
+    // Following 3 methods handle shifting the Planner from the UI
     private shiftLeft(nDays: number) {
         this.startDate = new Date(this.startDate.valueOf() - nDays * 86_400_000)
         this.render()
@@ -66,6 +72,10 @@ export class Planner implements TaskView {
         this.render()
     }
 
+    /**
+     * Wipes Planner elements and renders them anew starting on the current
+     * startDate.
+     */
     render() {
         var date = new Date(this.startDate.valueOf())
         for (let index = 0; index < this.dayColumns.length; index++) {
@@ -79,6 +89,9 @@ export class Planner implements TaskView {
         document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate() + 1}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate()}${differentYears ? `/${date.getFullYear()}` : ""}`
     }
 
+    /**
+     * Makes sure current date is indicated by the UI.
+     */
     refresh() {
         for (let index = 0; index < this.dayColumns.length; index++) {
             const col = this.dayColumns[index];
@@ -116,6 +129,11 @@ class DayColumn implements TaskView {
 
     private element: HTMLDivElement
 
+    /**
+     * Initializer for the DayColumn class
+     * @param taskMgr 
+     * @param date The date the column represents
+     */
     constructor(taskMgr: TaskManager, date: Date) {
         this.taskMgr = taskMgr
         this._date = date
@@ -132,6 +150,10 @@ class DayColumn implements TaskView {
         this.element.appendChild(task.getPlannerElement())
     }
 
+    /**
+     * Clears contents of the HTML element and renders anew all tasks and
+     * headings to make consistent with internal state. 
+     */
     render() {
         this.element.innerHTML = ""
 
@@ -156,6 +178,9 @@ class DayColumn implements TaskView {
         this.refresh()
     }
 
+    /**
+     * If the DayColumn's date is today (for the user), change styling.
+     */
     refresh() {
         if (isSameDay(new Date(), this._date)) {
             this.element.className = "daycolumn today"

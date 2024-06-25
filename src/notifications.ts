@@ -2,6 +2,7 @@ import { isPermissionGranted, requestPermission, sendNotification } from "@tauri
 import { todayDateString } from "./utils";
 import { Task } from "./task";
 import { TaskManager } from "./main";
+import { RemindersContainer } from "./reminders.ts";
 
 export async function sendNotif(title: string, body: string) {
     if (!(await isPermissionGranted())) {
@@ -89,7 +90,6 @@ export class CheckInHandler {
             this.stop()
             return
         }
-        console.log(interval)
         this.scheduledReminder = setTimeout(() => { this.sendReminder() }, interval)
     }
 
@@ -107,8 +107,6 @@ export class CheckInHandler {
             this.scheduleReminder()
         }
     }
-
-
 
     private restart() {
         if (this.isRunning || this.scheduledReminder) {
@@ -167,6 +165,8 @@ export class TaskNotifier {
     private taskMgr: TaskManager
     private tasks: Task[]
     private notifList: Task[]
+    private remindersContainer: RemindersContainer
+
 
     private scheduledReminder: NodeJS.Timeout | null = null
     public get isRunning(): boolean {
@@ -175,12 +175,15 @@ export class TaskNotifier {
 
     constructor(taskMgr: TaskManager){
         this.taskMgr = taskMgr
-        this.tasks = this.taskMgr.getTasks()
+        this.tasks = []
         this.notifList = []
+
+        this.remindersContainer = new RemindersContainer(this)
+        this.remindersContainer.render()
     }
 
-    getTasks(){
-        return this.tasks
+    getNotifTasks(){
+        return [...this.notifList]
     }
     
     private sendTaskReminder() {
@@ -195,8 +198,9 @@ export class TaskNotifier {
             this.notifList.push(task)
             // remove me from list
             this.tasks.shift()
-        }
 
+            this.remindersContainer.render()
+        }
         // schedule the next notification in list to be day before due date
         this.scheduleReminder()
     }
@@ -229,7 +233,12 @@ export class TaskNotifier {
             this.scheduledReminder = null
         }
     //     pulls (make sure contains no overdue tasks) and resorts notif list
-        this.tasks = this.taskMgr.getTasks()
+        this.tasks = this.taskMgr.getTasks().filter(
+            t => {
+                return !t.completed && !t.deleted
+            }
+        )
+        this.remindersContainer.render()
     //     reschedule first notifications to be noon day before due date
         this.scheduleReminder()
     }

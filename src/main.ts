@@ -6,7 +6,6 @@ import { TimerHandler } from "./pomodoro";
 import { TaskPlanner } from './taskplan'
 import { SettingsView } from './settings'
 import { TaskNotifier } from './notifications'
-import { showTooltip } from './utils';
 
 var app: App
 
@@ -18,8 +17,6 @@ class App {
 
     // Backend
     private taskMgr: TaskManager
-    // private checkInHandler: CheckInHandler | undefined
-
     private storageMgr: StorageManager
 
     // Other

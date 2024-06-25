@@ -10,7 +10,6 @@ export function onLoad(closure: () => void) {
 }
 
 export function onTasksChanged(closure: () => void) {
-    console.log("utils 13")
     window.addEventListener(
         "taskchanged", closure
     )
@@ -131,3 +130,18 @@ export const WEEKDAY_STRINGS = [
     "Friday",
     "Saturday"
 ]
+
+export enum Months {
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+}
