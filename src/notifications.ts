@@ -24,9 +24,9 @@ export class CheckInHandler {
     private interval: number // milliseconds
 
     private notifcontent: Object = {
-        "1. Just checking in!": "1. Are you finding it hard to be productive? Open Task Manager for some help!",
-        "2. You're doing great!": "2. Need any suggestions for what to do?  Open Task Manager for some help!",
-        "3. Don't give up!": "3. Struggling to stay motivated? Open Task Manager for some help!"
+        "Just checking in!": "Are you finding it hard to be productive? Open Task Manager for some help!",
+        "You're doing great!": "Need any suggestions for what to do?  Open Task Manager for some help!",
+        "Don't give up!": "Struggling to stay motivated? Open Task Manager for some help!"
     }
 
     private notifnum: number = 0

@@ -19,10 +19,8 @@ export class RemindersContainer {
 
         var reminderList = document.getElementById("reminderlist")!
         reminderList.innerHTML = ""
-        console.log("render3")
         
         this.tasks.forEach(task => reminderList.appendChild(this.getReminderElement(task)));        
-        console.log("render4")
 
     }
 
@@ -43,15 +41,14 @@ export class RemindersContainer {
     getReminderElement(task: Task) {
         var newElement = document.createElement("div")
         newElement.className = "task"
-        console.log("render5")
 
         newElement.innerHTML = `
             <div style="width: 100%;">
-                Checked in on ${task.name}
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? You have ${task.dueIn} days until it's due!
             </div>
         `
         this.elements.push(newElement)
-        console.log("render6")
 
         return newElement
     }

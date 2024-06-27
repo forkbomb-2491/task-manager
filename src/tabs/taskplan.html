@@ -24,17 +24,21 @@
             <div>
                 <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required></select>
             </div>
-            <div id="tpdeadlinedisplay">
-                Due DATE
-            </div>
+
         </form>
         <h3>Make Subtasks</h3><br>
-        <form name="subtaskcreate" autocomplete="off" id="tpsubtaskcreate" class="task" style="display:flex; justify-content: space-between;">
+        <form name="subtaskcreate" autocomplete="off" id="tpsubtaskcreate" class="task" style="display:flex; justify-content: left;">
             <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
-            <input type="text" id="tpsubtasktitleinput" name="titleinput" style="width: 45%; font-size: small;">
-            <input type="date" id="tpsubtaskdateinput" name="deadlineinput" style="width:45%; font-size: small;">
+            <input type="text" id="tpsubtasktitleinput" name="titleinput" style="min-width: 60%; max-width: 60%; font-size: small;">
+            <input type="date" id="tpsubtaskdateinput" name="deadlineinput" style="min-width: 26%; max-width: 26%; font-size: small;">
         </form>
-        <div name="subtasklist" id="tpsubtasklist">
+        <div class="subtasklist" name="subtasklist" id="tpsubtasklist">
+        </div>
+        <br>
+        <div class="task">
+            <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;">🏁</div>
+            <div id="tpmaintaskname" style="min-width: 60%; max-width: 60%; font-size: small;"></div>
+            <div id="tpdeadlinedisplay" style="min-width: 26%; max-width: 26%; font-size: small;"></div>
         </div>
     </div>
     <div class="tpcontainer" style="width: 80%; margin-left: 2rem;">

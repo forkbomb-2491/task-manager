@@ -149,6 +149,7 @@ export class TaskPlanner implements TaskView {
         }
 
         var subtaskList = document.getElementById("tpsubtasklist")!
+        subtaskList.innerHTML = ""
         for (let i = 0; i < task.children.length; i++) {
             const childId = task.children[i];
             const subtask = this.taskMgr.getTask(childId)
@@ -156,6 +157,11 @@ export class TaskPlanner implements TaskView {
                 subtaskList.appendChild(subtask.getTaskPlannerListElement())
             }
         }
+
+        var tpmaintask = document.getElementById("tpmaintaskname")
+        tpmaintask!.innerHTML = task.name
+        var deadlineDisplay = document.getElementById("tpdeadlinedisplay")
+        deadlineDisplay!.innerHTML = task.due.toDateString()
     }
 
     private shiftMonth(by: number) {
@@ -310,6 +316,7 @@ class TaskPlannerDate implements TaskView {
 
     render() {
         this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
+        this.hoverElement.innerHTML = ""
 
         if (this._selectedTask != null) {
             var childIds = this._selectedTask.children.filter(
@@ -318,6 +325,8 @@ class TaskPlannerDate implements TaskView {
                     return task != null && isSameDay(this.date, task.due) && !task.deleted
                 }
             )
+
+            if (isSameDay(this._date, this._selectedTask.due)) childIds.push(this._selectedTask.id)
 
             var children = childIds.map(
                 t => {
