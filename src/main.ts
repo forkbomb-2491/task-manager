@@ -260,7 +260,7 @@ export class TaskManager {
 
         this.render()
     }
-
+    // @ts-ignore
     private pruneTasks() {
         if (this.isPruning) return
         this.isPruning = true
@@ -295,7 +295,7 @@ export class TaskManager {
     }
 
     private refresh() {
-        this.pruneTasks()
+        // this.pruneTasks()
 
         this.taskList.refresh()
         this.planner.refresh()
