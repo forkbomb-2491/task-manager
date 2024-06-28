@@ -9,7 +9,7 @@ import { TaskNotifier } from './notifications'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 
-const DEBUG_TAB = true
+const DEBUG_TAB = false
 if (DEBUG_TAB) {
     addDebugFuncs()
     document.getElementById("debugtabbutton")!.style.display = "block"
