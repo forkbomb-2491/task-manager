@@ -295,7 +295,7 @@ export class TaskManager {
     }
 
     private refresh() {
-        this.pruneTasks()
+        // this.pruneTasks()
 
         this.taskList.refresh()
         this.planner.refresh()
