@@ -1,5 +1,6 @@
 import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getTimeString } from "./utils";
+import { getCurrent, ProgressBarStatus } from "@tauri-apps/api/window";
 
 export class TimerHandler {
     private counter: number // times we swap isBreak. (# of work blocks * 2) -1
@@ -43,6 +44,17 @@ export class TimerHandler {
             document.getElementById("pomodorotimer")!.innerHTML = getTimeString(this.timer)
 
             if (this.timer > 0) {
+                if (this.counter % 2 == 0) {
+                    getCurrent().setProgressBar({
+                        status: ProgressBarStatus.Normal,
+                        progress: Math.round(this.timer/(this.workdurat * 60) * 100)
+                    }).then()
+                } else {
+                    getCurrent().setProgressBar({
+                        status: ProgressBarStatus.Normal,
+                        progress: Math.round(this.timer/(this.breakdurat * 60) * 100)
+                    }).then()
+                }
                 this.doTick()
             } else {
                 this.counter -= 1
@@ -50,11 +62,14 @@ export class TimerHandler {
                     this.sendCompleteNotif()
                     this.completeCallback()
                     document.getElementById("pomodorostatus")!.innerHTML = "Completed!"
+                    getCurrent().setProgressBar({
+                        status: ProgressBarStatus.None
+                    }).then()
                 } else if (this.counter % 2 == 1) {
                     this.startWorkTimer()
-                } else (
+                } else {
                     this.startBreakTimer()
-                )
+                }
             }
         }, 1000)
     }

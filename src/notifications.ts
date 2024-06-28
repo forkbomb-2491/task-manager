@@ -164,6 +164,11 @@ export class CheckInHandler {
 export class TaskNotifier {
     private taskMgr: TaskManager
     private tasks: Task[]
+    
+    private overdue: Task[]
+    private today: Task[]
+    private nextup: Task[]
+
     private notifList: Task[]
     private remindersContainer: RemindersContainer
 
@@ -178,6 +183,10 @@ export class TaskNotifier {
         this.tasks = []
         this.notifList = []
 
+        this.overdue = []
+        this.today = []
+        this.nextup = []
+
         this.remindersContainer = new RemindersContainer(this)
         this.remindersContainer.render()
     }
@@ -186,50 +195,72 @@ export class TaskNotifier {
         return [...this.notifList]
     }
     
-    private sendTaskReminder() {
-        var task = this.tasks[0]
+    private sendTaskReminder(task: Task) {
+        // var task = this.tasks[0]
 
         // If you haven't already gotten a notif, send notif
         if (!this.notifList.includes(task)){
             if (task.dueIn < 0) {
                 sendNotification({
                     title: "Checking on " + task.name + "!",
-                    body: "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " days ago!"
+                    body: "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
                 })
-            } else {
+            } else if (task.dueIn == 0) {
                 sendNotification({
                     title: "Checking on " + task.name + "!",
-                    body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
+                    body: "Have you made any progress on " + task.name + "? It's due today!"
+                })
+            }
+            else {
+                sendNotification({
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " day(s) until it's due!"
                 })
             }
             this.notifList.push(task)
-            // remove me from list
-            this.tasks.shift()
 
             this.remindersContainer.render()
         }
         // schedule the next notification in list to be day before due date
-        this.scheduleReminder()
+        // this.scheduleReminder()
     }
 
     private scheduleReminder() {
-        // this.refresh()
-        var interval: number
+        // // this.refresh()
+        // var interval: number
 
-        if (this.tasks.length == 0) {
-            return
-        }
-        var task = this.tasks[0]
+        // if (this.tasks.length == 0) {
+        //     return
+        // }
+        // var task = this.tasks[0]
         
-        if (task.dueIn-1 == 0) {
-            interval = (task.dueIn-0.5)*86_400_000
-        }
-        else {
-            interval = (task.dueIn-1)*86_400_000
-        }
+        // if (task.dueIn-1 == 0) {
+        //     interval = (task.dueIn-0.5)*86_400_000
+        // }
+        // else {
+        //     interval = (task.dueIn-1)*86_400_000
+        // }
 
         // console.log(interval)
-        this.scheduledReminder = setTimeout(() => { this.sendTaskReminder() }, interval)
+        // this.scheduledReminder = setTimeout(() => { this.sendTaskReminder() }, interval)
+        // this.sendTaskReminder()
+        if (this.overdue.length > 0) {
+            this.overdue.forEach(task => {
+                this.sendTaskReminder(task)
+            });
+        }
+
+        if (this.today.length > 0) {
+            this.today.forEach(task => {
+                this.sendTaskReminder(task)
+            });
+        }
+
+        if (this.nextup.length > 0) {
+            this.nextup.forEach(task => {
+                this.sendTaskReminder(task)
+            });
+        }
     }
 
     public refresh() {
@@ -246,11 +277,37 @@ export class TaskNotifier {
         )
         this.remindersContainer.render()
     //     reschedule first notifications to be noon day before due date
-        this.scheduleReminder()
         this.tasks.sort(
             (t1, t2) => {
                 return t1.due.valueOf() - t2.due.valueOf()
             }
         )
+
+        this.overdue = this.tasks.filter(
+            t=> {
+                return (t.dueIn < 0)
+            }
+        )
+
+        this.today = this.tasks.filter(
+            t=> {
+                return (t.dueIn == 0)
+            }
+        )
+
+        this.nextup = this.tasks.filter(
+            t=> {
+                return (t.dueIn > 1)
+            }
+        )
+
+        this.nextup = this.nextup.filter(
+            t=>{
+                return(t.due == this.nextup[0].due)
+            }
+        )
+
+        this.scheduleReminder()
+
     }
 }

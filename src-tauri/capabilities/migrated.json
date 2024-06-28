@@ -32,6 +32,7 @@
     "store:allow-length",
     "store:allow-reset",
     "store:allow-values",
+    "window:allow-set-progress-bar",
     {
       "identifier": "fs:scope",
       "allow": [

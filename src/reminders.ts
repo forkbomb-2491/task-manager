@@ -42,12 +42,33 @@ export class RemindersContainer {
         var newElement = document.createElement("div")
         newElement.className = "task"
 
-        newElement.innerHTML = `
+        if (task.dueIn < 0) {
+            newElement.innerHTML = `
             <div style="width: 100%;">
                 Checked in on ${task.name}! </br>
-                Have you made any progress on ${task.name}? You have ${task.dueIn} days until it's due!
+                Have you made any progress on ${task.name}? It was due ${(task.dueIn*(-1))-1} day(s) ago!
             </div>
         `
+        } else if (task.dueIn == 0) {
+            newElement.innerHTML = `
+            <div style="width: 100%;">
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? It's due today!
+            </div>
+        `
+        }
+        else {
+            newElement.innerHTML = `
+            <div style="width: 100%;">
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? You have ${task.dueIn} day(s) until it's due!
+            </div>
+        `
+        }
+        
+
+
+        
         this.elements.push(newElement)
 
         return newElement

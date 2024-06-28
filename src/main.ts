@@ -1,4 +1,4 @@
-import { StorageManager, getTasksChanged, loadTasks, loadTabs, saveTasks } from './storage'
+import { StorageManager, loadTasks, loadTabs, saveTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
@@ -217,6 +217,9 @@ export class TaskManager {
     private taskPlanner: TaskPlanner
     private taskNotifier: TaskNotifier
 
+    // Prevents pruning recursion
+    private isPruning: boolean = false
+
     constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
@@ -258,8 +261,29 @@ export class TaskManager {
         this.render()
     }
 
-    private saveTasksViaEvent() {
-        window.dispatchEvent(getTasksChanged(this.tasks))
+    private pruneTasks() {
+        if (this.isPruning) return
+        this.isPruning = true
+
+        // Reap zombie children
+        var taskIds = this.tasks.filter(
+            t => !t.deleted
+        ).map(
+            t => t.id
+        )
+        this.tasks.forEach(task => {
+            // Delete orphaned tasks
+            if (task.parentId != null && !taskIds.includes(task.parentId)) {
+                task.delete()
+            }
+            // Remove deleted children
+            task.children = task.children.filter(c => taskIds.includes(c))
+        })
+
+        // Remove deleted tasks
+        this.tasks = this.tasks.filter(t => !t.deleted)
+
+        this.isPruning = false
     }
 
     private render() {
@@ -271,13 +295,15 @@ export class TaskManager {
     }
 
     private refresh() {
+        this.pruneTasks()
+
         this.taskList.refresh()
         this.planner.refresh()
         this.helpMgr.render()
         this.taskPlanner.refresh()
         this.taskNotifier.refresh()
 
-        this.saveTasksViaEvent()
+        saveTasks(this.tasks).then()
     }
 
     getTasks() {

@@ -25,7 +25,7 @@ function createTaskTmrw() {
         4,
         4,
         "Default",
-        new Date(new Date() + 86_400_000)
+        new Date(new Date() + 2 * 86_400_000)
     ))
 }
 
