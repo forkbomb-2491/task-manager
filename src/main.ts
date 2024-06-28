@@ -6,6 +6,14 @@ import { TimerHandler } from "./pomodoro";
 import { TaskPlanner } from './taskplan'
 import { SettingsView } from './settings'
 import { TaskNotifier } from './notifications'
+// @ts-ignore
+import { addDebugFuncs } from './debug'
+
+const DEBUG_TAB = true
+if (DEBUG_TAB) {
+    addDebugFuncs()
+    document.getElementById("debugtabbutton")!.style.display = "block"
+}
 
 var app: App
 
@@ -78,6 +86,12 @@ class App {
         })
 
         document.body.style.display = "block"
+
+        // DEBUG
+        if (DEBUG_TAB) {
+            // @ts-ignore
+            window.taskMgr = this.taskMgr
+        }
     }
 
     private createTaskCallback(event: SubmitEvent) {
@@ -222,9 +236,8 @@ export class TaskManager {
 
         window.addEventListener(
             "taskchanged", 
-            async _ => {
-                await saveTasks(this.tasks)
-                await saveTasks(this.tasks) // Duplicate nec. for functionality; fix
+            _ => {
+                saveTasks(this.tasks).then()
             }
         )
     }
@@ -291,7 +304,7 @@ export class TaskManager {
         this.helpMgr.refresh()
         this.taskNotifier.refresh()
 
-        this.saveTasksViaEvent()
+        saveTasks(this.tasks).then()
     }
 }
 

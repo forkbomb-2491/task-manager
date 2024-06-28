@@ -191,10 +191,17 @@ export class TaskNotifier {
 
         // If you haven't already gotten a notif, send notif
         if (!this.notifList.includes(task)){
-            sendNotification({
-                title: "Checking on " + task.name + "!",
-                body: "Have you made any progress on " + this.tasks[0].name + "? You have " + task.dueIn + " days until it's due!"
-            })
+            if (task.dueIn < 0) {
+                sendNotification({
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " days ago!"
+                })
+            } else {
+                sendNotification({
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " days until it's due!"
+                })
+            }
             this.notifList.push(task)
             // remove me from list
             this.tasks.shift()
@@ -214,7 +221,6 @@ export class TaskNotifier {
         }
         var task = this.tasks[0]
         
-
         if (task.dueIn-1 == 0) {
             interval = (task.dueIn-0.5)*86_400_000
         }
@@ -241,5 +247,10 @@ export class TaskNotifier {
         this.remindersContainer.render()
     //     reschedule first notifications to be noon day before due date
         this.scheduleReminder()
+        this.tasks.sort(
+            (t1, t2) => {
+                return t1.due.valueOf() - t2.due.valueOf()
+            }
+        )
     }
 }
