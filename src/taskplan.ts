@@ -130,6 +130,7 @@ export class TaskPlanner implements TaskView {
         var date = form.deadlineinput.valueAsDate
     
         var task = new Task(
+            this.taskMgr,
             title, 
             0, // Size presumed to be tiny
             this.selectedTask.importance, // Inherit importance

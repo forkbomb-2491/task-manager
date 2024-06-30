@@ -105,7 +105,7 @@ class App {
         var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
         var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
     
-        var task = new Task(title, size, importance, cat, date, false)
+        var task = new Task(this.taskMgr, title, size, importance, cat, date, false)
         this.taskMgr.addTask(task)
     }
 
@@ -209,16 +209,13 @@ class App {
  * The Task Manager.
  */
 export class TaskManager {
-    private tasks: Task[] = []
+    private _tasks: Task[] = []
 
     private taskList: TaskList
     private planner: Planner
     private helpMgr: HelpManager
     private taskPlanner: TaskPlanner
     private taskNotifier: TaskNotifier
-
-    // Prevents pruning recursion
-    private isPruning: boolean = false
 
     constructor() {
         this.taskList = new TaskList(this)
@@ -240,7 +237,7 @@ export class TaskManager {
         window.addEventListener(
             "taskchanged", 
             _ => {
-                saveTasks(this.tasks).then()
+                saveTasks(this._tasks).then()
             }
         )
     }
@@ -251,39 +248,22 @@ export class TaskManager {
     }
 
     private async loadTasks() {
-        this.tasks = await loadTasks()
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            task.completeCallback = () => { this.refresh() }
-            task.deleteCallback = () => { this.refresh() }
-        }
+        this._tasks = (await loadTasks()).map(
+            o => new Task(
+                this,
+                o.name,
+                o.size,
+                o.importance,
+                o.category,
+                o.due,
+                o.completed,
+                o.id,
+                o.subtasks,
+                null
+            )
+        )
 
         this.render()
-    }
-
-    private pruneTasks() {
-        if (this.isPruning) return
-        this.isPruning = true
-
-        // Reap zombie children
-        var taskIds = this.tasks.filter(
-            t => !t.deleted
-        ).map(
-            t => t.id
-        )
-        this.tasks.forEach(task => {
-            // Delete orphaned tasks
-            if (task.parentId != null && !taskIds.includes(task.parentId)) {
-                task.delete()
-            }
-            // Remove deleted children
-            task.children = task.children.filter(c => taskIds.includes(c))
-        })
-
-        // Remove deleted tasks
-        this.tasks = this.tasks.filter(t => !t.deleted)
-
-        this.isPruning = false
     }
 
     private render() {
@@ -294,25 +274,35 @@ export class TaskManager {
         this.taskNotifier.refresh()
     }
 
-    private refresh() {
-        // this.pruneTasks()
-
+    refresh() {
         this.taskList.refresh()
         this.planner.refresh()
         this.helpMgr.render()
         this.taskPlanner.refresh()
         this.taskNotifier.refresh()
 
-        saveTasks(this.tasks).then()
+        saveTasks(this._tasks).then()
+    }
+
+    private flattenTaskList(currentList: Task[]): Task[] {
+        var ret: Task[] = []
+        for (let i = 0; i < currentList.length; i++) {
+            const currentTask = currentList[i];
+            ret.push(currentTask)
+            if (currentTask.subtasks.length > 0) {
+                ret = ret.concat(this.flattenTaskList(currentTask.subtasks))
+            }
+        }
+        return ret
     }
 
     getTasks() {
-        return [...this.tasks]
+        return this.flattenTaskList(this._tasks)
     }
 
     getTask(id: string): Task | null {
-        for (let i = 0; i < this.tasks.length; i++) {
-            const task = this.tasks[i];
+        for (let i = 0; i < this.getTasks().length; i++) {
+            const task = this.getTasks()[i];
             if (task.id == id) {
                 return task
             }
@@ -322,7 +312,9 @@ export class TaskManager {
     }
 
     addTask(task: Task) {
-        this.tasks.push(task)
+        if (task.parent == null) {
+            this._tasks.push(task)
+        }
 
         this.planner.addTask(task)
         this.taskList.addTask(task)
@@ -330,7 +322,7 @@ export class TaskManager {
         this.helpMgr.refresh()
         this.taskNotifier.refresh()
 
-        saveTasks(this.tasks).then()
+        saveTasks(this._tasks).then()
     }
 }
 
