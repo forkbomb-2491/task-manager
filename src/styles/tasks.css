@@ -105,38 +105,22 @@ button.complete:hover {
 
 .sortbutton {
     display: flex;
+    /* background-color: transparent; */
     background-color: var(--secondary-color);
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
+    border: none;
 
-    transition: ease-in-out 200ms;
-
-    padding: 0.5rem;
-    /* width: 85%; */
+    display: flex;
+    padding: 0.25rem;
     margin-bottom: 0.5rem;
+
+    min-width: 98%;
+    transition: ease-in-out 200ms;
 
     color: var(--primary-text-color);
     font-size: smaller;
-    font-style: italic;
-    overflow-wrap: break-word;
-}
-
-.sortarrow {
-    display: flex;
-    background-color: var(--secondary-color);
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
-    border-radius: 0.5rem;
-
-    transition: ease-in-out 200ms;
-
-    padding: 0.5rem;
-    width: 4%;
-    margin-bottom: 0.5rem;
-
-    color: var(--primary-text-color);
-    font-size: small;
     font-style: italic;
     overflow-wrap: break-word;
 }

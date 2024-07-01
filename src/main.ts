@@ -8,6 +8,7 @@ import { SettingsView } from './settings'
 import { TaskNotifier } from './notifications'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
+import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
@@ -71,6 +72,9 @@ class App {
                 this.pomodoro = null
                 document.getElementById("pomodorotimer")!.innerHTML = "00:00"
                 document.getElementById("pomodorostatus")!.innerHTML = "Cancelled"
+                getCurrent().setProgressBar({
+                    status: ProgressBarStatus.None
+                }).then()
             }
         )
 
