@@ -211,6 +211,10 @@ class App {
 export class TaskManager {
     private _tasks: Task[] = []
 
+    get tasks(): Task[] {
+        return [...this._tasks]
+    }
+
     private taskList: TaskList
     private planner: Planner
     private helpMgr: HelpManager

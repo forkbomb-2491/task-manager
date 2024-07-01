@@ -50,6 +50,7 @@
     "store:default",
     "dialog:default",
     "dialog:allow-message",
-    "dialog:allow-confirm"
+    "dialog:allow-confirm",
+    "dialog:default"
   ]
 }

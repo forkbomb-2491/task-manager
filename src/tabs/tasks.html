@@ -11,7 +11,7 @@
 <div class="task" style="justify-content: left;">
     <form name="taskcreate" id="taskcreateform" autocomplete="off">
         <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
-        <div style="min-width: 50%; min-width: 50%;">
+        <div style="min-width: 50%; max-width: 50%;">
             <input type = "text" id = "titleinput" name="titleinput" required>
         </div>
         <div style="min-width: 10%; max-width: 10%; display: flex;">
@@ -34,7 +34,7 @@
                 <option name="4">Huge</option>
             </select>
         </div>
-        <div style="min-width: 12.5%; min-width: 12.5%; display: flex;">
+        <div style="min-width: 12.5%; max-width: 12.5%; display: flex;">
             <select id = "importanceinput" name = "importanceinput" required>
                 <option name="0">Trivial</option>
                 <option name="1">Unimportant</option>
@@ -53,6 +53,32 @@
     <div style="display: flex;">
         <!-- <button class="showhidebutton" id="currenttasksbutton">S/H</button> -->
         <h2>Current Tasks</h2>
+    </div>
+    <div style="display: flex; justify-content: left;">
+        <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="">
+        </div>
+            
+        <div style="display: flex; min-width: 50%; max-width: 50%;">
+            <button class="sortarrow" id="alphaarrow">↑↓</button>
+            <button class="sortbutton" id="alphabeticalsort">Sort by Name</button>
+        </div>
+        <div style="min-width: 10%; max-width: 10%; display: flex;">
+            <button class="sortarrow" id="categoryarrow">↑↓</button>
+            <button class="sortbutton" id="categorysort">Sort by Category</button>
+        </div>
+        <div style="min-width: 7.5%; max-width: 7.5%; display: flex;">
+            <button class="sortarrow" id="sizearrow">↑↓</button>
+            <button class="sortbutton" id="sizesort">Sort by Size</button>
+        </div>
+        <div style="min-width: 12.5%; max-width: 12.5%; display: flex;">
+            <button class="sortarrow" id="importancearrow">↑↓</button>
+            <button class="sortbutton" id="importancesort">Sort by Importance</button>
+        </div>
+        <div style="min-width: 16%; max-width: 16%; display: flex;">
+            <button class="sortarrow" id="duedatearrow">↑↓</button>
+            <button class="sortbutton" id="duedatesort">Sort by Due Date</button>
+        </div>
+        <div style="background: none; border: 0;" class="deletetask"></div>
     </div>
     <div class="tasklist" id="currenttasklist">
     </div>

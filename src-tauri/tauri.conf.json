@@ -1,7 +1,7 @@
 {
     "build": {
         "beforeDevCommand": "npm run dev",
-        "beforeBuildCommand": "npm run build && echo hi",
+        "beforeBuildCommand": "npm run build",
         "frontendDist": [
             "../dist",
             "../src/styles/themes",

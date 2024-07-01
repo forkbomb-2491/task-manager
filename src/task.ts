@@ -55,14 +55,14 @@ export class TaskList implements TaskView {
         currentList.innerHTML = ""
         completedList.innerHTML = ""
 
-        var tasks = this.taskMgr.getTasks()
+        var tasks = this.taskMgr.tasks
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];
             if (task.deleted) { continue }
             if (task.completed) {
-                completedList.appendChild(task.getTaskListElement())
+                completedList.appendChild(task.taskListElement)
             } else {
-                currentList.appendChild(task.getTaskListElement())
+                currentList.appendChild(task.taskListElement)
             }
         }
     }
@@ -76,7 +76,7 @@ export class TaskList implements TaskView {
         var completedList = document.getElementById("completedtasklist")!;
         for (let i = 0; i < currentList.children.length; i++) {
             const task = currentList.children[i];
-            if (task.className.includes("completed")) {
+            if (task.children[0].className.includes("completed")) {
                 currentList.removeChild(task)
                 completedList.appendChild(task)
             }
@@ -84,7 +84,7 @@ export class TaskList implements TaskView {
 
         for (let i = 0; i < completedList.children.length; i++) {
             const task = completedList.children[i];
-            if (!task.className.includes("completed")) {
+            if (!task.children[0].className.includes("completed")) {
                 completedList.removeChild(task)
                 currentList.appendChild(task)
             }
@@ -182,6 +182,50 @@ export class Task {
     deleteCallback: (() => void) | null = null
 
     private elements: HTMLElement[] = []
+
+    get plannerElement(): HTMLParagraphElement {
+        this.cleanUpElements()
+
+        var newElement = document.createElement("p")
+        if (this.completed) {
+            newElement.className = " completed"
+        }
+        newElement.innerHTML = `
+        <button class="complete"></button>
+        ${this.name}
+        `
+
+        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
+
+        newElement.getElementsByClassName("complete")[0].addEventListener(
+            "click",
+            completeTaskCallback
+        )
+
+        if (this.category != "Default") {
+            newElement.style.color = getColor(this.category)
+        }
+
+        this.elements.push(newElement)
+        return newElement
+    }
+
+    get taskListElement(): HTMLDivElement {
+        var ownTaskElement = this.getTaskListLikeElement(true)
+        var newContainer = document.createElement("div")
+        var subtaskContainer = document.createElement("div")
+        subtaskContainer.className = "subtaskcontainer"
+        this._subtasks.forEach(st => {
+            subtaskContainer.appendChild(st.taskListElement)
+        })
+        newContainer.appendChild(ownTaskElement)
+        newContainer.appendChild(subtaskContainer)
+        return newContainer
+    }
+
+    get shortenedTaskListElement(): HTMLDivElement {
+        return this.getTaskListLikeElement(false)
+    }
 
     /**
      * The Task's default constructor. Should be called mainly by UI callbacks
@@ -438,30 +482,7 @@ export class Task {
      * @returns A <p> HTML Element with a square checkbox.
      */
     getPlannerElement() {
-        this.cleanUpElements()
-
-        var newElement = document.createElement("p")
-        if (this.completed) {
-            newElement.className = " completed"
-        }
-        newElement.innerHTML = `
-        <button class="complete"></button>
-        ${this.name}
-        `
-
-        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
-
-        newElement.getElementsByClassName("complete")[0].addEventListener(
-            "click",
-            completeTaskCallback
-        )
-
-        if (this.category != "Default") {
-            newElement.style.color = getColor(this.category)
-        }
-
-        this.elements.push(newElement)
-        return newElement
+        return this.plannerElement
     }
 }
 
