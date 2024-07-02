@@ -47,12 +47,12 @@ export class TimerHandler {
                 if (this.counter % 2 == 0) {
                     getCurrent().setProgressBar({
                         status: ProgressBarStatus.Normal,
-                        progress: Math.round(this.timer/(this.breakdurat * 60) * 100)
+                        progress: Math.round(this.timer/(this.breakdurat * 60) * 99 + 1)
                     }).then()
                 } else {
                     getCurrent().setProgressBar({
                         status: ProgressBarStatus.Normal,
-                        progress: Math.round(this.timer/(this.workdurat * 60) * 100)
+                        progress: Math.round(this.timer/(this.workdurat * 60) * 99 + 1)
                     }).then()
                 }
                 this.doTick()

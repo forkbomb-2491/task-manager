@@ -22,11 +22,11 @@
         ]
     },
     "productName": "task-manager",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "identifier": "dev.pgil.forkbomb.taskmgr",
     "plugins": {
         "updater": {
-            "active": false,
+            "active": true,
             "dialog": true,
             "endpoints": [
                 "https://gist.githubusercontent.com/monsieurjonees/f307f935c5c26f5817a947df95cf8b12/raw/taskMgrUpdates.json"

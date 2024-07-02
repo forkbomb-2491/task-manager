@@ -34,6 +34,10 @@ input {
     margin-bottom: 0.5rem;
 }
 
+.settingsbutton:active {
+    background-color: var(--primary-color);
+}
+
 .settingsslider {
     -webkit-appearance: none;
     appearance: none;

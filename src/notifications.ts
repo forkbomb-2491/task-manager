@@ -26,7 +26,8 @@ export class CheckInHandler {
     private notifcontent: Object = {
         "Just checking in!": "Are you finding it hard to be productive? Open Task Manager for some help!",
         "You're doing great!": "Need any suggestions for what to do?  Open Task Manager for some help!",
-        "Don't give up!": "Struggling to stay motivated? Open Task Manager for some help!"
+        "Don't give up!": "Struggling to stay motivated? Open Task Manager for some help!",
+        "Feeling stuck?":"Having trouble finding a sense of urgency? You have stuff coming up it would be good to get started on!"
     }
 
     private notifnum: number = 0
@@ -269,14 +270,13 @@ export class TaskNotifier {
             clearTimeout(this.scheduledReminder)
             this.scheduledReminder = null
         }
-    //     pulls (make sure contains no overdue tasks) and resorts notif list
+        //  pulls (make sure contains no overdue tasks) and resorts notif list
         this.tasks = this.taskMgr.getTasks().filter(
             t => {
                 return !t.completed && !t.deleted
             }
         )
         this.remindersContainer.render()
-    //     reschedule first notifications to be noon day before due date
         this.tasks.sort(
             (t1, t2) => {
                 return t1.due.valueOf() - t2.due.valueOf()

@@ -287,7 +287,7 @@ export class TaskManager {
         this.planner.refresh()
         this.helpMgr.render()
         this.taskPlanner.refresh()
-        this.taskNotifier.refresh()
+        // this.taskNotifier.refresh()
 
         saveTasks(this._tasks).then()
     }
@@ -328,7 +328,7 @@ export class TaskManager {
         this.taskList.addTask(task)
         this.taskPlanner.addTask(task)
         this.helpMgr.refresh()
-        this.taskNotifier.refresh()
+        // this.taskNotifier.refresh()
 
         saveTasks(this._tasks).then()
     }

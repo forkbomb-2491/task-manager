@@ -108,7 +108,7 @@ class HelpPane {
         )
     }
 
-    private getTasks(nTasks: number = 4) {
+    private getTasks(nTasks: number = 8) {
         var tasks = this.taskMgr.getTasks().filter((t) => {
             return !t.completed && !t.deleted && this.taskFilter(t)
         })
@@ -122,7 +122,7 @@ class HelpPane {
         this.element.innerHTML = ""
         var tasks = this.getTasks()
         tasks.forEach(task => {
-            this.element.appendChild(task.getPlannerElement())
+            this.element.appendChild(task.shortenedTaskListElement)
         });
     }
 }

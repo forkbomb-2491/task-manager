@@ -44,7 +44,16 @@ export class TaskPlanner implements TaskView {
             _ => this.shiftMonth(1)
         )
 
-        onTasksChanged(() => { this.refresh(); console.log("tp 37") })
+        window.addEventListener(
+            "resize",
+            _ => {
+                this.resize(window.innerWidth)
+            }
+        )
+
+        this.resize(window.innerWidth)
+        
+        onTasksChanged(() => { this.refresh() })
 
         var taskSelect = document.getElementById("tptask")!
         taskSelect.addEventListener(
@@ -57,6 +66,31 @@ export class TaskPlanner implements TaskView {
                 this.selectTask(task!)
             }
         )
+    }
+
+    private isStacked: boolean = false
+    private resize(width: number) {
+        const right = document.getElementById("tprightside")!
+        const left = document.getElementById("tpleftside")!
+        const container = document.getElementById("taskplan")!
+
+        if (this.isStacked && width > 1600) {
+            container.style.flexDirection = "row"
+            right.style.width = "80%"
+            right.style.marginLeft = "2rem"
+            right.style.marginTop = ""
+
+            left.style.width = "30%"
+            this.isStacked = false
+        } else if (!this.isStacked && width < 1600) {
+            container.style.flexDirection = "column"
+            right.style.width = ""
+            right.style.marginLeft = ""
+            right.style.marginTop = "2rem"
+
+            left.style.width = ""
+            this.isStacked = true
+        }
     }
 
     private clearDayElements() {

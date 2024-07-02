@@ -145,3 +145,11 @@ export enum Months {
     "November",
     "December"
 }
+
+export enum SortBasis {
+    "name",
+    "category",
+    "size",
+    "importance",
+    "duedate"
+}

@@ -1,5 +1,5 @@
 import { TaskManager } from "./main"
-import { padWithLeftZeroes } from "./utils"
+import { SortBasis, padWithLeftZeroes } from "./utils"
 
 const TaskChanged = new Event("taskchanged")
 
@@ -34,6 +34,9 @@ export interface TaskView {
 export class TaskList implements TaskView {
     private taskMgr: TaskManager
 
+    private sortBasis: SortBasis = SortBasis.duedate
+    private sortReverse: boolean = false
+
     constructor (taskMgr: TaskManager) {
         this.taskMgr = taskMgr
 
@@ -41,6 +44,40 @@ export class TaskList implements TaskView {
             "click",
             (_) => { this.toggleCompletedVisibility() }
         )
+    }
+
+    private sort(container: Element = document.getElementById("currenttasklist")!) {
+        var sortClosure = (a: Element, b: Element) => {
+            var ret: number = 0
+            const taskA = this.taskMgr.getTask(a.getAttribute("name")!)!
+            const taskB = this.taskMgr.getTask(b.getAttribute("name")!)!
+            switch (this.sortBasis) {
+                case SortBasis.name:
+                    ret = taskA.name > taskB.name ? 1 : -1
+                    break;
+                case SortBasis.category:
+                    ret = taskA.category > taskB.category ? 1 : -1
+                    break;
+                case SortBasis.size:
+                    ret = taskA.size - taskB.size
+                    break;
+                case SortBasis.importance:
+                    ret = taskA.importance - taskB.importance
+                    break;
+                case SortBasis.duedate:
+                    ret = taskA.due.valueOf() - taskB.due.valueOf()
+                    break;
+                default:
+                    break;
+            }
+            if (this.sortReverse) { ret *= -1 }
+            return ret
+        }
+        var elements = [...container.children].sort(sortClosure)
+        container.innerHTML = ""
+        elements.forEach(element => {
+            container.appendChild(element)
+        })
     }
 
     /**
@@ -65,6 +102,8 @@ export class TaskList implements TaskView {
                 currentList.appendChild(task.taskListElement)
             }
         }
+
+        this.sort()
     }
 
     /**
@@ -89,10 +128,15 @@ export class TaskList implements TaskView {
                 currentList.appendChild(task)
             }
         }
+
+        this.sort()
     }
 
     addTask(task: Task) {
-        document.getElementById("currenttasklist")!.appendChild(task.getTaskListElement())
+        if (task.parent == null) {
+            document.getElementById("currenttasklist")!.appendChild(task.taskListElement)
+        }
+        this.sort()
     }
 
     private toggleCompletedVisibility() {
@@ -213,6 +257,8 @@ export class Task {
     get taskListElement(): HTMLDivElement {
         var ownTaskElement = this.getTaskListLikeElement(true)
         var newContainer = document.createElement("div")
+        newContainer.className = "taskcontainer"
+        newContainer.setAttribute("name", this.id)
         var subtaskContainer = document.createElement("div")
         subtaskContainer.className = "subtaskcontainer"
         this._subtasks.forEach(st => {
@@ -220,6 +266,7 @@ export class Task {
         })
         newContainer.appendChild(ownTaskElement)
         newContainer.appendChild(subtaskContainer)
+        this.elements.push(newContainer)
         return newContainer
     }
 
@@ -303,7 +350,7 @@ export class Task {
             "due": this.due,
             "completed": this.completed,
             "id": this.id,
-            "subtasks": this._subtasks.map(t => t.toBasicObject())
+            "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
         }
     }
 
@@ -319,6 +366,12 @@ export class Task {
 
         task.parent = this
         this._subtasks.push(task)
+
+        this.elements.forEach(element => {
+            if (element.className == "taskcontainer") {
+                element.children[1].appendChild(task.taskListElement)
+            }
+        })
 
         window.dispatchEvent(TaskChanged)
     }
@@ -354,11 +407,19 @@ export class Task {
     toggleCompleted() {
         if (!this.completed) {
             this.elements.forEach(element => {
-                element.className += " completed"
+                if (element.className == "taskcontainer") {
+                    element.children[0].className += " completed"
+                } else {
+                    element.className += " completed"
+                }
             })
         } else {
             this.elements.forEach(element => {
-                element.className = element.className.replace(" completed", "")
+                if (element.className == "taskcontainer") {
+                    element.children[0].className = element.children[0].className.replace(" completed", "")
+                } else {
+                    element.className = element.className.replace(" completed", "")
+                }
             })
         }
 
@@ -405,20 +466,22 @@ export class Task {
         if (full) {
             newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="min-width: 50%; min-width: 50%;">
-                ${this.name}
-            </div>
-            <div style="min-width: 10%; max-width: 10%;">
-                ${this.category}
-            </div>
-            <div style="min-width: 7.5%; max-width: 7.5%;">
-                ${TaskSizes[this.size]}
-            </div>
-            <div style="min-width: 12.5%; min-width: 12.5%;">
-                ${TaskImportances[this.importance]}
-            </div>
-            <div style="min-width: 16%; max-width: 16%;">
-                ${this.due.toDateString()}
+            <div style="display: flex; flex-grow: 1">
+                <div style="flex-grow: 1">
+                    ${this.name}
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    ${this.category}
+                </div>
+                <div style="min-width: 10ch; max-width: 10ch;">
+                    ${TaskSizes[this.size]}
+                </div>
+                <div style="min-width: 13ch; min-width: 13ch;">
+                    ${TaskImportances[this.importance]}
+                </div>
+                <div style="min-width: 17ch; max-width: 17ch;">
+                    ${this.due.toDateString()}
+                </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
@@ -427,11 +490,16 @@ export class Task {
         } else {
             newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="min-width: 60%; max-width: 60%">
-                ${this.name}
-            </div>
-            <div style="min-width: 26%; max-width: 26%">
-                ${this.due.toDateString()}
+            <div style="display: flex; flex-grow: 1;">
+                <div style="flex-grow: 1">
+                    ${this.name}
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    ${TaskSizes[this.size]}
+                </div>
+                <div style="min-width: 15ch; max-width: 15ch;">
+                    ${this.due.toDateString()}
+                </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
@@ -455,8 +523,6 @@ export class Task {
         if (this.category != "Default") {
             newElement.style.color = getColor(this.category)
         }
-
-        this.elements.push(newElement)
         return newElement
     }
 
@@ -465,7 +531,9 @@ export class Task {
      * @returns A <div class="task"> HTML Element
      */
     getTaskListElement() {
-        return this.getTaskListLikeElement(true)
+        const newElement = this.getTaskListLikeElement(true)
+        this.elements.push(newElement)
+        return newElement
     }
     
     /**
@@ -474,7 +542,9 @@ export class Task {
      * @returns A <div class="task"> HTML Element with fewer details.
      */
     getTaskPlannerListElement() {
-        return this.getTaskListLikeElement(false)
+        const newElement = this.getTaskListLikeElement(false)
+        this.elements.push(newElement)
+        return newElement
     }
 
     /**
