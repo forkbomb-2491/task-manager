@@ -9,7 +9,16 @@ export class Planner implements TaskView {
     private startDate: Date
     private taskMgr: TaskManager
 
-    private startDay: Weekdays
+    private _startDay: Weekdays
+    
+    get startDay(): Weekdays {
+        return this._startDay
+    }
+    
+    set startDay(day: Weekdays) {
+        this._startDay = day
+        this.centerThisWeek()
+    }
 
     private dayColumns: DayColumn[] = []
 
@@ -20,7 +29,7 @@ export class Planner implements TaskView {
      */
     constructor(taskMgr: TaskManager, startDay: Weekdays = Weekdays.sunday) {
         this.taskMgr = taskMgr
-        this.startDay = startDay
+        this._startDay = startDay
 
         var today = new Date()
         this.startDate = findFirstPrecedingDay(today, startDay)
@@ -68,7 +77,7 @@ export class Planner implements TaskView {
 
     private centerThisWeek() {
         var today = new Date()
-        this.startDate = findFirstPrecedingDay(today, this.startDay)
+        this.startDate = findFirstPrecedingDay(today, this._startDay)
         this.render()
     }
 
@@ -86,7 +95,7 @@ export class Planner implements TaskView {
 
         var differentYears = this.startDate.getFullYear() != date.getFullYear()
 
-        document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate() + 1}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate()}${differentYears ? `/${date.getFullYear()}` : ""}`
+        document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate()}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate() - 1}${differentYears ? `/${date.getFullYear()}` : ""}`
     }
 
     /**

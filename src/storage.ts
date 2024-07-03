@@ -4,6 +4,7 @@ import { Task, TaskRecord } from "./task";
 import { Store } from "@tauri-apps/plugin-store";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
+import { Weekdays } from "./utils";
 
 const TASKS_FN = "tasks2.json"
 
@@ -96,6 +97,62 @@ export class StorageManager {
 
     async setLastTab(tab: string) {
         await this.settings.set("lastTab", tab)
+    }
+
+    async getPlannerStartDay(): Promise<Weekdays> {
+        var ret = await this.settings.get("plannerStartDay")
+        if (ret == null) {
+            return Weekdays.sunday
+        }
+        // @ts-ignore; type should be right
+        return ret
+    }
+
+    async setPlannerStartDay(day: Weekdays) {
+        await this.settings.set("plannerStartDay", day)
+        await this.settings.save()
+    }
+
+    async getRecListLength(): Promise<number> {
+        var ret = await this.settings.get("recListLength")
+        if (ret == null) {
+            return 8
+        }
+        // @ts-ignore; type should be right
+        return ret
+    }
+
+    async setRecListLength(nTasks: number) {
+        await this.settings.set("recListLength", nTasks)
+        await this.settings.save()
+    }
+
+    async getCheckinsEnabled(): Promise<boolean> {
+        var ret = await this.settings.get("checkinsEnabled")
+        if (ret == null) {
+            return true
+        }
+        // @ts-ignore; type should be right
+        return ret
+    }
+
+    async setCheckinsEnabled(enabled: boolean) {
+        await this.settings.set("checkinsEnabled", enabled)
+        await this.settings.save()
+    }
+
+    async getRemindersEnabled(): Promise<boolean> {
+        var ret = await this.settings.get("remindersEnabled")
+        if (ret == null) {
+            return true
+        }
+        // @ts-ignore; type should be right
+        return ret
+    }
+
+    async setRemindersEnabled(enabled: boolean) {
+        await this.settings.set("remindersEnabled", enabled)
+        await this.settings.save()
     }
 }
 

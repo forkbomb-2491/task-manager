@@ -32,14 +32,14 @@ class App {
     private pomodoro: TimerHandler | null = null
 
     constructor() {
-        this.taskMgr = new TaskManager()
         this.storageMgr = new StorageManager()
+        this.taskMgr = new TaskManager(this.storageMgr)
         this.settingsView = new SettingsView(this.storageMgr)
     }
     
     async main() {
-        this.taskMgr.start().then()
         this.settingsView.load()
+        this.taskMgr.start().then()
 
         // Register callbacks
         document.getElementById("taskcreateform")!.addEventListener(
@@ -225,12 +225,24 @@ export class TaskManager {
     private taskPlanner: TaskPlanner
     private taskNotifier: TaskNotifier
 
-    constructor() {
+    private storageMgr: StorageManager | null
+
+    constructor(storageMgr: StorageManager | null = null) {
+        this.storageMgr = storageMgr
+
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
         this.taskPlanner = new TaskPlanner(this)
         this.taskNotifier = new TaskNotifier(this)
+
+        if (this.storageMgr != null) {
+            this.storageMgr.getPlannerStartDay().then(
+                day => {
+                    this.planner.startDay = day
+                }
+            )
+        }
 
         window.addEventListener(
             "taskchanged",

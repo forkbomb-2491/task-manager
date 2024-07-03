@@ -19,6 +19,8 @@ export class CheckInHandler {
     private startTime: string
     private endTime: string
 
+    private enabledInSettings: boolean = true
+
     private daysEnabled: boolean[] = [false, false, false, false, false, false, false]
 
     private interval: number // milliseconds
@@ -57,6 +59,14 @@ export class CheckInHandler {
         if (daysEnabled.length == 7) {
             this.daysEnabled = daysEnabled
         }
+
+        window.addEventListener(
+            "checkinchange",
+            e => {
+                // @ts-ignore
+                this.enabledInSettings = e.value
+            }
+        )
     }
 
     private getStartTimestamp() {
@@ -99,11 +109,13 @@ export class CheckInHandler {
         this.notifnum = Math.floor(Math.random()*Object.keys(this.notifcontent).length)
         
         const notifTitle = Object.keys(this.notifcontent)[this.notifnum];
-        sendNotification({
-            title: notifTitle,
-            // @ts-ignore
-            body: this.notifcontent[notifTitle]
-        })
+        if (this.enabledInSettings) {
+            sendNotification({
+                title: notifTitle,
+                // @ts-ignore
+                body: this.notifcontent[notifTitle]
+            })
+        }
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
         }
@@ -173,6 +185,7 @@ export class TaskNotifier {
     private notifList: Task[]
     private remindersContainer: RemindersContainer
 
+    private enabledInSettings: boolean = true
 
     private scheduledReminder: NodeJS.Timeout | null = null
     public get isRunning(): boolean {
@@ -190,6 +203,14 @@ export class TaskNotifier {
 
         this.remindersContainer = new RemindersContainer(this)
         this.remindersContainer.render()
+
+        window.addEventListener(
+            "reminderschange",
+            e => {
+                // @ts-ignore
+                this.enabledInSettings = e.value
+            }
+        )
     }
 
     getNotifTasks(){
@@ -200,7 +221,7 @@ export class TaskNotifier {
         // var task = this.tasks[0]
 
         // If you haven't already gotten a notif, send notif
-        if (!this.notifList.includes(task)){
+        if (!this.notifList.includes(task) && this.enabledInSettings){
             if (task.dueIn < 0) {
                 sendNotification({
                     title: "Checking on " + task.name + "!",

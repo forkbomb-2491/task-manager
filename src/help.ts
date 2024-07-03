@@ -88,6 +88,16 @@ class HelpPane {
 
     private theAlgorithm: (t: Task) => number
     private taskFilter: (t: Task) => boolean
+    private _recListLength: number
+
+    get recListLength(): number {
+        return this._recListLength
+    }
+
+    set recListLength(value: number) {
+        this._recListLength = value
+        this.render()
+    }
 
     constructor(
         taskMgr: TaskManager,
@@ -99,6 +109,7 @@ class HelpPane {
         this.taskFilter = filter
         this.taskMgr = taskMgr
         this.element = element
+        this._recListLength = 8
 
         window.addEventListener(
             "taskchanged",
@@ -106,16 +117,26 @@ class HelpPane {
                 this.render()
             }
         )
+
+        window.addEventListener(
+            "reclistchange",
+            e => {
+                // @ts-ignore
+                this.recListLength = e.value
+            }
+        )
     }
 
-    private getTasks(nTasks: number = 8) {
+    private getTasks() {
         var tasks = this.taskMgr.getTasks().filter((t) => {
             return !t.completed && !t.deleted && this.taskFilter(t)
         })
         tasks = tasks.sort((t1, t2) => {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
-        return tasks.slice(0, nTasks)
+        // return tasks.slice(0, nTasks)
+        return tasks.slice(0, this._recListLength)
+
     }
 
     render(): void {

@@ -35,11 +35,81 @@ export class SettingsView {
 
         this.addThemeButtonCallbacks()
 
+        document.getElementById("weekstartform")!.addEventListener(
+            "change",
+            _ => {
+                this.weekStartChangeCallback()
+            }
+        )
+
+        document.getElementById("reclistslider")!.addEventListener(
+            "change",
+            _ => {
+                this.recListSliderCallback()
+            }
+        )
+
+        document.getElementById("checkinenabled")!.addEventListener(
+            "change",
+            _ => {
+                console.log("chicken")
+                const element = document.getElementById("checkinenabled")!
+                // @ts-ignore
+                window.dispatchEvent(new BooleanSettingsEvent("checkinchange", element.checked))
+                this.storageMgr.setCheckinsEnabled(true).then()
+            }
+        )
+
+        document.getElementById("remindersenabled")!.addEventListener(
+            "change",
+            _ => {
+                console.log("reminderz")
+                const element = document.getElementById("remindersenabled")!
+                // @ts-ignore
+                window.dispatchEvent(new BooleanSettingsEvent("reminderschange", element.checked))
+                this.storageMgr.setRemindersEnabled(true).then()
+            }
+        )
+
         this.storageMgr.getLastTheme().then((theme: string) => {
             this.changeTheme(theme)
         })
 
+        this.storageMgr.getRecListLength().then(len => {
+            const slider = document.getElementById("reclistslider")!
+            // @ts-ignore
+            slider.value = len
+            const label = document.getElementById("reclistlabel")!
+            // @ts-ignore
+            label.innerHTML = `${len}`
+            window.dispatchEvent(new NumericalSettingsEvent("reclistchange", len))
+        })
+
+        this.storageMgr.getCheckinsEnabled().then(val => {
+            const checkbox = document.getElementById("checkinenabled")!
+            // @ts-ignore
+            checkbox.checked = val
+            // @ts-ignore
+            window.dispatchEvent(new BooleanSettingsEvent("checkinchange", val))
+        })
+
+        this.storageMgr.getRemindersEnabled().then(val => {
+            const checkbox = document.getElementById("remindersenabled")!
+            // @ts-ignore
+            checkbox.checked = val
+            // @ts-ignore
+            window.dispatchEvent(new BooleanSettingsEvent("reminderschange", val))
+        })
+
         this.setSettingsFieldsToSavedValues().then()
+    }
+
+    private recListSliderCallback() {
+        const slider = document.getElementById("reclistslider")!
+        // @ts-ignore
+        const val = Number(slider.value)
+        window.dispatchEvent(new NumericalSettingsEvent("reclistchange", val))
+        this.storageMgr.setRecListLength(val).then()
     }
 
     private async setSettingsFieldsToSavedValues() {
@@ -84,6 +154,17 @@ export class SettingsView {
             for (let i = 0; i < selector!.getElementsByTagName("input").length; i++) {
                 const element = selector!.getElementsByTagName("input")[i];
                 if (element.value == theme) {
+                    element.checked = true
+                    break
+                }
+            }
+        })
+
+        this.storageMgr.getPlannerStartDay().then(day => {
+            var selector = document.getElementById("weekstartform")!
+            for (let i = 0; i < selector.getElementsByTagName("input").length; i++) {
+                const element = selector.getElementsByTagName("input")[i];
+                if (element.value == `${day}`) {
                     element.checked = true
                     break
                 }
@@ -178,12 +259,64 @@ export class SettingsView {
         )
     }
 
+    private weekStartChangeCallback() {
+        var selector = document.getElementById("weekstartform")!
+        for (let i = 0; i < selector.getElementsByTagName("input").length; i++) {
+            const element = selector.getElementsByTagName("input")[i];
+            if (element.checked) {
+                var newDay = Number(element.value)
+                window.dispatchEvent(new NumericalSettingsEvent("weekstartchange", newDay))
+                this.storageMgr.setPlannerStartDay(newDay).then()
+                break
+            }
+        }
+    }
+
     private addThemeButtonCallbacks() {
         var themeButtonCallback = (e: Event) => {
             this.themeButtonCallback(e)
         }
 
         document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
-        
+    }
+}
+
+class NumericalSettingsEvent extends Event {
+    _value: number
+
+    get value(): number {
+        return this._value
+    }
+
+    constructor(event: string, value: number) {
+        super(event)
+        this._value = value
+    }
+}
+
+// @ts-ignore
+class StringSettingsEvent extends Event {
+    _value: string
+
+    get value(): string {
+        return this._value
+    }
+
+    constructor(event: string, value: string) {
+        super(event)
+        this._value = value
+    }
+}
+
+class BooleanSettingsEvent extends Event {
+    _value: boolean
+
+    get value(): boolean {
+        return this._value
+    }
+
+    constructor(event: string, value: boolean) {
+        super(event)
+        this._value = value
     }
 }
