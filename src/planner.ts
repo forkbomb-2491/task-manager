@@ -65,10 +65,12 @@ export class Planner implements TaskView {
         )
 
         onSettingChange("plannerFlipped", e => {
-            if (e) {
+            if (e.value) {
                 switchPlannerOrientation()
             }
         })
+
+        onSettingChange("plannerStartDay", e => this.startDay = e.value)
     }
 
     // Following 3 methods handle shifting the Planner from the UI

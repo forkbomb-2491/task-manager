@@ -111,6 +111,7 @@ class App {
     }
 
     private switchPlannerCallback() {
+        this.settings.plannerFlipped = !this.settings.plannerFlipped
         this.settings.plannerFlipped = switchPlannerOrientation()
     }
 
@@ -216,6 +217,8 @@ export class TaskManager {
     private taskPlanner: TaskPlanner
     private taskNotifier: TaskNotifier
 
+    private settingsLoaded: boolean = false
+
     constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
@@ -239,6 +242,8 @@ export class TaskManager {
                 saveTasks(this._tasks).then()
             }
         )
+        
+        onSettingsLoad(() => this.settingsLoaded = true)
     }
 
     async start() {
@@ -270,7 +275,13 @@ export class TaskManager {
         this.planner.render()
         this.helpMgr.render()
         this.taskPlanner.render()
-        this.taskNotifier.refresh()
+
+        if (this.settingsLoaded) {
+            this.taskNotifier.refresh()
+        } else {
+            onSettingsLoad(() => this.taskNotifier.refresh())
+        }
+
     }
 
     refresh() {

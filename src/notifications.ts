@@ -61,7 +61,7 @@ export class CheckInHandler {
             this.daysEnabled = daysEnabled
         }
 
-        onSettingChange("checkinsEnabled", e => this.enabledInSettings = e.value)
+        onSettingChange("checkinsEnabled", e => {this.enabledInSettings = e.value})
     }
 
     private getStartTimestamp() {
@@ -199,7 +199,10 @@ export class TaskNotifier {
         this.remindersContainer = new RemindersContainer(this)
         this.remindersContainer.render()
 
-        onSettingChange("remindersEnabled", e => this.enabledInSettings = e.value)
+        onSettingChange("remindersEnabled", e => {
+            this.enabledInSettings = e.value
+            console.log(e.value)
+        })
     }
 
     getNotifTasks(){

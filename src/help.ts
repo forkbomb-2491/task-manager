@@ -1,5 +1,6 @@
 import { Task, TaskView } from "./task";
 import { TaskManager } from "./main";
+import { onSettingChange } from "./settings";
 
 export function changeHelpStuff(target: string) {
     // Change tab to target in all contexts
@@ -118,13 +119,7 @@ class HelpPane {
             }
         )
 
-        window.addEventListener(
-            "reclistchange",
-            e => {
-                // @ts-ignore
-                this.recListLength = e.value
-            }
-        )
+        onSettingChange("recListLength", e => this.recListLength = e.value)
     }
 
     private getTasks() {

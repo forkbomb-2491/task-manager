@@ -4,7 +4,7 @@ import { } from "./storage";
 import { Weekdays } from "./utils";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 
-const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings2.json"
+const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json"
 
 export class SettingsView {
     // @ts-ignore
@@ -76,7 +76,7 @@ export class SettingsView {
                 console.log("reminderz")
                 // @ts-ignore
                 const element: HTMLInputElement = document.getElementById("remindersenabled")!
-                this.settings.checkinsEnabled = element.checked
+                this.settings.remindersEnabled = element.checked
             }
         )
 
@@ -185,6 +185,7 @@ export class SettingsView {
 
     private changeNotifSettingsCallback(event: SubmitEvent) {
         event.preventDefault()
+        console.log("urmom")
 
         // @ts-ignore
         var form: HTMLFormElement = event.target
@@ -206,7 +207,9 @@ export class SettingsView {
             this.checkInHandler.setStartTime(startTime)
             this.checkInHandler.setEndTime(endTime)
             this.checkInHandler.setInterval(Number(sliderValue) * 60_000)
+            this.checkInHandler.setDaysEnabled(daysEnabled)
             this.checkInHandler.start()
+            console.log(this.checkInHandler)
         } else {
             this.checkInHandler = new CheckInHandler(startTime, endTime, Number(sliderValue) * 60_000, daysEnabled)
             this.checkInHandler.start()
@@ -215,7 +218,7 @@ export class SettingsView {
         this.settings.checkInSettings = {
             "startTime": startTime, 
             "endTime": endTime, 
-            "interval": Number(sliderValue), 
+            "interval": Number(sliderValue) * 60_000, 
             "daysEnabled": daysEnabled
         }
     }
@@ -331,13 +334,14 @@ export class Settings {
             this.store.load().then(_ => {
                 this.store.entries().then(ret => {
                     this.entries = ret
-                    this._isLoaded = true
-                    window.dispatchEvent(new Event("settingsloaded"))
-    
                     ret.forEach(stg => {
                         window.dispatchEvent(new SettingsEvent(SettingsEventType.change, stg[0], stg[1]))
                     })
+
+                    this._isLoaded = true
+                    window.dispatchEvent(new Event("settingsloaded"))
     
+                    // @ts-ignore
                     window.settings = this
                 })
             })
