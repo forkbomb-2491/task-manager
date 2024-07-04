@@ -227,11 +227,6 @@ export class TaskManager {
         this.taskNotifier = new TaskNotifier(this)
 
         window.addEventListener(
-            "taskchanged",
-            _ => this.refresh()
-        )
-
-        window.addEventListener(
             "focus",
             _ => this.refresh()
         )
@@ -239,6 +234,7 @@ export class TaskManager {
         window.addEventListener(
             "taskchanged", 
             _ => {
+                this.refresh()
                 saveTasks(this._tasks).then()
             }
         )

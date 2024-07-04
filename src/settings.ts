@@ -6,6 +6,10 @@ import { appDataDir, resolve } from "@tauri-apps/api/path";
 
 const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json"
 
+/**
+ * Controls the Settings tab's UI elements and responds to (most) changes.
+ * Some settings changed are still handled in main. (<- TO DO)
+ */
 export class SettingsView {
     // @ts-ignore
     private reminderSettings: HTMLFormElement = document.getElementById("remindersettings")!
@@ -36,6 +40,11 @@ export class SettingsView {
         )
     }
 
+    /**
+     * This loads the Settings UI. This starts the CheckInHandler and the
+     * Settings tab's UI elements to reflect the user's previously selected
+     * settings.
+     */
     load() {
         this.loadCheckInHandler().then()
 
@@ -274,15 +283,32 @@ export class SettingsView {
     }
 }
 
+/**
+ * The different types of Settings events the Settings class may dispatch or to
+ * which it may respond. 
+ */
 enum SettingsEventType {
-    "change"
+    "change" // When a setting is changed, or a non-default value is loaded
 }
 
+/**
+ * An Event that Settings can dispatch or receive. The event contains a
+ * "setting" field and "value" field, the purposes of which are self-
+ * evident.
+ */
 export class SettingsEvent extends Event {
     private _setting: string
     private _value: any
 
+    /**
+     * The setting about which the Event is concerned.
+     */
     get setting(): string { return this._setting }
+
+    /**
+     * The value (if any) that has been mutated (usually associated with)
+     * `change` Events.
+     */
     get value(): any { return this._value }
 
     constructor(type: SettingsEventType, setting: string, value: any = null) {
@@ -302,6 +328,12 @@ export class SettingsEvent extends Event {
     }
 }
 
+/**
+ * Helper method for registering callbacks for settings changes. Further,
+ * it filters by setting which Events your callback will receive.
+ * @param setting Setting of interest
+ * @param cb Callback that takes a SettingsEvent argument.
+ */
 export function onSettingChange(setting: string, cb: (event: SettingsEvent) => void) {
     window.addEventListener(
         "settingchange",
@@ -312,15 +344,27 @@ export function onSettingChange(setting: string, cb: (event: SettingsEvent) => v
     )
 }
 
+/**
+ * Helper method to register callbacks for when settings are loaded from the
+ * disk.
+ * @param cb Callback method taking no arguments.
+ */
 export function onSettingsLoad(cb: () => void) {
     window.addEventListener("settingsloaded", _ => cb())
 }
 
+/**
+ * The Settings class manages all settings values, loading and storing to the
+ * disk, and handles Event dispatches when settings are changed.
+ */
 export class Settings {
     private store: Store
     private entries: [key: string, value: unknown][] = []
 
     private _isLoaded: boolean = false
+    /**
+     * Indicates whether settings have been loaded from the disk.
+     */
     get isLoaded(): boolean {
         return this._isLoaded
     }
@@ -329,6 +373,12 @@ export class Settings {
         this.store = new Store(SETTINGS_PATH)
     }
 
+    /**
+     * Loads settings from the disk. Note this method calls asynchronous
+     * functions and thus returns before settings are loaded. (Use
+     * onSettingsLoaded or onSettingChange callbacks to handle settings after
+     * they are loaded)
+     */
     load() {
         if (!this._isLoaded) {
             this.store.load().then(_ => {
@@ -368,6 +418,9 @@ export class Settings {
         return default_
     }
 
+    /**
+     * The last Theme selected by the user. (default: light)
+     */
     get lastTheme(): string {
         return this.getKey("theme", "light")
     }
@@ -376,6 +429,9 @@ export class Settings {
         this.setKey("theme", theme)
     }
 
+    /**
+     * Whether the planner presents the days as a list. (default: false)
+     */
     get plannerFlipped(): boolean {
         return this.getKey("plannerFlipped", false)
     }
@@ -384,6 +440,9 @@ export class Settings {
         this.setKey("plannerFlipped", val, false)
     }
 
+    /**
+     * The Tab last switched to by the user. (default: Tasks)
+     */
     get lastTab(): string {
         return this.getKey("lastTab", "tasks")
     }
@@ -392,6 +451,10 @@ export class Settings {
         this.setKey("lastTab", tab)
     }
 
+    /**
+     * The day of the week that appears first by default in the Planner. (And
+     * when the "This Week" button is pressed. default: Sunday)
+     */
     get plannerStartDay(): Weekdays {
         return this.getKey("plannerStartDay", 0)
     }
@@ -400,6 +463,9 @@ export class Settings {
         this.setKey("plannerStartDay", day)
     }
 
+    /**
+     * The number of recommendations offered by the Help tab. (default: 8)
+     */
     get recListLength(): number {
         return this.getKey("recListLength", 8)
     }
@@ -408,6 +474,10 @@ export class Settings {
         this.setKey("recListLength", len)
     }
 
+    /**
+     * Whether regular productivity Check-In notifications are sent by Task 
+     * Manager. (default: true)
+     */
     get checkinsEnabled(): boolean {
         return this.getKey("checkinsEnabled", true)
     }
@@ -416,6 +486,10 @@ export class Settings {
         this.setKey("checkinsEnabled", val)
     }
 
+    /**
+     * Whether notifications concerning tasks are sent by Task Manager.
+     * (default: true)
+     */
     get remindersEnabled(): boolean {
         return this.getKey("remindersEnabled", true)
     }
@@ -424,6 +498,10 @@ export class Settings {
         this.setKey("remindersEnabled", val)
     }
 
+    /**
+     * All Check-In settings, including start time, end time, interval, and
+     * days enabled.
+     */
     get checkInSettings(): CheckInSettings {
         return {
             "startTime": this.getKey("checkInStart", "12:00"),
