@@ -1,5 +1,7 @@
+import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
 import { StorageManager } from "./storage";
+import { Weekdays } from "./utils";
 
 export class SettingsView {
     // @ts-ignore
@@ -278,6 +280,109 @@ export class SettingsView {
         }
 
         document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
+    }
+}
+
+export class Settings {
+    private store: Store
+    private entries: [key: string, value: unknown][] = []
+
+    private _isLoaded: boolean = false
+    get isLoaded(): boolean {
+        return this._isLoaded
+    }
+
+    constructor(storageMgr: StorageManager) {
+        this.store = storageMgr.store
+        this.store.entries().then(ret => {
+            this.entries = ret
+            this._isLoaded = true
+            window.settings = this
+        })
+    }
+
+    private setKey(key: string, value: any) {
+        this.entries = this.entries.filter(e => e[0] != key)
+        this.entries.push([key, value])
+        this.store.set(key, value).then(_ => this.store.save().then())
+    }
+
+    private getKey(key: string, default_: any) {
+        for (let i = 0; i < this.entries.length; i++) {
+            const entry = this.entries[i];
+            if (entry[0] == key) {
+                return entry[1]
+            }
+        }
+        return default_
+    }
+
+    get lastTheme(): string {
+        return this.getKey("theme", "light")
+    }
+
+    set lastTheme(theme: string) {
+        this.setKey("theme", theme)
+    }
+
+    get plannerFlipped(): boolean {
+        return this.getKey("plannerFlipped", false)
+    }
+
+    set plannerFlipped(val: boolean) {
+        this.setKey("plannerFlipped", val)
+    }
+
+    get lastTab(): string {
+        return this.getKey("lastTab", "tasks")
+    }
+
+    set lastTab(tab: string) {
+        this.setKey("lastTab", tab)
+    }
+
+    get plannerStartDay(): Weekdays {
+        return this.getKey("plannerStartDay", 0)
+    }
+
+    set plannerStartDay(day: Weekdays) {
+        this.setKey("plannerStartDay", day)
+    }
+
+    get recListLength(): number {
+        return this.getKey("recListLength", 8)
+    }
+
+    set recListLength(len: number) {
+        this.setKey("recListLength", len)
+    }
+
+    get checkinsEnabled(): boolean {
+        return this.getKey("checkinsEnabled", true)
+    }
+
+    set checkinsEnabled(val: boolean) {
+        this.setKey("checkinsEnabled", val)
+    }
+
+    get remindersEnabled(): boolean {
+        return this.getKey("remindersEnabled", true)
+    }
+
+    set remindersEnabled(val: boolean) {
+        this.setKey("remindersEnabled", val)
+    }
+}
+
+class SettingsEvent extends Event {
+    private _value: any
+    get value(): any {
+        return this._value
+    }
+
+    constructor(type: string, value: any) {
+        super(type)
+        this._value = value
     }
 }
 
