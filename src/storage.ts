@@ -5,7 +5,6 @@ import { Store } from "@tauri-apps/plugin-store";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 import { message } from "@tauri-apps/plugin-dialog";
 import { Weekdays } from "./utils";
-import { Settings } from "./settings";
 
 const TASKS_FN = "tasks2.json"
 
@@ -19,9 +18,8 @@ if (!dirExists) {
 
 const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings2.json"
 
-export class StorageManager {
+class StorageManager {
     private settings: Store
-    private newSettings: Settings | undefined
 
     get store(): Store {
         return this.settings
@@ -29,9 +27,6 @@ export class StorageManager {
 
     constructor() {
         this.settings = new Store(SETTINGS_PATH)
-        this.settings.load().then(_ => {
-            this.newSettings = new Settings(this)
-        })
     }
 
     async saveSettings() {

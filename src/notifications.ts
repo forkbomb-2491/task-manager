@@ -3,6 +3,7 @@ import { todayDateString } from "./utils";
 import { Task } from "./task";
 import { TaskManager } from "./main";
 import { RemindersContainer } from "./reminders.ts";
+import { onSettingChange } from "./settings.ts";
 
 export async function sendNotif(title: string, body: string) {
     if (!(await isPermissionGranted())) {
@@ -60,13 +61,7 @@ export class CheckInHandler {
             this.daysEnabled = daysEnabled
         }
 
-        window.addEventListener(
-            "checkinchange",
-            e => {
-                // @ts-ignore
-                this.enabledInSettings = e.value
-            }
-        )
+        onSettingChange("checkinsEnabled", e => this.enabledInSettings = e.value)
     }
 
     private getStartTimestamp() {
@@ -204,13 +199,7 @@ export class TaskNotifier {
         this.remindersContainer = new RemindersContainer(this)
         this.remindersContainer.render()
 
-        window.addEventListener(
-            "reminderschange",
-            e => {
-                // @ts-ignore
-                this.enabledInSettings = e.value
-            }
-        )
+        onSettingChange("remindersEnabled", e => this.enabledInSettings = e.value)
     }
 
     getNotifTasks(){

@@ -1,6 +1,7 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
 import { Task, TaskView } from "./task"
 import { TaskManager } from "./main"
+import { onSettingChange } from "./settings"
 
 /**
  * The TaskView that represents the Planner tab.
@@ -62,6 +63,12 @@ export class Planner implements TaskView {
             "click",
             (_) => this.centerThisWeek()
         )
+
+        onSettingChange("plannerFlipped", e => {
+            if (e) {
+                switchPlannerOrientation()
+            }
+        })
     }
 
     // Following 3 methods handle shifting the Planner from the UI

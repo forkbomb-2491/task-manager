@@ -1,7 +1,10 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { StorageManager } from "./storage";
+import { } from "./storage";
 import { Weekdays } from "./utils";
+import { appDataDir, resolve } from "@tauri-apps/api/path";
+
+const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings2.json"
 
 export class SettingsView {
     // @ts-ignore
@@ -11,11 +14,17 @@ export class SettingsView {
     // @ts-ignore
     private themeSelector: HTMLFormElement = document.getElementById("themeselector")!
 
-    private storageMgr: StorageManager
     private checkInHandler: CheckInHandler | undefined
+    private settings: Settings
 
-    constructor(storageMgr: StorageManager) {
-        this.storageMgr = storageMgr
+    constructor(settings: Settings | null = null) {
+        if (settings != null) {
+            this.settings = settings
+        } else {
+            this.settings = new Settings()
+        }
+
+        window.addEventListener("settingsloaded", _ => this.load())
 
         window.addEventListener(
             "focus",
@@ -55,10 +64,9 @@ export class SettingsView {
             "change",
             _ => {
                 console.log("chicken")
-                const element = document.getElementById("checkinenabled")!
                 // @ts-ignore
-                window.dispatchEvent(new BooleanSettingsEvent("checkinchange", element.checked))
-                this.storageMgr.setCheckinsEnabled(true).then()
+                const element: HTMLInputElement = document.getElementById("checkinenabled")!
+                this.settings.checkinsEnabled = element.checked
             }
         )
 
@@ -66,56 +74,43 @@ export class SettingsView {
             "change",
             _ => {
                 console.log("reminderz")
-                const element = document.getElementById("remindersenabled")!
                 // @ts-ignore
-                window.dispatchEvent(new BooleanSettingsEvent("reminderschange", element.checked))
-                this.storageMgr.setRemindersEnabled(true).then()
+                const element: HTMLInputElement = document.getElementById("remindersenabled")!
+                this.settings.checkinsEnabled = element.checked
             }
         )
 
-        this.storageMgr.getLastTheme().then((theme: string) => {
-            this.changeTheme(theme)
-        })
+        this.changeTheme(this.settings.lastTheme)
 
-        this.storageMgr.getRecListLength().then(len => {
-            const slider = document.getElementById("reclistslider")!
-            // @ts-ignore
-            slider.value = len
-            const label = document.getElementById("reclistlabel")!
-            // @ts-ignore
-            label.innerHTML = `${len}`
-            window.dispatchEvent(new NumericalSettingsEvent("reclistchange", len))
-        })
+        const recListLen = this.settings.recListLength
+        // @ts-ignore
+        const slider: HTMLInputElement = document.getElementById("reclistslider")!.value = recListLen
+        document.getElementById("reclistlabel")!.innerHTML = `${recListLen}`
 
-        this.storageMgr.getCheckinsEnabled().then(val => {
-            const checkbox = document.getElementById("checkinenabled")!
-            // @ts-ignore
-            checkbox.checked = val
-            // @ts-ignore
-            window.dispatchEvent(new BooleanSettingsEvent("checkinchange", val))
-        })
+        
+        const checkInBox = document.getElementById("checkinenabled")!
+        // @ts-ignore
+        checkInBox.checked = this.settings.checkinsEnabled
 
-        this.storageMgr.getRemindersEnabled().then(val => {
-            const checkbox = document.getElementById("remindersenabled")!
-            // @ts-ignore
-            checkbox.checked = val
-            // @ts-ignore
-            window.dispatchEvent(new BooleanSettingsEvent("reminderschange", val))
-        })
 
-        this.setSettingsFieldsToSavedValues().then()
+        const remindersCheckbox = document.getElementById("remindersenabled")!
+        // @ts-ignore
+        remindersCheckbox.checked = this.settings.remindersEnabled
+
+
+        this.setSettingsFieldsToSavedValues()
     }
 
     private recListSliderCallback() {
         const slider = document.getElementById("reclistslider")!
         // @ts-ignore
         const val = Number(slider.value)
-        window.dispatchEvent(new NumericalSettingsEvent("reclistchange", val))
-        this.storageMgr.setRecListLength(val).then()
+
+        this.settings.recListLength = val
     }
 
-    private async setSettingsFieldsToSavedValues() {
-        var reminderStgs = await this.storageMgr.getCheckInSettings()
+    private setSettingsFieldsToSavedValues() {
+        var reminderStgs = this.settings.checkInSettings
         if (reminderStgs.startTime != null) {
             // @ts-ignore
             document.getElementById("notifstart")!.value = reminderStgs.startTime
@@ -151,34 +146,27 @@ export class SettingsView {
             document.getElementById("notifinterval")!.innerHTML = reminderStgs.interval / 60_000
         }
 
-        this.storageMgr.getLastTheme().then(theme => {
-            var selector = document.getElementById("themeselector")
-            for (let i = 0; i < selector!.getElementsByTagName("input").length; i++) {
-                const element = selector!.getElementsByTagName("input")[i];
-                if (element.value == theme) {
-                    element.checked = true
-                    break
-                }
+        var themeSelector = document.getElementById("themeselector")
+        for (let i = 0; i < themeSelector!.getElementsByTagName("input").length; i++) {
+            const element = themeSelector!.getElementsByTagName("input")[i];
+            if (element.value == this.settings.lastTheme) {
+                element.checked = true
+                break
             }
-        })
+        }
 
-        this.storageMgr.getPlannerStartDay().then(day => {
-            var selector = document.getElementById("weekstartform")!
-            for (let i = 0; i < selector.getElementsByTagName("input").length; i++) {
-                const element = selector.getElementsByTagName("input")[i];
-                if (element.value == `${day}`) {
-                    element.checked = true
-                    break
-                }
+        var weekStartSelector = document.getElementById("weekstartform")!
+        for (let i = 0; i < weekStartSelector.getElementsByTagName("input").length; i++) {
+            const element = weekStartSelector.getElementsByTagName("input")[i];
+            if (element.value == `${this.settings.plannerStartDay}`) {
+                element.checked = true
+                break
             }
-        })
+        }
     }
 
     private async loadCheckInHandler(): Promise<boolean> {
-        var stgs = await this.storageMgr.getCheckInSettings()
-        if (Object.values(stgs).includes(null)) {
-            return false
-        }
+        var stgs = this.settings.checkInSettings
         
         this.checkInHandler = new CheckInHandler(
             // @ts-ignore; If it isn't null, it's the right type
@@ -224,7 +212,12 @@ export class SettingsView {
             this.checkInHandler.start()
         }
 
-        this.storageMgr.setCheckInSettings(startTime, endTime, sliderValue, daysEnabled).then()
+        this.settings.checkInSettings = {
+            "startTime": startTime, 
+            "endTime": endTime, 
+            "interval": Number(sliderValue), 
+            "daysEnabled": daysEnabled
+        }
     }
 
     private changeTheme(theme: string) {
@@ -254,11 +247,7 @@ export class SettingsView {
         }
 
         this.changeTheme(theme)
-        this.storageMgr.setLastTheme(theme).then(
-            async () => {
-                await this.storageMgr.saveSettings()
-            }
-        )
+        this.settings.lastTheme = theme
     }
 
     private weekStartChangeCallback() {
@@ -267,8 +256,7 @@ export class SettingsView {
             const element = selector.getElementsByTagName("input")[i];
             if (element.checked) {
                 var newDay = Number(element.value)
-                window.dispatchEvent(new NumericalSettingsEvent("weekstartchange", newDay))
-                this.storageMgr.setPlannerStartDay(newDay).then()
+                this.settings.plannerStartDay = newDay
                 break
             }
         }
@@ -283,6 +271,48 @@ export class SettingsView {
     }
 }
 
+enum SettingsEventType {
+    "change"
+}
+
+export class SettingsEvent extends Event {
+    private _setting: string
+    private _value: any
+
+    get setting(): string { return this._setting }
+    get value(): any { return this._value }
+
+    constructor(type: SettingsEventType, setting: string, value: any = null) {
+        var eventType: string
+        switch (type) {
+            case SettingsEventType.change:
+                eventType = "settingchange"
+                break;
+        
+            default:
+                break;
+        }
+        super(eventType!)
+
+        this._setting = setting
+        this._value = value
+    }
+}
+
+export function onSettingChange(setting: string, cb: (event: SettingsEvent) => void) {
+    window.addEventListener(
+        "settingchange",
+        e => {
+            // @ts-ignore
+            if (e.setting == setting) { cb(e) }
+        }
+    )
+}
+
+export function onSettingsLoad(cb: () => void) {
+    window.addEventListener("settingsloaded", _ => cb())
+}
+
 export class Settings {
     private store: Store
     private entries: [key: string, value: unknown][] = []
@@ -292,19 +322,36 @@ export class Settings {
         return this._isLoaded
     }
 
-    constructor(storageMgr: StorageManager) {
-        this.store = storageMgr.store
-        this.store.entries().then(ret => {
-            this.entries = ret
-            this._isLoaded = true
-            window.settings = this
-        })
+    constructor() {
+        this.store = new Store(SETTINGS_PATH)
     }
 
-    private setKey(key: string, value: any) {
+    load() {
+        if (!this._isLoaded) {
+            this.store.load().then(_ => {
+                this.store.entries().then(ret => {
+                    this.entries = ret
+                    this._isLoaded = true
+                    window.dispatchEvent(new Event("settingsloaded"))
+    
+                    ret.forEach(stg => {
+                        window.dispatchEvent(new SettingsEvent(SettingsEventType.change, stg[0], stg[1]))
+                    })
+    
+                    window.settings = this
+                })
+            })
+        }
+    }
+
+    private setKey(key: string, value: any, fireEvent: boolean = true) {
         this.entries = this.entries.filter(e => e[0] != key)
         this.entries.push([key, value])
         this.store.set(key, value).then(_ => this.store.save().then())
+
+        if (fireEvent) {
+            window.dispatchEvent(new SettingsEvent(SettingsEventType.change, key, value))
+        }
     }
 
     private getKey(key: string, default_: any) {
@@ -330,7 +377,7 @@ export class Settings {
     }
 
     set plannerFlipped(val: boolean) {
-        this.setKey("plannerFlipped", val)
+        this.setKey("plannerFlipped", val, false)
     }
 
     get lastTab(): string {
@@ -372,56 +419,29 @@ export class Settings {
     set remindersEnabled(val: boolean) {
         this.setKey("remindersEnabled", val)
     }
-}
 
-class SettingsEvent extends Event {
-    private _value: any
-    get value(): any {
-        return this._value
+    get checkInSettings(): CheckInSettings {
+        return {
+            "startTime": this.getKey("checkInStart", "12:00"),
+            "endTime": this.getKey("checkInEnd", "12:00"),
+            "interval": this.getKey("checkInInterval", 60),
+            "daysEnabled": this.getKey("checkInDaysEnabled", [false, false, false, false, false, false, false])
+        }
     }
 
-    constructor(type: string, value: any) {
-        super(type)
-        this._value = value
-    }
-}
+    set checkInSettings(stgs: CheckInSettings) {
+        this.setKey("checkInStart", stgs.startTime, false)
+        this.setKey("checkInEnd", stgs.endTime, false)
+        this.setKey("checkInInterval", stgs.interval, false)
+        this.setKey("checkInDaysEnabled", stgs.daysEnabled, false)
 
-class NumericalSettingsEvent extends Event {
-    _value: number
-
-    get value(): number {
-        return this._value
-    }
-
-    constructor(event: string, value: number) {
-        super(event)
-        this._value = value
+        window.dispatchEvent(new SettingsEvent(SettingsEventType.change, "checkInSettings", stgs))
     }
 }
 
-// @ts-ignore
-class StringSettingsEvent extends Event {
-    _value: string
-
-    get value(): string {
-        return this._value
-    }
-
-    constructor(event: string, value: string) {
-        super(event)
-        this._value = value
-    }
-}
-
-class BooleanSettingsEvent extends Event {
-    _value: boolean
-
-    get value(): boolean {
-        return this._value
-    }
-
-    constructor(event: string, value: boolean) {
-        super(event)
-        this._value = value
-    }
+type CheckInSettings = {
+    "startTime": string,
+    "endTime": string,
+    "interval": number,
+    "daysEnabled": boolean[]
 }

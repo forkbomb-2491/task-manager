@@ -1,10 +1,10 @@
-import { StorageManager, loadTasks, loadTabs, saveTasks } from './storage'
+import { loadTasks, loadTabs, saveTasks } from './storage'
 import { Task, TaskList } from './task'
 import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
 import { TaskPlanner } from './taskplan'
-import { SettingsView } from './settings'
+import { Settings, SettingsView, onSettingsLoad } from './settings'
 import { TaskNotifier } from './notifications'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
@@ -22,23 +22,22 @@ await loadTabs()
 
 class App {
     // Frontend
-    private settingsView: SettingsView
+        // Nothing here!
 
     // Backend
     private taskMgr: TaskManager
-    private storageMgr: StorageManager
+    private settings: Settings
 
     // Other
     private pomodoro: TimerHandler | null = null
 
     constructor() {
-        this.storageMgr = new StorageManager()
-        this.taskMgr = new TaskManager(this.storageMgr)
-        this.settingsView = new SettingsView(this.storageMgr)
+        this.taskMgr = new TaskManager()
+        this.settings = new Settings()
+        new SettingsView(this.settings)
     }
     
     async main() {
-        this.settingsView.load()
         this.taskMgr.start().then()
 
         // Register callbacks
@@ -80,14 +79,12 @@ class App {
 
         // @ts-ignore; Populate fields' default values
         document.getElementById("deadlineinput")!.valueAsDate = new Date()
-        // Apply settings
-        this.storageMgr.getPlannerFlipped().then((flipped: boolean) => {
-            if (flipped) { switchPlannerOrientation() }
+
+        onSettingsLoad(() => {
+            this.changeTab(this.settings.lastTab)
         })
 
-        this.storageMgr.getLastTab().then((tab: string) => {
-            this.changeTab(tab)
-        })
+        this.settings.load()
 
         document.body.style.display = "block"
 
@@ -114,9 +111,7 @@ class App {
     }
 
     private switchPlannerCallback() {
-        this.storageMgr.setPlannerFlipped(switchPlannerOrientation()).then(async () => {
-            await this.storageMgr.saveSettings()
-        })
+        this.settings.plannerFlipped = switchPlannerOrientation()
     }
 
     /**
@@ -175,11 +170,7 @@ class App {
         var button: HTMLButtonElement = event.currentTarget
         var tab = button.name
         this.changeTab(tab)
-        this.storageMgr.setLastTab(tab).then(
-            async () => {
-                await this.storageMgr.saveSettings()
-            }
-        )
+        this.settings.lastTab = tab
     }
 
     private addTabButtonCallbacks() {
@@ -225,24 +216,12 @@ export class TaskManager {
     private taskPlanner: TaskPlanner
     private taskNotifier: TaskNotifier
 
-    private storageMgr: StorageManager | null
-
-    constructor(storageMgr: StorageManager | null = null) {
-        this.storageMgr = storageMgr
-
+    constructor() {
         this.taskList = new TaskList(this)
         this.planner = new Planner(this)
         this.helpMgr = new HelpManager(this)
         this.taskPlanner = new TaskPlanner(this)
         this.taskNotifier = new TaskNotifier(this)
-
-        if (this.storageMgr != null) {
-            this.storageMgr.getPlannerStartDay().then(
-                day => {
-                    this.planner.startDay = day
-                }
-            )
-        }
 
         window.addEventListener(
             "taskchanged",
