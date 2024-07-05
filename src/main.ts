@@ -4,7 +4,7 @@ import { Planner, switchPlannerOrientation } from './planner'
 import { HelpManager, changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
 import { TaskPlanner } from './taskplan'
-import { Settings, SettingsView, onSettingsLoad } from './settings'
+import { Settings, SettingsView, onSettingChange, onSettingsLoad } from './settings'
 import { TaskNotifier } from './notifications'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
@@ -83,6 +83,14 @@ class App {
         onSettingsLoad(() => {
             this.changeTab(this.settings.lastTab)
         })
+
+        onSettingChange(
+            "helpTabName",
+            e => {
+                document.getElementById("helptabbutton")!.innerHTML = e.value
+                document.getElementById("helptabheader")!.innerHTML = e.value
+            }
+        )
 
         this.settings.load()
 

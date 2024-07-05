@@ -519,6 +519,14 @@ export class Settings {
 
         window.dispatchEvent(new SettingsEvent(SettingsEventType.change, "checkInSettings", stgs))
     }
+
+    get helpTabName(): string {
+        return this.getKey("helpTabName", "💡")
+    }
+
+    set helpTabName(name: string) {
+        this.setKey("helpTabName", name)
+    }
 }
 
 type CheckInSettings = {
