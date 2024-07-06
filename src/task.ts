@@ -49,6 +49,8 @@ export class TaskList implements TaskView {
             "click",
             (_) => { this.toggleCompletedVisibility() }
         )
+
+        onTaskEvent(_ => this.refresh())
     }
 
     private sort(container: Element = document.getElementById("currenttasklist")!) {
@@ -186,6 +188,10 @@ export class TaskEvent extends Event {
                 typeString = "taskdelete"
                 break;
         
+            case TaskEventType.edit:
+                typeString = "taskedit"
+                break;
+        
             case TaskEventType.complete:
                 typeString = "taskcomplete"
                 break;
@@ -211,6 +217,14 @@ export function onTaskDelete(cb: (event: TaskEvent) => void) {
     )
 }
 
+export function onTaskEdit(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskedit",
+        cb
+    )
+}
+
 export function onTaskComplete(cb: (event: TaskEvent) => void) {
     // @ts-ignore
     window.addEventListener(
@@ -227,8 +241,10 @@ export function onTaskUncomplete(cb: (event: TaskEvent) => void) {
     )
 }
 
+
 export function onTaskEvent(cb: (event: TaskEvent) => void) {
     onTaskDelete(cb)
+    onTaskEdit(cb)
     onTaskComplete(cb)
     onTaskUncomplete(cb)
 }
@@ -430,6 +446,7 @@ export class Task {
             }
         })
 
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
         window.dispatchEvent(TaskChanged)
     }
 
@@ -709,13 +726,6 @@ export class TaskManager {
             _ => this.refresh()
         );
 
-        // window.addEventListener(
-        //     "taskchanged", 
-        //     _ => {
-        //         this.refresh()
-        //         saveTasks(this._tasks).then()
-        //     }
-        // )
         onTaskEvent(_ => {
             this.refresh();
             saveTasks(this._tasks).then();
@@ -762,10 +772,7 @@ export class TaskManager {
     }
 
     refresh() {
-        this.taskList.refresh();
-        this.planner.refresh();
         this.helpMgr.render();
-        this.taskPlanner.refresh();
         // this.taskNotifier.refresh()
         saveTasks(this._tasks).then();
     }
