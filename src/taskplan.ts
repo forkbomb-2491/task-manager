@@ -1,4 +1,4 @@
-import { TaskManager, onTaskEdit, onTaskEvent } from './task';
+import { TaskManager, onTaskEvent } from './task';
 import { Task, TaskView } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged } from "./utils";
 

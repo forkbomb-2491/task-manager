@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { assert, beforeEach, describe, it, vi } from 'vitest'
-import { getTask, mockDoc } from './testutils'
+import { assert, beforeEach, describe, it } from 'vitest'
+import { mockDoc } from './testutils'
 import { Task, TaskManager } from '../task'
 import { TaskPlanner } from '../taskplan'
 
