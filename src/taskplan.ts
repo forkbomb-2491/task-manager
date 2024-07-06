@@ -1,4 +1,4 @@
-import { TaskManager } from "./main";
+import { TaskManager } from './task';
 import { Task, TaskView } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged } from "./utils";
 
@@ -164,7 +164,6 @@ export class TaskPlanner implements TaskView {
         var date = form.deadlineinput.valueAsDate
     
         var task = new Task(
-            this.taskMgr,
             title, 
             0, // Size presumed to be tiny
             this.selectedTask.importance, // Inherit importance

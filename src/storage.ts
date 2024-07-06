@@ -2,8 +2,10 @@ import { path } from "@tauri-apps/api"
 import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { Task, TaskRecord } from "./task";
 import { message } from "@tauri-apps/plugin-dialog";
+import { appDataDir, resolve } from "@tauri-apps/api/path";
 
 const TASKS_FN = "tasks2.json"
+export const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json";
 
 // Checks to make sure the AppData folder for the App exists.
 var dirExists = await exists(".", {
@@ -142,4 +144,4 @@ export async function saveTasks(tasks: Array<Task>) {
 window.addEventListener(
     "blocktasksave",
     _ => blockTaskSave = true
-)
+);

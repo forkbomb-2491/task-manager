@@ -1,4 +1,9 @@
-import { TaskManager } from "./main"
+import { HelpManager } from "./help"
+import { TaskNotifier } from "./notifications"
+import { Planner } from "./planner"
+import { onSettingsLoad } from "./settings"
+import { saveTasks, loadTasks } from "./storage"
+import { TaskPlanner } from "./taskplan"
 import { SortBasis, padWithLeftZeroes } from "./utils"
 
 const TaskChanged = new Event("taskchanged")
@@ -47,6 +52,9 @@ export class TaskList implements TaskView {
     }
 
     private sort(container: Element = document.getElementById("currenttasklist")!) {
+        if (container.children.length < 2) {
+            return
+        }
         var sortClosure = (a: Element, b: Element) => {
             var ret: number = 0
             const taskA = this.taskMgr.getTask(a.getAttribute("name")!)!
@@ -160,6 +168,71 @@ export type TaskRecord = {
     "subtasks": TaskRecord[]
 }
 
+enum TaskEventType {
+    "delete",
+    "edit",
+    "complete",
+    "uncomplete"
+}
+
+export class TaskEvent extends Event {
+    private _task: TaskRecord
+    get task(): TaskRecord { return this._task }
+
+    constructor(type: TaskEventType, task: TaskRecord) {
+        var typeString: string
+        switch (type) {
+            case TaskEventType.delete:
+                typeString = "taskdelete"
+                break;
+        
+            case TaskEventType.complete:
+                typeString = "taskcomplete"
+                break;
+        
+            case TaskEventType.uncomplete:
+                typeString = "taskuncomplete"
+                break;
+        
+            default:
+                break;
+        }
+        super(typeString!)
+
+        this._task = task
+    }
+}
+
+export function onTaskDelete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskdelete",
+        cb
+    )
+}
+
+export function onTaskComplete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskcomplete",
+        cb
+    )
+}
+
+export function onTaskUncomplete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskuncomplete",
+        cb
+    )
+}
+
+export function onTaskEvent(cb: (event: TaskEvent) => void) {
+    onTaskDelete(cb)
+    onTaskComplete(cb)
+    onTaskUncomplete(cb)
+}
+
 /** 
 * This class represents a Task.
 */
@@ -173,42 +246,39 @@ export class Task {
     due: Date
     completed: boolean
 
-    private taskMgr: TaskManager
     private _subtasks: Task[] = []
     private _parent: Task | null = null
 
-    get subtasks(): Task[] {
-        return [...this._subtasks]
-    }
+    get subtasks(): Task[] { return [...this._subtasks] }
 
-    get parent(): Task | null {
-        return this._parent
-    }
-
+    get parent(): Task | null { return this._parent }
     set parent(task: Task) {
         if (this._parent == null) {
             this._parent = task
         }
     }
 
-    // Deprecated
-    get children(): string[] {
-        return this._subtasks.map(t => t.id)
+    get record(): TaskRecord {
+        return {
+            "name": this.name,
+            "size": this.size,
+            "importance": this.importance,
+            "category": this.category,
+            "due": this.due,
+            "completed": this.completed,
+            "id": this.id,
+            "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
+        }
     }
 
-    get parentId(): string | null {
-        return this._parent != null ? this._parent.id : null
-    }
+    // Deprecated
+    get children(): string[] { return this._subtasks.map(t => t.id) }
+    get parentId(): string | null { return this._parent != null ? this._parent.id : null }
     // End Dep.
 
+    get hasSubtasks() : boolean { return this._subtasks.length > 0 }
 
-    get hasSubtasks() : boolean {
-        return this._subtasks.length > 0
-    }
-
-    get isSubtask() : boolean {
-        return this._parent != null
-    }
+    get isSubtask() : boolean { return this._parent != null }
     
     /**
      * How many days until this task is due (rounded DOWN to nearest integer)
@@ -222,8 +292,8 @@ export class Task {
 
     deleted: boolean = false
 
-    completeCallback: (() => void) | null = null
-    deleteCallback: (() => void) | null = null
+    // completeCallback: (() => void) | null = null
+    // deleteCallback: (() => void) | null = null
 
     private elements: HTMLElement[] = []
 
@@ -288,7 +358,6 @@ export class Task {
      * @param parentId The parent Task's ID (as a *string*)
      */
     constructor(
-        taskMgr: TaskManager,
         name: string, 
         size: string | number, 
         importance: string | number, 
@@ -299,8 +368,6 @@ export class Task {
         subtasks: TaskRecord[] = [],
         parent: Task | null = null
     ) {
-        this.taskMgr = taskMgr
-
         this.name = name
         this.size = Number(size)
         this.importance = Number(importance)
@@ -318,7 +385,6 @@ export class Task {
 
         this._subtasks = subtasks.map(
             o => new Task(
-                taskMgr,
                 o.name,
                 o.size,
                 o.importance,
@@ -342,16 +408,7 @@ export class Task {
      * @returns An Object
      */
     toBasicObject(): TaskRecord {
-        return {
-            "name": this.name,
-            "size": this.size,
-            "importance": this.importance,
-            "category": this.category,
-            "due": this.due,
-            "completed": this.completed,
-            "id": this.id,
-            "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
-        }
+        return this.record
     }
 
     /**
@@ -389,10 +446,12 @@ export class Task {
 
         this.deleted = true
 
-        if (this.deleteCallback != null) {
-            this.deleteCallback()
-        }
-        this.taskMgr.refresh()
+        // if (this.deleteCallback != null) {
+        //     this.deleteCallback()
+        // }
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record))
+
+        // this.taskMgr.refresh()
 
         this._subtasks.forEach(sub => {
             sub.delete()
@@ -420,15 +479,20 @@ export class Task {
                 } else {
                     element.className = element.className.replace(" completed", "")
                 }
-            })
+            })      
         }
-
+        
         this.completed = !this.completed
-
-        if (this.completeCallback != null) {
-            this.completeCallback()
+        if (this.completed) {
+            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record))
+        } else {
+            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record))
         }
-        this.taskMgr.refresh()
+
+        // if (this.completeCallback != null) {
+        //     this.completeCallback()
+        // }
+        // this.taskMgr.refresh()
 
         window.dispatchEvent(TaskChanged)
     }
@@ -612,5 +676,137 @@ function getColor(color: string) {
 
         default:
             return "inherit"
+    }
+}
+/**
+ * The Task Manager.
+ */
+
+export class TaskManager {
+    private _tasks: Task[] = [];
+
+    get tasks(): Task[] {
+        return [...this._tasks];
+    }
+
+    private taskList: TaskList;
+    private planner: Planner;
+    private helpMgr: HelpManager;
+    private taskPlanner: TaskPlanner;
+    private taskNotifier: TaskNotifier;
+
+    private settingsLoaded: boolean = false;
+
+    constructor() {
+        this.taskList = new TaskList(this);
+        this.planner = new Planner(this);
+        this.helpMgr = new HelpManager(this);
+        this.taskPlanner = new TaskPlanner(this);
+        this.taskNotifier = new TaskNotifier(this);
+
+        window.addEventListener(
+            "focus",
+            _ => this.refresh()
+        );
+
+        // window.addEventListener(
+        //     "taskchanged", 
+        //     _ => {
+        //         this.refresh()
+        //         saveTasks(this._tasks).then()
+        //     }
+        // )
+        onTaskEvent(_ => {
+            this.refresh();
+            saveTasks(this._tasks).then();
+        });
+
+        onSettingsLoad(() => this.settingsLoaded = true);
+    }
+
+    async start() {
+        await this.loadTasks();
+        this.render();
+    }
+
+    private async loadTasks() {
+        this._tasks = (await loadTasks()).map(
+            o => new Task(
+                o.name,
+                o.size,
+                o.importance,
+                o.category,
+                o.due,
+                o.completed,
+                o.id,
+                o.subtasks,
+                null
+            )
+        );
+
+        this.render();
+    }
+
+    private render() {
+        this.taskList.render();
+        this.planner.render();
+        this.helpMgr.render();
+        this.taskPlanner.render();
+
+        if (this.settingsLoaded) {
+            this.taskNotifier.refresh();
+        } else {
+            onSettingsLoad(() => this.taskNotifier.refresh());
+        }
+
+    }
+
+    refresh() {
+        this.taskList.refresh();
+        this.planner.refresh();
+        this.helpMgr.render();
+        this.taskPlanner.refresh();
+        // this.taskNotifier.refresh()
+        saveTasks(this._tasks).then();
+    }
+
+    private flattenTaskList(currentList: Task[]): Task[] {
+        var ret: Task[] = [];
+        for (let i = 0; i < currentList.length; i++) {
+            const currentTask = currentList[i];
+            ret.push(currentTask);
+            if (currentTask.subtasks.length > 0) {
+                ret = ret.concat(this.flattenTaskList(currentTask.subtasks));
+            }
+        }
+        return ret;
+    }
+
+    getTasks() {
+        return this.flattenTaskList(this._tasks);
+    }
+
+    getTask(id: string): Task | null {
+        for (let i = 0; i < this.getTasks().length; i++) {
+            const task = this.getTasks()[i];
+            if (task.id == id) {
+                return task;
+            }
+        }
+
+        return null;
+    }
+
+    addTask(task: Task) {
+        if (task.parent == null) {
+            this._tasks.push(task);
+        }
+
+        this.planner.addTask(task);
+        this.taskList.addTask(task);
+        this.taskPlanner.addTask(task);
+        this.helpMgr.refresh();
+        // this.taskNotifier.refresh()
+        saveTasks(this._tasks).then();
     }
 }

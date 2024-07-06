@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { readdirSync } from "node:fs"
+import path from "node:path";
 
 function getRollupInputs(): string[] {
     // Always include index
@@ -25,11 +26,19 @@ export default defineConfig(async () => ({
     build: {
         rollupOptions: {
             input: getRollupInputs()
-        }
+        },
+        exclude: ["**/src/tests/**"]
     },
     esbuild: {
         supported: {
             "top-level-await": true
+        }
+    },
+    test: {
+        alias: {
+            "./storage": path.resolve(__dirname, "./src/tests/mocks"),
+            // "./settings": path.resolve(__dirname, "./src/tests/mocks"),
+            "./notifications": path.resolve(__dirname, "./src/tests/mocks"),
         }
     },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

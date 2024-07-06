@@ -1,6 +1,6 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
 import { Task, TaskView } from "./task"
-import { TaskManager } from "./main"
+import { TaskManager } from './task'
 import { onSettingChange } from "./settings"
 
 /**

@@ -1,5 +1,5 @@
 import { Task, TaskView } from "./task";
-import { TaskManager } from "./main";
+import { TaskManager } from './task';
 import { onSettingChange } from "./settings";
 
 export function changeHelpStuff(target: string) {

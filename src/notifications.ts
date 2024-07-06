@@ -1,7 +1,7 @@
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
 import { Task } from "./task";
-import { TaskManager } from "./main";
+import { TaskManager } from './task.ts';
 import { RemindersContainer } from "./reminders.ts";
 import { onSettingChange } from "./settings.ts";
 

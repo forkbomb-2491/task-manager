@@ -1,16 +1,15 @@
-import { loadTasks, loadTabs, saveTasks } from './storage'
-import { Task, TaskList } from './task'
-import { Planner, switchPlannerOrientation } from './planner'
-import { HelpManager, changeHelpStuff } from './help'
+import { loadTabs } from './storage'
+import { Task } from './task'
+import { switchPlannerOrientation } from './planner'
+import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
-import { TaskPlanner } from './taskplan'
 import { Settings, SettingsView, onSettingChange, onSettingsLoad } from './settings'
-import { TaskNotifier } from './notifications'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
+import { TaskManager } from './task';
 
-const DEBUG_TAB = true
+const DEBUG_TAB = false
 if (DEBUG_TAB) {
     addDebugFuncs()
     document.getElementById("debugtabbutton")!.style.display = "block"
@@ -114,7 +113,7 @@ class App {
         var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
         var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
     
-        var task = new Task(this.taskMgr, title, size, importance, cat, date, false)
+        var task = new Task(title, size, importance, cat, date, false)
         this.taskMgr.addTask(task)
     }
 
@@ -206,137 +205,6 @@ class App {
                 }
             )
         }
-    }
-}
-
-/**
- * The Task Manager.
- */
-export class TaskManager {
-    private _tasks: Task[] = []
-
-    get tasks(): Task[] {
-        return [...this._tasks]
-    }
-
-    private taskList: TaskList
-    private planner: Planner
-    private helpMgr: HelpManager
-    private taskPlanner: TaskPlanner
-    private taskNotifier: TaskNotifier
-
-    private settingsLoaded: boolean = false
-
-    constructor() {
-        this.taskList = new TaskList(this)
-        this.planner = new Planner(this)
-        this.helpMgr = new HelpManager(this)
-        this.taskPlanner = new TaskPlanner(this)
-        this.taskNotifier = new TaskNotifier(this)
-
-        window.addEventListener(
-            "focus",
-            _ => this.refresh()
-        )
-
-        window.addEventListener(
-            "taskchanged", 
-            _ => {
-                this.refresh()
-                saveTasks(this._tasks).then()
-            }
-        )
-        
-        onSettingsLoad(() => this.settingsLoaded = true)
-    }
-
-    async start() {
-        await this.loadTasks()
-        this.render()
-    }
-
-    private async loadTasks() {
-        this._tasks = (await loadTasks()).map(
-            o => new Task(
-                this,
-                o.name,
-                o.size,
-                o.importance,
-                o.category,
-                o.due,
-                o.completed,
-                o.id,
-                o.subtasks,
-                null
-            )
-        )
-
-        this.render()
-    }
-
-    private render() {
-        this.taskList.render()
-        this.planner.render()
-        this.helpMgr.render()
-        this.taskPlanner.render()
-
-        if (this.settingsLoaded) {
-            this.taskNotifier.refresh()
-        } else {
-            onSettingsLoad(() => this.taskNotifier.refresh())
-        }
-
-    }
-
-    refresh() {
-        this.taskList.refresh()
-        this.planner.refresh()
-        this.helpMgr.render()
-        this.taskPlanner.refresh()
-        // this.taskNotifier.refresh()
-
-        saveTasks(this._tasks).then()
-    }
-
-    private flattenTaskList(currentList: Task[]): Task[] {
-        var ret: Task[] = []
-        for (let i = 0; i < currentList.length; i++) {
-            const currentTask = currentList[i];
-            ret.push(currentTask)
-            if (currentTask.subtasks.length > 0) {
-                ret = ret.concat(this.flattenTaskList(currentTask.subtasks))
-            }
-        }
-        return ret
-    }
-
-    getTasks() {
-        return this.flattenTaskList(this._tasks)
-    }
-
-    getTask(id: string): Task | null {
-        for (let i = 0; i < this.getTasks().length; i++) {
-            const task = this.getTasks()[i];
-            if (task.id == id) {
-                return task
-            }
-        }
-
-        return null
-    }
-
-    addTask(task: Task) {
-        if (task.parent == null) {
-            this._tasks.push(task)
-        }
-
-        this.planner.addTask(task)
-        this.taskList.addTask(task)
-        this.taskPlanner.addTask(task)
-        this.helpMgr.refresh()
-        // this.taskNotifier.refresh()
-
-        saveTasks(this._tasks).then()
     }
 }
 

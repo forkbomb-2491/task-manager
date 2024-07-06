@@ -2,9 +2,7 @@ import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
 import { } from "./storage";
 import { Weekdays } from "./utils";
-import { appDataDir, resolve } from "@tauri-apps/api/path";
-
-const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json"
+import { SETTINGS_PATH } from "./storage";
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -72,7 +70,6 @@ export class SettingsView {
         document.getElementById("checkinenabled")!.addEventListener(
             "change",
             _ => {
-                console.log("chicken")
                 // @ts-ignore
                 const element: HTMLInputElement = document.getElementById("checkinenabled")!
                 this.settings.checkinsEnabled = element.checked
@@ -82,7 +79,6 @@ export class SettingsView {
         document.getElementById("remindersenabled")!.addEventListener(
             "change",
             _ => {
-                console.log("reminderz")
                 // @ts-ignore
                 const element: HTMLInputElement = document.getElementById("remindersenabled")!
                 this.settings.remindersEnabled = element.checked
