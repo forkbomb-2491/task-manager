@@ -2,12 +2,8 @@
 import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { Task, TaskEvent, TaskManager, onTaskComplete, onTaskDelete, onTaskUncomplete } from "../task";
 // @ts-ignore
-import { mockDoc } from './testutils'
+import { mockDoc, getTask } from './testutils'
 mockDoc()
-
-function getTask() {
-    return new Task("Test", 1, 4, "test", new Date())
-}
 
 describe("Task Events", () => {
     var task = new Task("test", 1, 1, "hhhh", new Date())

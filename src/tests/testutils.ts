@@ -1,9 +1,15 @@
+// @ts-nocheck
 import { readFile, readFileSync } from "fs"
 import path from "path"
+import { Task } from "../task"
 
 export function mockDoc() {
     loadIndex()
     loadTabs()
+}
+
+export function getTask() {
+    return new Task("Test", 1, 4, "test", new Date())
 }
 
 function loadIndex() {
