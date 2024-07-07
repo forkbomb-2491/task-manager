@@ -414,7 +414,7 @@ export class Task {
                     ${TaskImportances[this.importance]}
                 </div>
                 <div style="min-width: 17ch; max-width: 17ch;">
-                    ${this.due.toDateString()}
+                    <div class="overduewarning">${this.dueIn < 0 && !this.completed ? "⚠️ ": ""}</div>${this.due.toDateString()}
                 </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
@@ -431,8 +431,8 @@ export class Task {
                 <div style="min-width: 9ch; max-width: 9ch;">
                     ${TaskSizes[this.size]}
                 </div>
-                <div style="min-width: 15ch; max-width: 15ch;">
-                    ${this.due.toDateString()}
+                <div style="min-width: 17ch; max-width: 17ch;">
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this.due.toDateString()}
                 </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">

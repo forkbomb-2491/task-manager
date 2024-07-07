@@ -46,6 +46,14 @@
     width: calc(100% - 1ch);
 }
 
+.overduewarning {
+    display: inline;
+}
+
+.completed .overduewarning {
+    display: none;
+}
+
 .task select:focus-within {
     background-color: var(--secondary-color);
 
