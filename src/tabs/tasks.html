@@ -8,7 +8,29 @@
     <div style="width: 16%;">deadline</div>
     <div style="background: none; border: 0;" class="deletetask"></div>
 </div> -->
-<div class="task" style="justify-content: left;">
+<h2>Create New Task</h2>
+<div style="display: flex; justify-content: left; padding-left: 0.75rem; padding-right: 0.75rem;">
+    <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="">
+    </div>
+        
+    <div style="flex-grow: 1;">
+        <div class="sortbutton" id="alphasort">Name</div>
+    </div>
+    <div style="min-width: 9ch; max-width: 9ch; display: flex;">
+        <div class="sortbutton" id="categorysort">Category</div>
+    </div>
+    <div style="min-width: 10ch; max-width: 10ch; display: flex;">
+        <div class="sortbutton" id="sizesort">Size</div>
+    </div>
+    <div style="min-width: 13ch; max-width: 13ch; display: flex;">
+        <div class="sortbutton" id="importancesort">Importance</div>
+    </div>
+    <div style="min-width: 17.5ch; max-width: 17.5ch; display: flex;">
+        <div class="sortbutton" id="duedatearrow">Due Date</div>
+    </div>
+    <div style="background: none; border: 0;" class="deletetask"></div>
+</div>
+<div class="task" style="justify-content: left;" id="taskcreatebox">
     <form name="taskcreate" id="taskcreateform" autocomplete="off">
         <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
         <div style="display: flex; flex-grow: 1;">

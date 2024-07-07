@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { assert, beforeEach, describe, it } from 'vitest'
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockDoc } from './testutils'
 import { Task } from '../task'
 import { TaskManager } from "../taskmanager"
@@ -12,7 +12,7 @@ beforeEach(() => {
     mockDoc()
     taskMgr = new TaskManager()
     // @ts-ignore
-    taskplan = taskMgr.taskplan
+    taskplan = taskMgr.taskPlanner
 })
 
 describe("TaskPlan Task Changes", () => {
@@ -31,5 +31,13 @@ describe("TaskPlan Task Changes", () => {
         assert.equal(taskSelect.children.length, 1)
         task.delete()
         assert.equal(taskSelect.children.length, 0)
+    })
+    
+    it("Deleting Task Refreshes", () => {
+        const task = new Task("bigenuff", 4, 4, "def", new Date())
+        taskMgr.addTask(task)
+        const spy = vi.spyOn(taskplan, "refresh")
+        task.delete()
+        expect(spy).toHaveBeenCalled()
     })
 })

@@ -10,6 +10,16 @@ export class TaskPlanner {
 
     private selectedTask: Task | null = null
 
+    private _fullCal: boolean = false
+    get fullCal(): boolean {
+        return this._fullCal
+    }
+
+    private set fullCal(val: boolean) {
+        this._fullCal = val
+        this.refresh()
+    }
+
     filter: (t: Task) => boolean = _ => true
 
     private taskMgr: TaskManager
@@ -45,6 +55,12 @@ export class TaskPlanner {
             _ => this.shiftMonth(1)
         )
 
+        document.getElementById("tpfullcal")!.addEventListener(
+            "change",
+            // @ts-ignore
+            e => this.fullCal = e.currentTarget!.checked
+        )
+
         window.addEventListener(
             "resize",
             _ => {
@@ -55,7 +71,7 @@ export class TaskPlanner {
         this.resize(window.innerWidth)
         
         onTaskEvent(() => { this.refresh() })
-        onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onTaskAdd(_ => this.refresh())
         onWindowFocused(() => this.refresh())
 
         var taskSelect = document.getElementById("tptask")!
@@ -167,6 +183,12 @@ export class TaskPlanner {
         var date = form.deadlineinput.valueAsDate
         console.log(form.sizeinput)
         var size = getFirstSelected(form.sizeinput)!.getAttribute("name")!
+
+        var box = document.getElementById("tpsubtaskcreatebox")!
+        box.style.scale = "1.03"
+        window.setTimeout(() => box.style.scale = "1.0", 100)
+        form.reset()
+        form.deadlineinput.valueAsDate = new Date()
     
         var task = new Task(
             title, 
@@ -243,7 +265,7 @@ export class TaskPlanner {
             var day = document.getElementById(`${TaskPlanDays[date.getDay()]}`)
             
             // Create new date
-            const newDate = new TaskPlannerDate(this.taskMgr, this.selectedTask, date);
+            const newDate = new TaskPlannerDate(this.taskMgr, this, this.selectedTask, date);
             this.dates.push(newDate)
             newDate.render()
 
@@ -253,27 +275,28 @@ export class TaskPlanner {
 
     refresh(): void {
         this.updateFilter()
-    }
-
-    addTask(t: Task): void {
-        if (this.selectedTask != null && t.parentId == this.selectedTask.id) {
-            var subtaskList = document.getElementById("tpsubtasklist")!
-            subtaskList.appendChild(t.getTaskPlannerListElement())
-
-            for (let i = 0; i < this.dates.length; i++) {
-                const date = this.dates[i];
-                date.addTask(t)
-            }
-        }
-
-        this.updateSelector()
+        this.dates.forEach(date => {
+            date.render()
+        })
+        if (this.selectedTask == null) return
+        var subtaskList = document.getElementById("tpsubtasklist")!
+        subtaskList.innerHTML = ""
+        this.selectedTask!.subtasks.sort((a, b) => {
+            return a.due.valueOf() - b.due.valueOf()
+        }).forEach(st => {
+            if (st.deleted) return
+            subtaskList.appendChild(st.shortenedTaskListElement)
+        })
     }
 }
 
 class TaskPlannerDate {
     private taskMgr: TaskManager
+    private taskPlan: TaskPlanner
     private _selectedTask: Task | null
     private _date: Date
+
+    private label: string | undefined
 
     get date(): Date {
         return new Date(this._date)
@@ -291,8 +314,9 @@ class TaskPlannerDate {
     private element: HTMLDivElement
     private hoverElement: HTMLDivElement
 
-    constructor(taskMgr: TaskManager, selectedTask: Task | null, date: Date) {
+    constructor(taskMgr: TaskManager, taskPlan: TaskPlanner, selectedTask: Task | null, date: Date) {
         this.taskMgr = taskMgr
+        this.taskPlan = taskPlan
         this._selectedTask = selectedTask
         this._date = date
 
@@ -320,6 +344,7 @@ class TaskPlannerDate {
 
     private onHover(hovered: boolean = true) {
         if (this.element.className == "tpdate hastask" && hovered) {
+            if (this.hoverElement.children.length == 0) return
             this.element.innerHTML = ""
             this.element.appendChild(this.hoverElement)
             this.element.className = "tpspacer"
@@ -333,7 +358,16 @@ class TaskPlannerDate {
             if (this.element.className == "tpspacer") {
                 this.element.className = "tpdate hastask"
 
-                this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
+                this.element.innerHTML = this.label! + "<br>"
+                for (let i = 0; i < this.hoverElement.children.length; i++) {
+                    this.element.innerHTML += "✅ "
+                }
+                if (this.taskPlan.fullCal) {
+                    this.element.innerHTML += "<br>"
+                    for (let i = 0; i < this.getFullCalTasks().length; i++) {
+                        this.element.innerHTML += "☑️ "
+                    }
+                }
                 this.element.appendChild(this.hoverElement)
             }
         }
@@ -347,16 +381,9 @@ class TaskPlannerDate {
         this.hoverElement.style.display = "none"
     }
 
-    addTask(task: Task) {
-        if (!isSameDay(task.due, this.date)) {
-            return
-        }
-        this.hoverElement.appendChild(task.getPlannerElement())
-        this.refresh()
-    }
-
     render() {
-        this.element.innerHTML = `${this._date.getMonth() + 1}/${this._date.getDate()}`
+        this.label = `${this._date.getMonth() + 1}/${this._date.getDate()}`
+        this.element.innerHTML = this.label
         this.hoverElement.innerHTML = ""
 
         if (this._selectedTask != null) {
@@ -385,14 +412,34 @@ class TaskPlannerDate {
         this.element.appendChild(this.hoverElement)
     }
 
+    private getFullCalTasks(): Task[] {
+        if (!this.taskPlan.fullCal) return []
+        var exclude = this.selectedTask != null ? [this.selectedTask, ...this.selectedTask!.subtasks]: []
+        var tasks = this.taskMgr.getTasks().filter(t => {
+            return isSameDay(t.due, this.date) && !exclude.includes(t)
+        })
+        return tasks
+    }
+
     refresh() {
         if (this.hoverElement.style.display != "none") {
             return
         }
-        if (this.hoverElement.children.length > 0) {
+        if (this.hoverElement.children.length > 0 || this.getFullCalTasks().length > 0) {
             this.element.className = "tpdate hastask"
+            this.element.innerHTML = this.label! + "<br>"
+            for (let i = 0; i < this.hoverElement.children.length; i++) {
+                this.element.innerHTML += "✅ "
+            }
+            if (this.taskPlan.fullCal) {
+                this.element.innerHTML += "<br>"
+                for (let i = 0; i < this.getFullCalTasks().length; i++) {
+                    this.element.innerHTML += "☑️ "
+                }
+            }
         } else {
             this.element.className = "tpdate"
+            this.element.innerHTML = this.label!
         }
     }
 }

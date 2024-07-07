@@ -78,6 +78,9 @@ class App {
 
         // @ts-ignore; Populate fields' default values
         document.getElementById("deadlineinput")!.valueAsDate = new Date()
+        // @ts-ignore; Populate fields' default values
+        document.getElementById("tpsubtaskdateinput")!.valueAsDate = new Date()
+        
 
         onSettingsLoad(() => {
             this.changeTab(this.settings.lastTab)
@@ -114,7 +117,7 @@ class App {
 
     private createTaskCallback(event: SubmitEvent) {
         event.preventDefault()
-
+        
         // @ts-ignore; Necessary to make this whole darn thing work
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
@@ -122,7 +125,13 @@ class App {
         var date = form.deadlineinput.valueAsDate
         var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
         var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
-    
+
+        var box = document.getElementById("taskcreatebox")!
+        box.style.scale = "1.03"
+        window.setTimeout(() => box.style.scale = "1.0", 100)
+        form.reset()
+        form.deadlineinput.valueAsDate = new Date()
+        
         var task = new Task(title, size, importance, cat, date, false)
         this.taskMgr.addTask(task)
     }
