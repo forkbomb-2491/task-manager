@@ -325,8 +325,11 @@ export class Task {
     delete() {
         while (this.elements.length > 0) {
             var element = this.elements.pop()!
-            element.style.display = "none"
-            element.remove()
+            // element.style.scale = "0.5"
+            // window.setTimeout(() => {
+                element.style.display = "none"
+                element.remove()
+            // }, 6000)
         }
 
         this.deleted = true
@@ -344,6 +347,8 @@ export class Task {
         if (!this.completed) {
             this.elements.forEach(element => {
                 if (element.className == "taskcontainer") {
+                    element.style.scale = "1.03"
+                    window.setTimeout(() => element.style.scale = "1.0", 100)
                     element.children[0].className += " completed"
                 } else {
                     element.className += " completed"
@@ -352,6 +357,8 @@ export class Task {
         } else {
             this.elements.forEach(element => {
                 if (element.className == "taskcontainer") {
+                    element.style.scale = "1.03"
+                    window.setTimeout(() => element.style.scale = "1.0", 100)
                     element.children[0].className = element.children[0].className.replace(" completed", "")
                 } else {
                     element.className = element.className.replace(" completed", "")
