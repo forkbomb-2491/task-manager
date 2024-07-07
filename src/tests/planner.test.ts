@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockDoc, getTask } from './testutils'
-import { TaskManager } from '../task'
+import { TaskManager } from "../taskmanager"
 import { Planner } from '../planner'
 import { DayCols } from '../utils'
 

@@ -1,13 +1,40 @@
 // @ts-nocheck
-import { readFile, readFileSync } from "fs"
+import { readFileSync } from "fs"
 import path from "path"
 import { Task } from "../task"
 
+var eventListeners: any[][]
+/**
+ * Removes window's event listeners (prevents errors thrown ancillary to test results)
+ */
+export function clearEvents() {
+    if (eventListeners == undefined) {
+        eventListeners = []
+        window.ogAddEventListener = window.addEventListener
+        window.addEventListener = (type, listener) => {
+            eventListeners.push([type, listener])
+            window.ogAddEventListener(type, listener)
+        }
+    } else {
+        eventListeners.forEach(entry => {
+            window.removeEventListener(entry[0], entry[1])
+        })
+    }
+}
+
+/**
+ * Loads the app's HTML (and resets window's event listeners)
+ */
 export function mockDoc() {
+    clearEvents()
     loadIndex()
     loadTabs()
 }
 
+/**
+ * Creates a new Task
+ * @returns Task
+ */
 export function getTask() {
     const now = new Date()
     return new Task("Test", 1, 4, "test", new Date(now.getFullYear(), now.getMonth(), now.getDate()))

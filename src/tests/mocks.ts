@@ -1,4 +1,5 @@
-import { Task, TaskManager } from "../task";
+import { Task } from "../task";
+import { TaskManager } from "../taskmanager";
 
 export function onSettingChange(_: (e: Event) => void) {}
 

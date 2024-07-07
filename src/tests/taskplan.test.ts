@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { assert, beforeEach, describe, it } from 'vitest'
 import { mockDoc } from './testutils'
-import { Task, TaskManager } from '../task'
+import { Task } from '../task'
+import { TaskManager } from "../taskmanager"
 import { TaskPlanner } from '../taskplan'
 
 var taskMgr: TaskManager
@@ -31,13 +32,4 @@ describe("TaskPlan Task Changes", () => {
         task.delete()
         assert.equal(taskSelect.children.length, 0)
     })
-
-    // it("Adding Subtask Adds to Subtask List", () => {
-    //     const task = new Task("bigenuff", 4, 4, "def", new Date())
-    //     taskMgr.addTask(task)
-    //     var subtaskList = document.getElementById("tpsubtasklist")!
-    //     assert.equal(subtaskList.children.length, 0)
-    //     task.adoptChild(getTask())
-    //     assert.equal(subtaskList.children.length, 1)
-    // })
 })

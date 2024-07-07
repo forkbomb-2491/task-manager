@@ -1,6 +1,6 @@
-import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
-import { Task, TaskView, onTaskAdd } from "./task"
-import { TaskManager } from './task'
+import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused } from "./utils"
+import { Task, TaskView, onTaskAdd, onTaskAdopt } from "./task"
+import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
 /**
@@ -71,9 +71,10 @@ export class Planner implements TaskView {
         })
 
         onSettingChange("plannerStartDay", e => this.startDay = e.value)
-        onTaskAdd(e => {
-            this.addTask(this.taskMgr.getTask(e.task.id)!)
-        })
+        onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+
+        onWindowFocused(() => this.refresh())
     }
 
     // Following 3 methods handle shifting the Planner from the UI

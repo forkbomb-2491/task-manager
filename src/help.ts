@@ -1,6 +1,7 @@
-import { Task, TaskView } from "./task";
-import { TaskManager } from './task';
+import { Task, TaskView, onTaskEvent } from "./task";
+import { TaskManager } from "./taskmanager";
 import { onSettingChange } from "./settings";
+import { onWindowFocused } from "./utils";
 
 export function changeHelpStuff(target: string) {
     // Change tab to target in all contexts
@@ -66,6 +67,7 @@ export class HelpManager implements TaskView {
                 },
             ),
         ]
+        onWindowFocused(() => this.render())
     }
 
     render(): void {
@@ -112,13 +114,7 @@ class HelpPane {
         this.element = element
         this._recListLength = 8
 
-        window.addEventListener(
-            "taskchanged",
-            () => {
-                this.render()
-            }
-        )
-
+        onTaskEvent(_ => this.render(), true, true)
         onSettingChange("recListLength", e => this.recListLength = e.value)
     }
 

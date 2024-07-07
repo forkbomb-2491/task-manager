@@ -7,7 +7,7 @@ import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } f
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
-import { TaskManager } from './task';
+import { TaskManager } from "./taskmanager";
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {

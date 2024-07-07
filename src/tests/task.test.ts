@@ -1,13 +1,17 @@
 // @vitest-environment jsdom
-import { assert, beforeEach, describe, expect, it, vi } from "vitest";
-import { Task, TaskEvent, TaskManager, onTaskComplete, onTaskDelete, onTaskUncomplete } from "../task";
+import { assert, beforeEach, describe, it } from "vitest";
+import { Task, TaskEvent, TaskEventType, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskEdit, onTaskUncomplete } from "../task";
+import { TaskManager } from "../taskmanager";
 // @ts-ignore
-import { mockDoc, getTask } from './testutils'
+import { mockDoc, getTask, clearEvents } from './testutils'
 mockDoc()
+var task: Task
+beforeEach(() => {
+    clearEvents()
+    task = getTask()
+})
 
 describe("Task Events", () => {
-    var task = new Task("test", 1, 1, "hhhh", new Date())
-
     it("Task Complete Event", () => {
         var eventReceived: TaskEvent | undefined
         onTaskComplete((e) => eventReceived = e)
@@ -21,6 +25,7 @@ describe("Task Events", () => {
     it("Task Uncomplete Event", () => {
         var eventReceived: TaskEvent | undefined
         onTaskUncomplete((e) => eventReceived = e)
+        task.toggleCompleted()
         task.toggleCompleted()
     
         assert.notEqual(eventReceived, undefined)
@@ -45,11 +50,71 @@ describe("Task Events", () => {
         assert.isTrue(task.subtasks.includes(child))
     })
 
+    it("Task Adoption Event", () => {
+        var eventReceived: TaskEvent | undefined
+        onTaskAdopt(e => eventReceived = e)
+        var child = new Task("test", 1, 1, "hhhh", new Date())
+        task.adoptChild(child)
+
+        assert.notEqual(eventReceived, undefined)
+    })
+
     it("Deleting Parent Deletes Child", () => {
-        var child = task.subtasks[0]
+        var child = getTask()
+        task.adoptChild(child)
         task.delete()
         
         assert.isTrue(child.deleted)
+    })
+})
+
+describe("Task Event Funcs", () => {
+    it("Task Delete Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskDelete(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
+    })
+
+    it("Task Edit Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskEdit(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
+    })
+
+    it("Task Complete Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskComplete(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.complete, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
+    })
+
+    it("Task Uncomplete Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskUncomplete(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
+    })
+
+    it("Task Add Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskAdd(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.add, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
+    })
+
+    it("Task Adopt Fires and Catches", () => {
+        var event: TaskEvent | undefined
+        onTaskAdopt(e => event = e)
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task))
+        assert.notEqual(event, undefined)
+        assert.equal(event!.task.id, task.id)
     })
 })
 
@@ -59,13 +124,6 @@ describe("Task Manager Tests", () => {
     it("Add Task Works", () => {
         taskMgr.addTask(new Task("test", 1, 2, "red", new Date()))
         assert.notEqual(taskMgr.tasks.length, 0)
-    })
-    
-    it("Refresh on Task Change", () => {
-        taskMgr.addTask(new Task("test", 1, 2, "red", new Date()))
-        const spy = vi.spyOn(taskMgr, "refresh")
-        taskMgr.tasks[0].toggleCompleted()
-        expect(spy).toHaveBeenCalled()
     })
 })
 
