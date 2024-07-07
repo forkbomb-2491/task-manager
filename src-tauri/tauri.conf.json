@@ -21,7 +21,7 @@
             "icons/icon.ico"
         ]
     },
-    "productName": "task-manager",
+    "productName": "Task Manager",
     "version": "0.2.0",
     "identifier": "dev.pgil.forkbomb.taskmgr",
     "plugins": {
