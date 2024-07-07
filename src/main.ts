@@ -1,13 +1,13 @@
-import { StorageManager, loadTasks, loadTabs, saveTasks } from './storage'
-import { Task, TaskList } from './task'
-import { Planner, switchPlannerOrientation } from './planner'
-import { HelpManager, changeHelpStuff } from './help'
+import { loadTabs } from './storage'
+import { Task } from './task'
+import { switchPlannerOrientation } from './planner'
+import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
-import { TaskPlanner } from './taskplan'
-import { SettingsView } from './settings'
-import { TaskNotifier } from './notifications'
+import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
+import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
+import { TaskManager } from "./taskmanager";
 
 const DEBUG_TAB = false
 if (DEBUG_TAB) {
@@ -21,24 +21,23 @@ await loadTabs()
 
 class App {
     // Frontend
-    private settingsView: SettingsView
+        // Nothing here!
 
     // Backend
     private taskMgr: TaskManager
-    private storageMgr: StorageManager
+    private settings: Settings
 
     // Other
     private pomodoro: TimerHandler | null = null
 
     constructor() {
         this.taskMgr = new TaskManager()
-        this.storageMgr = new StorageManager()
-        this.settingsView = new SettingsView(this.storageMgr)
+        this.settings = new Settings()
+        new SettingsView(this.settings)
     }
     
     async main() {
         this.taskMgr.start().then()
-        this.settingsView.load()
 
         // Register callbacks
         document.getElementById("taskcreateform")!.addEventListener(
@@ -71,19 +70,38 @@ class App {
                 this.pomodoro = null
                 document.getElementById("pomodorotimer")!.innerHTML = "00:00"
                 document.getElementById("pomodorostatus")!.innerHTML = "Cancelled"
+                getCurrent().setProgressBar({
+                    status: ProgressBarStatus.None
+                }).then()
             }
         )
 
         // @ts-ignore; Populate fields' default values
         document.getElementById("deadlineinput")!.valueAsDate = new Date()
-        // Apply settings
-        this.storageMgr.getPlannerFlipped().then((flipped: boolean) => {
-            if (flipped) { switchPlannerOrientation() }
+
+        onSettingsLoad(() => {
+            this.changeTab(this.settings.lastTab)
         })
 
-        this.storageMgr.getLastTab().then((tab: string) => {
-            this.changeTab(tab)
-        })
+        onSettingChange(
+            "helpTabName",
+            e => {
+                document.getElementById("helptabbutton")!.innerHTML = e.value
+                document.getElementById("helptabheader")!.innerHTML = e.value
+                var helpLabels = document.getElementsByClassName("helplabel")
+                for (let i = 0; i < helpLabels.length; i++) {
+                    const label = helpLabels[i];
+                    label.innerHTML = e.value
+                }
+            }
+        )
+
+        onSettingChange(
+            "tabsActive",
+            e => this.updateTabVisibility(e.value)
+        )
+
+        this.settings.load()
 
         document.body.style.display = "block"
 
@@ -110,9 +128,17 @@ class App {
     }
 
     private switchPlannerCallback() {
-        this.storageMgr.setPlannerFlipped(switchPlannerOrientation()).then(async () => {
-            await this.storageMgr.saveSettings()
-        })
+        this.settings.plannerFlipped = !this.settings.plannerFlipped
+        this.settings.plannerFlipped = switchPlannerOrientation()
+    }
+
+    private updateTabVisibility(tabsActive: TabsActive) {
+        document.getElementById("plannertabbutton")!.style.display = tabsActive.planner ? "block": "none"
+        document.getElementById("tptabbutton")!.style.display = tabsActive.taskplan ? "block": "none"
+        document.getElementById("pomodorotabbutton")!.style.display = tabsActive.pomodoro ? "block": "none"
+        document.getElementById("eisenhowertabbutton")!.style.display = tabsActive.eisenhower ? "block": "none"
+        document.getElementById("dopamenutabbutton")!.style.display = tabsActive.dopamenu ? "block": "none"
+        document.getElementById("reminderstabbutton")!.style.display = tabsActive.reminders ? "block": "none"
     }
 
     /**
@@ -171,11 +197,7 @@ class App {
         var button: HTMLButtonElement = event.currentTarget
         var tab = button.name
         this.changeTab(tab)
-        this.storageMgr.setLastTab(tab).then(
-            async () => {
-                await this.storageMgr.saveSettings()
-            }
-        )
+        this.settings.lastTab = tab
     }
 
     private addTabButtonCallbacks() {
@@ -202,135 +224,6 @@ class App {
                 }
             )
         }
-    }
-}
-
-/**
- * The Task Manager.
- */
-export class TaskManager {
-    private tasks: Task[] = []
-
-    private taskList: TaskList
-    private planner: Planner
-    private helpMgr: HelpManager
-    private taskPlanner: TaskPlanner
-    private taskNotifier: TaskNotifier
-
-    // Prevents pruning recursion
-    private isPruning: boolean = false
-
-    constructor() {
-        this.taskList = new TaskList(this)
-        this.planner = new Planner(this)
-        this.helpMgr = new HelpManager(this)
-        this.taskPlanner = new TaskPlanner(this)
-        this.taskNotifier = new TaskNotifier(this)
-
-        window.addEventListener(
-            "taskchanged",
-            _ => this.refresh()
-        )
-
-        window.addEventListener(
-            "focus",
-            _ => this.refresh()
-        )
-
-        window.addEventListener(
-            "taskchanged", 
-            _ => {
-                saveTasks(this.tasks).then()
-            }
-        )
-    }
-
-    async start() {
-        await this.loadTasks()
-        this.render()
-    }
-
-    private async loadTasks() {
-        this.tasks = await loadTasks()
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            task.completeCallback = () => { this.refresh() }
-            task.deleteCallback = () => { this.refresh() }
-        }
-
-        this.render()
-    }
-    // @ts-ignore
-    private pruneTasks() {
-        if (this.isPruning) return
-        this.isPruning = true
-
-        // Reap zombie children
-        var taskIds = this.tasks.filter(
-            t => !t.deleted
-        ).map(
-            t => t.id
-        )
-        this.tasks.forEach(task => {
-            // Delete orphaned tasks
-            if (task.parentId != null && !taskIds.includes(task.parentId)) {
-                task.delete()
-            }
-            // Remove deleted children
-            task.children = task.children.filter(c => taskIds.includes(c))
-        })
-
-        // Remove deleted tasks
-        this.tasks = this.tasks.filter(t => !t.deleted)
-
-        this.isPruning = false
-    }
-
-    private render() {
-        this.taskList.render()
-        this.planner.render()
-        this.helpMgr.render()
-        this.taskPlanner.render()
-        this.taskNotifier.refresh()
-    }
-
-    private refresh() {
-        // this.pruneTasks()
-
-        this.taskList.refresh()
-        this.planner.refresh()
-        this.helpMgr.render()
-        this.taskPlanner.refresh()
-        this.taskNotifier.refresh()
-
-        saveTasks(this.tasks).then()
-    }
-
-    getTasks() {
-        return [...this.tasks]
-    }
-
-    getTask(id: string): Task | null {
-        for (let i = 0; i < this.tasks.length; i++) {
-            const task = this.tasks[i];
-            if (task.id == id) {
-                return task
-            }
-        }
-
-        return null
-    }
-
-    addTask(task: Task) {
-        this.tasks.push(task)
-
-        this.planner.addTask(task)
-        this.taskList.addTask(task)
-        this.taskPlanner.addTask(task)
-        this.helpMgr.refresh()
-        this.taskNotifier.refresh()
-
-        saveTasks(this.tasks).then()
     }
 }
 

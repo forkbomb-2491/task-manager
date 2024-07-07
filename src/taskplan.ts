@@ -1,9 +1,10 @@
-import { TaskManager } from "./main";
-import { Task, TaskView } from "./task";
-import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged } from "./utils";
+import { onTaskAdd, onTaskEvent } from './task';
+import { TaskManager } from "./taskmanager";
+import { Task } from "./task";
+import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
 
 
-export class TaskPlanner implements TaskView {
+export class TaskPlanner {
     private calStartDate: Date = new Date()
     private dates: TaskPlannerDate[] = []
 
@@ -44,7 +45,18 @@ export class TaskPlanner implements TaskView {
             _ => this.shiftMonth(1)
         )
 
-        onTasksChanged(() => { this.refresh(); console.log("tp 37") })
+        window.addEventListener(
+            "resize",
+            _ => {
+                this.resize(window.innerWidth)
+            }
+        )
+
+        this.resize(window.innerWidth)
+        
+        onTaskEvent(() => { this.refresh() })
+        onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onWindowFocused(() => this.refresh())
 
         var taskSelect = document.getElementById("tptask")!
         taskSelect.addEventListener(
@@ -57,6 +69,31 @@ export class TaskPlanner implements TaskView {
                 this.selectTask(task!)
             }
         )
+    }
+
+    private isStacked: boolean = false
+    private resize(width: number) {
+        const right = document.getElementById("tprightside")!
+        const left = document.getElementById("tpleftside")!
+        const container = document.getElementById("taskplan")!
+
+        if (this.isStacked && width > 1600) {
+            container.style.flexDirection = "row"
+            right.style.width = "80%"
+            right.style.marginLeft = "2rem"
+            right.style.marginTop = ""
+
+            left.style.width = "30%"
+            this.isStacked = false
+        } else if (!this.isStacked && width < 1600) {
+            container.style.flexDirection = "column"
+            right.style.width = ""
+            right.style.marginLeft = ""
+            right.style.marginTop = "2rem"
+
+            left.style.width = ""
+            this.isStacked = true
+        }
     }
 
     private clearDayElements() {
@@ -128,10 +165,12 @@ export class TaskPlanner implements TaskView {
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
         var date = form.deadlineinput.valueAsDate
+        console.log(form.sizeinput)
+        var size = getFirstSelected(form.sizeinput)!.getAttribute("name")!
     
         var task = new Task(
             title, 
-            0, // Size presumed to be tiny
+            size, // Size presumed to be tiny
             this.selectedTask.importance, // Inherit importance
             this.selectedTask.category, // Inherit category
             date, 
@@ -226,10 +265,12 @@ export class TaskPlanner implements TaskView {
                 date.addTask(t)
             }
         }
+
+        this.updateSelector()
     }
 }
 
-class TaskPlannerDate implements TaskView {
+class TaskPlannerDate {
     private taskMgr: TaskManager
     private _selectedTask: Task | null
     private _date: Date

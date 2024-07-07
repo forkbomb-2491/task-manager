@@ -32,6 +32,7 @@
     "store:allow-length",
     "store:allow-reset",
     "store:allow-values",
+    "store:allow-entries",
     "window:allow-set-progress-bar",
     {
       "identifier": "fs:scope",
@@ -47,6 +48,10 @@
     "notification:default",
     "fs:default",
     "shell:default",
-    "store:default"
+    "store:default",
+    "dialog:default",
+    "dialog:allow-message",
+    "dialog:allow-confirm",
+    "dialog:default"
   ]
 }

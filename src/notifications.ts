@@ -1,8 +1,9 @@
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
 import { Task } from "./task";
-import { TaskManager } from "./main";
+import { TaskManager } from "./taskmanager.ts";
 import { RemindersContainer } from "./reminders.ts";
+import { onSettingChange } from "./settings.ts";
 
 export async function sendNotif(title: string, body: string) {
     if (!(await isPermissionGranted())) {
@@ -19,6 +20,8 @@ export class CheckInHandler {
     private startTime: string
     private endTime: string
 
+    private enabledInSettings: boolean = true
+
     private daysEnabled: boolean[] = [false, false, false, false, false, false, false]
 
     private interval: number // milliseconds
@@ -26,7 +29,8 @@ export class CheckInHandler {
     private notifcontent: Object = {
         "Just checking in!": "Are you finding it hard to be productive? Open Task Manager for some help!",
         "You're doing great!": "Need any suggestions for what to do?  Open Task Manager for some help!",
-        "Don't give up!": "Struggling to stay motivated? Open Task Manager for some help!"
+        "Don't give up!": "Struggling to stay motivated? Open Task Manager for some help!",
+        "Feeling stuck?":"Having trouble finding a sense of urgency? You have stuff coming up it would be good to get started on!"
     }
 
     private notifnum: number = 0
@@ -56,6 +60,8 @@ export class CheckInHandler {
         if (daysEnabled.length == 7) {
             this.daysEnabled = daysEnabled
         }
+
+        onSettingChange("checkinsEnabled", e => {this.enabledInSettings = e.value})
     }
 
     private getStartTimestamp() {
@@ -98,11 +104,13 @@ export class CheckInHandler {
         this.notifnum = Math.floor(Math.random()*Object.keys(this.notifcontent).length)
         
         const notifTitle = Object.keys(this.notifcontent)[this.notifnum];
-        sendNotification({
-            title: notifTitle,
-            // @ts-ignore
-            body: this.notifcontent[notifTitle]
-        })
+        if (this.enabledInSettings) {
+            sendNotification({
+                title: notifTitle,
+                // @ts-ignore
+                body: this.notifcontent[notifTitle]
+            })
+        }
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
         }
@@ -172,6 +180,7 @@ export class TaskNotifier {
     private notifList: Task[]
     private remindersContainer: RemindersContainer
 
+    private enabledInSettings: boolean = true
 
     private scheduledReminder: NodeJS.Timeout | null = null
     public get isRunning(): boolean {
@@ -189,6 +198,11 @@ export class TaskNotifier {
 
         this.remindersContainer = new RemindersContainer(this)
         this.remindersContainer.render()
+
+        onSettingChange("remindersEnabled", e => {
+            this.enabledInSettings = e.value
+            console.log(e.value)
+        })
     }
 
     getNotifTasks(){
@@ -199,7 +213,7 @@ export class TaskNotifier {
         // var task = this.tasks[0]
 
         // If you haven't already gotten a notif, send notif
-        if (!this.notifList.includes(task)){
+        if (!this.notifList.includes(task) && this.enabledInSettings){
             if (task.dueIn < 0) {
                 sendNotification({
                     title: "Checking on " + task.name + "!",
@@ -269,14 +283,13 @@ export class TaskNotifier {
             clearTimeout(this.scheduledReminder)
             this.scheduledReminder = null
         }
-    //     pulls (make sure contains no overdue tasks) and resorts notif list
+        //  pulls (make sure contains no overdue tasks) and resorts notif list
         this.tasks = this.taskMgr.getTasks().filter(
             t => {
                 return !t.completed && !t.deleted
             }
         )
         this.remindersContainer.render()
-    //     reschedule first notifications to be noon day before due date
         this.tasks.sort(
             (t1, t2) => {
                 return t1.due.valueOf() - t2.due.valueOf()

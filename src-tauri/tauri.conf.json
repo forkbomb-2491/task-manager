@@ -1,7 +1,7 @@
 {
     "build": {
-        "beforeDevCommand": "npm run dev",
-        "beforeBuildCommand": "npm run build && echo hi",
+        "beforeDevCommand": "npm install && npm run dev",
+        "beforeBuildCommand": "npm install && npm test && npm run build",
         "frontendDist": [
             "../dist",
             "../src/styles/themes",
@@ -21,12 +21,12 @@
             "icons/icon.ico"
         ]
     },
-    "productName": "task-manager",
-    "version": "0.1.2",
+    "productName": "Task Manager",
+    "version": "0.2.0",
     "identifier": "dev.pgil.forkbomb.taskmgr",
     "plugins": {
         "updater": {
-            "active": false,
+            "active": true,
             "dialog": true,
             "endpoints": [
                 "https://gist.githubusercontent.com/monsieurjonees/f307f935c5c26f5817a947df95cf8b12/raw/taskMgrUpdates.json"
@@ -38,7 +38,7 @@
         "withGlobalTauri": true,
         "windows": [
             {
-                "title": "task-manager",
+                "title": "Task Manager",
                 "width": 1080,
                 "height": 700,
                 "minWidth": 1080,

@@ -1,15 +1,25 @@
-import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
-import { Task, TaskView } from "./task"
-import { TaskManager } from "./main"
+import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused } from "./utils"
+import { Task, onTaskAdd, onTaskAdopt } from "./task"
+import { TaskManager } from "./taskmanager"
+import { onSettingChange } from "./settings"
 
 /**
  * The TaskView that represents the Planner tab.
  */
-export class Planner implements TaskView {
+export class Planner {
     private startDate: Date
     private taskMgr: TaskManager
 
-    private startDay: Weekdays
+    private _startDay: Weekdays
+    
+    get startDay(): Weekdays {
+        return this._startDay
+    }
+    
+    set startDay(day: Weekdays) {
+        this._startDay = day
+        this.centerThisWeek()
+    }
 
     private dayColumns: DayColumn[] = []
 
@@ -20,7 +30,7 @@ export class Planner implements TaskView {
      */
     constructor(taskMgr: TaskManager, startDay: Weekdays = Weekdays.sunday) {
         this.taskMgr = taskMgr
-        this.startDay = startDay
+        this._startDay = startDay
 
         var today = new Date()
         this.startDate = findFirstPrecedingDay(today, startDay)
@@ -53,6 +63,18 @@ export class Planner implements TaskView {
             "click",
             (_) => this.centerThisWeek()
         )
+
+        onSettingChange("plannerFlipped", e => {
+            if (e.value) {
+                switchPlannerOrientation()
+            }
+        })
+
+        onSettingChange("plannerStartDay", e => this.startDay = e.value)
+        onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+
+        onWindowFocused(() => this.refresh())
     }
 
     // Following 3 methods handle shifting the Planner from the UI
@@ -68,7 +90,7 @@ export class Planner implements TaskView {
 
     private centerThisWeek() {
         var today = new Date()
-        this.startDate = findFirstPrecedingDay(today, this.startDay)
+        this.startDate = findFirstPrecedingDay(today, this._startDay)
         this.render()
     }
 
@@ -86,7 +108,7 @@ export class Planner implements TaskView {
 
         var differentYears = this.startDate.getFullYear() != date.getFullYear()
 
-        document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate() + 1}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate()}${differentYears ? `/${date.getFullYear()}` : ""}`
+        document.getElementById("plannerdaterange")!.innerHTML = `${this.startDate.getMonth() + 1}/${this.startDate.getDate()}${differentYears ? `/${this.startDate.getFullYear()}` : ""} – ${date.getMonth() + 1}/${date.getDate() - 1}${differentYears ? `/${date.getFullYear()}` : ""}`
     }
 
     /**
@@ -114,7 +136,7 @@ export class Planner implements TaskView {
  * Represents the Planner's Day Columns. This View handles rendering and
  * displaying the day's tasks.
  */
-class DayColumn implements TaskView {
+class DayColumn {
     private taskMgr: TaskManager
     private _date: Date
 
@@ -147,7 +169,7 @@ class DayColumn implements TaskView {
     }
 
     addTask(task: Task) {
-        this.element.appendChild(task.getPlannerElement())
+        this.element.appendChild(task.plannerElement)
     }
 
     /**
@@ -156,6 +178,7 @@ class DayColumn implements TaskView {
      */
     render() {
         this.element.innerHTML = ""
+        this.element.id = DayCols[this.date.getDay()]
 
         var heading = document.createElement("h4")
         heading.innerHTML = WEEKDAY_STRINGS[this._date.getDay()]

@@ -1,7 +1,8 @@
+import { message, confirm } from '@tauri-apps/plugin-dialog'
+import { loadFile, saveFile } from './storage'
 import { Task } from './task'
 
 function setSliderMinsTo1() {
-    console.log("urmom")
     document.getElementById("workduratslider").min = "1"
     document.getElementById("breakduratslider").min = "1"
     document.getElementById("repeatslider").min = "1"
@@ -11,6 +12,7 @@ function setSliderMinsTo1() {
 
 function createOverdueTask() {
     window.taskMgr.addTask(new Task(
+        window.taskMgr,
         "overdue",
         4,
         4,
@@ -21,6 +23,7 @@ function createOverdueTask() {
 
 function createTaskTmrw() {
     window.taskMgr.addTask(new Task(
+        window.taskMgr,
         "tmrw",
         4,
         4,
@@ -29,8 +32,30 @@ function createTaskTmrw() {
     ))
 }
 
+async function pullv1Tasks() {
+    if (await confirm("Are you sure you want to overwrite tasks2.json with tasks.json?")) {
+        window.dispatchEvent(new Event("blocktasksave"))
+        var v1 = await loadFile("tasks.json", [])
+        await saveFile(v1, "tasks2.json")
+        message("Done. Restart the app to apply").then()
+    }
+}
+
+var errorsBound = false
+function bindErrors() {
+    if (errorsBound) { return }
+    errorsBound = true
+    console.defaulterror = console.error
+    console.error = (data) => {
+        message(data, {"kind": "error"}).then()
+        console.defaulterror(data)
+    }
+    console.error("hi")
+}
+
 export function addDebugFuncs() {
     window.setSliderMinsTo1 = setSliderMinsTo1
     window.createOverdueTask = createOverdueTask
     window.createTaskTmrw = createTaskTmrw
+    window.pullv1Tasks = () => pullv1Tasks().then()
 }

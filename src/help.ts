@@ -1,5 +1,7 @@
-import { Task, TaskView } from "./task";
-import { TaskManager } from "./main";
+import { Task, onTaskEvent } from "./task";
+import { TaskManager } from "./taskmanager";
+import { onSettingChange } from "./settings";
+import { onWindowFocused } from "./utils";
 
 export function changeHelpStuff(target: string) {
     // Change tab to target in all contexts
@@ -14,7 +16,7 @@ export function changeHelpStuff(target: string) {
     }
 }
 
-export class HelpManager implements TaskView {
+export class HelpManager {
     private taskMgr: TaskManager
 
     private panes: HelpPane[]
@@ -65,6 +67,7 @@ export class HelpManager implements TaskView {
                 },
             ),
         ]
+        onWindowFocused(() => this.render())
     }
 
     render(): void {
@@ -88,6 +91,16 @@ class HelpPane {
 
     private theAlgorithm: (t: Task) => number
     private taskFilter: (t: Task) => boolean
+    private _recListLength: number
+
+    get recListLength(): number {
+        return this._recListLength
+    }
+
+    set recListLength(value: number) {
+        this._recListLength = value
+        this.render()
+    }
 
     constructor(
         taskMgr: TaskManager,
@@ -99,30 +112,29 @@ class HelpPane {
         this.taskFilter = filter
         this.taskMgr = taskMgr
         this.element = element
+        this._recListLength = 8
 
-        window.addEventListener(
-            "taskchanged",
-            () => {
-                this.render()
-            }
-        )
+        onTaskEvent(_ => this.render(), true, true)
+        onSettingChange("recListLength", e => this.recListLength = e.value)
     }
 
-    private getTasks(nTasks: number = 4) {
+    private getTasks() {
         var tasks = this.taskMgr.getTasks().filter((t) => {
             return !t.completed && !t.deleted && this.taskFilter(t)
         })
         tasks = tasks.sort((t1, t2) => {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
-        return tasks.slice(0, nTasks)
+        // return tasks.slice(0, nTasks)
+        return tasks.slice(0, this._recListLength)
+
     }
 
     render(): void {
         this.element.innerHTML = ""
         var tasks = this.getTasks()
         tasks.forEach(task => {
-            this.element.appendChild(task.getPlannerElement())
+            this.element.appendChild(task.shortenedTaskListElement)
         });
     }
 }

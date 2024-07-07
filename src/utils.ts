@@ -67,6 +67,13 @@ export function getFirstSelected(select: HTMLSelectElement): HTMLOptionElement |
     return null
 }
 
+export function onWindowFocused(cb: () => void) {
+    window.addEventListener(
+        "focus",
+        _ => cb()
+    )
+}
+
 export const isSameDay = (d1: Date, d2: Date) => {
     return (d1.getFullYear() == d2.getFullYear() &&
     d1.getMonth() == d2.getMonth() &&
@@ -144,4 +151,12 @@ export enum Months {
     "October",
     "November",
     "December"
+}
+
+export enum SortBasis {
+    "name",
+    "category",
+    "size",
+    "importance",
+    "duedate"
 }

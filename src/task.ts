@@ -1,108 +1,120 @@
-import { TaskManager } from "./main"
 import { padWithLeftZeroes } from "./utils"
 
-const TaskChanged = new Event("taskchanged")
-
-/**
- * A View for Tasks. It displays, sorts, and processes user input for
- * the Task Manager. It is typical to have one of these per tab where
- * tasks are manipulated.
- */
-export interface TaskView {
-    /**
-     * Clears the UI for which the TaskView is responsible and reloads all
-     * tasks and relevant elements from scratch.
-     */
-    render(): void
-
-    /**
-     * Checks all existing UI elements to verify they are correctly placed
-     * and that all attributes match internal state.
-     */
-    refresh(): void
-
-    /**
-     * Adds a new Task to the View without refreshing or re-rendering.
-     * @param task The new Task to add
-     */
-    addTask(task: Task): void
+export type TaskRecord = {
+    "name": string,
+    "size": number,
+    "importance": number,
+    "category": string,
+    "due": Date,
+    "completed": boolean,
+    "id": string,
+    "subtasks": TaskRecord[]
 }
 
-/**
- * A Task View that represents and handles the Tasks tab.
- */
-export class TaskList implements TaskView {
-    private taskMgr: TaskManager
+export enum TaskEventType {
+    "delete",
+    "edit",
+    "complete",
+    "uncomplete",
+    "add",
+    "adopt"
+}
 
-    constructor (taskMgr: TaskManager) {
-        this.taskMgr = taskMgr
+export class TaskEvent extends Event {
+    private _task: TaskRecord
+    get task(): TaskRecord { return this._task }
 
-        document.getElementById("completedtasksbutton")!.addEventListener(
-            "click",
-            (_) => { this.toggleCompletedVisibility() }
-        )
-    }
-
-    /**
-     * Loads tasks from the List's TaskManager and sorts them into the
-     * completed and current task lists.
-     */
-    render() {
-        var currentList = document.getElementById("currenttasklist")!
-        var completedList = document.getElementById("completedtasklist")!
-
-        // Wipe current contents
-        currentList.innerHTML = ""
-        completedList.innerHTML = ""
-
-        var tasks = this.taskMgr.getTasks()
-        for (let index = 0; index < tasks.length; index++) {
-            const task = tasks[index];
-            if (task.deleted) { continue }
-            if (task.completed) {
-                completedList.appendChild(task.getTaskListElement())
-            } else {
-                currentList.appendChild(task.getTaskListElement())
-            }
+    constructor(type: TaskEventType, task: TaskRecord) {
+        var typeString: string
+        switch (type) {
+            case TaskEventType.delete:
+                typeString = "taskdelete"
+                break;
+        
+            case TaskEventType.edit:
+                typeString = "taskedit"
+                break;
+        
+            case TaskEventType.complete:
+                typeString = "taskcomplete"
+                break;
+        
+            case TaskEventType.uncomplete:
+                typeString = "taskuncomplete"
+                break;
+        
+            case TaskEventType.add:
+                typeString = "taskadd"
+                break;
+        
+            case TaskEventType.adopt:
+                typeString = "taskadopt"
+                break;
+        
+            default:
+                break;
         }
-    }
+        super(typeString!)
 
-    /**
-     * Checks to see that all completed and current tasks are sorted into
-     * the correct lists on the Tasks tab.
-     */
-    refresh() {
-        var currentList = document.getElementById("currenttasklist")!;
-        var completedList = document.getElementById("completedtasklist")!;
-        for (let i = 0; i < currentList.children.length; i++) {
-            const task = currentList.children[i];
-            if (task.className.includes("completed")) {
-                currentList.removeChild(task)
-                completedList.appendChild(task)
-            }
-        }
-
-        for (let i = 0; i < completedList.children.length; i++) {
-            const task = completedList.children[i];
-            if (!task.className.includes("completed")) {
-                completedList.removeChild(task)
-                currentList.appendChild(task)
-            }
-        }
+        this._task = task
     }
+}
 
-    addTask(task: Task) {
-        document.getElementById("currenttasklist")!.appendChild(task.getTaskListElement())
-    }
+export function onTaskDelete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskdelete",
+        cb
+    )
+}
 
-    private toggleCompletedVisibility() {
-        var list = document.getElementById("completedtasklist")!
-        if (list.style.display == "none") {
-            list.style.display = "block"
-        } else {
-            list.style.display = "none"
-        }
-    }
+export function onTaskEdit(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskedit",
+        cb
+    )
+}
+
+export function onTaskComplete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskcomplete",
+        cb
+    )
+}
+
+export function onTaskUncomplete(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskuncomplete",
+        cb
+    )
+}
+
+export function onTaskAdd(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskadd",
+        cb
+    )
+}
+
+export function onTaskAdopt(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskadopt",
+        cb
+    )
+}
+
+export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean = false, includeAdopt: boolean = false) {
+    onTaskDelete(cb)
+    onTaskEdit(cb)
+    onTaskComplete(cb)
+    onTaskUncomplete(cb)
+    if (includeAdd) onTaskAdd(cb)
+    if (includeAdopt) onTaskAdopt(cb)
 }
 
 /** 
@@ -118,16 +130,39 @@ export class Task {
     due: Date
     completed: boolean
 
-    children: string[] = []
-    parentId: string | null
+    private _subtasks: Task[] = []
+    private _parent: Task | null = null
 
-    get hasSubtasks() : boolean {
-        return this.children.length > 0
+    get subtasks(): Task[] { return [...this._subtasks] }
+
+    get parent(): Task | null { return this._parent }
+    set parent(task: Task) {
+        if (this._parent == null) {
+            this._parent = task
+        }
     }
 
-    get isSubtask() : boolean {
-        return this.parentId != null
+    get record(): TaskRecord {
+        return {
+            "name": this.name,
+            "size": this.size,
+            "importance": this.importance,
+            "category": this.category,
+            "due": this.due,
+            "completed": this.completed,
+            "id": this.id,
+            "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
+        }
     }
+
+    // Deprecated
+    get children(): string[] { return this._subtasks.map(t => t.id) }
+    get parentId(): string | null { return this._parent != null ? this._parent.id : null }
+    // End Dep.
+
+    get hasSubtasks() : boolean { return this._subtasks.length > 0 }
+
+    get isSubtask() : boolean { return this._parent != null }
     
     /**
      * How many days until this task is due (rounded DOWN to nearest integer)
@@ -141,10 +176,57 @@ export class Task {
 
     deleted: boolean = false
 
-    completeCallback: (() => void) | null = null
-    deleteCallback: (() => void) | null = null
+    // completeCallback: (() => void) | null = null
+    // deleteCallback: (() => void) | null = null
 
     private elements: HTMLElement[] = []
+
+    get plannerElement(): HTMLParagraphElement {
+        this.cleanUpElements()
+
+        var newElement = document.createElement("p")
+        if (this.completed) {
+            newElement.className = " completed"
+        }
+        newElement.innerHTML = `
+        <button class="complete"></button>
+        ${this.name}
+        `
+
+        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
+
+        newElement.getElementsByClassName("complete")[0].addEventListener(
+            "click",
+            completeTaskCallback
+        )
+
+        if (this.category != "Default") {
+            newElement.style.color = getColor(this.category)
+        }
+
+        this.elements.push(newElement)
+        return newElement
+    }
+
+    get taskListElement(): HTMLDivElement {
+        var ownTaskElement = this.getTaskListLikeElement(true)
+        var newContainer = document.createElement("div")
+        newContainer.className = "taskcontainer"
+        newContainer.setAttribute("name", this.id)
+        var subtaskContainer = document.createElement("div")
+        subtaskContainer.className = "subtaskcontainer"
+        this._subtasks.forEach(st => {
+            subtaskContainer.appendChild(st.taskListElement)
+        })
+        newContainer.appendChild(ownTaskElement)
+        newContainer.appendChild(subtaskContainer)
+        this.elements.push(newContainer)
+        return newContainer
+    }
+
+    get shortenedTaskListElement(): HTMLDivElement {
+        return this.getTaskListLikeElement(false)
+    }
 
     /**
      * The Task's default constructor. Should be called mainly by UI callbacks
@@ -167,8 +249,8 @@ export class Task {
         due: Date, 
         completed: boolean = false,
         id: string | null = null,
-        children: string[] = [],
-        parentId: string | null = null
+        subtasks: TaskRecord[] = [],
+        parent: Task | null = null
     ) {
         this.name = name
         this.size = Number(size)
@@ -184,8 +266,21 @@ export class Task {
         } else {
             this.id = id
         }
-        this.children = children
-        this.parentId = parentId
+
+        this._subtasks = subtasks.map(
+            o => new Task(
+                o.name,
+                o.size,
+                o.importance,
+                o.category,
+                o.due,
+                o.completed,
+                o.id,
+                o.subtasks,
+                this
+            )
+        )
+        this._parent = parent
     }
 
     static generateId() {
@@ -196,18 +291,8 @@ export class Task {
      * Returns an Object a la-Map which can be encoded and saved to the disk.
      * @returns An Object
      */
-    toBasicObject() {
-        return {
-            "name": this.name,
-            "size": this.size,
-            "importance": this.importance,
-            "category": this.category,
-            "due": this.due,
-            "completed": this.completed,
-            "id": this.id,
-            "children": this.children,
-            "parentId": this.parentId
-        }
+    toBasicObject(): TaskRecord {
+        return this.record
     }
 
     /**
@@ -216,10 +301,21 @@ export class Task {
      * @param task The Task to adopt
      */
     adoptChild(task: Task) {
-        this.children.push(task.id)
-        task.parentId = this.id
+        if (task.parent != null) {
+            return
+        }
 
-        window.dispatchEvent(TaskChanged)
+        task.parent = this
+        this._subtasks.push(task)
+
+        this.elements.forEach(element => {
+            if (element.className == "taskcontainer") {
+                element.children[1].appendChild(task.taskListElement)
+            }
+        })
+
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record))
     }
 
     /**
@@ -234,12 +330,11 @@ export class Task {
         }
 
         this.deleted = true
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record))
 
-        if (this.deleteCallback != null) {
-            this.deleteCallback()
-        }
-
-        window.dispatchEvent(TaskChanged)
+        this._subtasks.forEach(sub => {
+            sub.delete()
+        })
     }
 
     /**
@@ -248,21 +343,28 @@ export class Task {
     toggleCompleted() {
         if (!this.completed) {
             this.elements.forEach(element => {
-                element.className += " completed"
+                if (element.className == "taskcontainer") {
+                    element.children[0].className += " completed"
+                } else {
+                    element.className += " completed"
+                }
             })
         } else {
             this.elements.forEach(element => {
-                element.className = element.className.replace(" completed", "")
-            })
+                if (element.className == "taskcontainer") {
+                    element.children[0].className = element.children[0].className.replace(" completed", "")
+                } else {
+                    element.className = element.className.replace(" completed", "")
+                }
+            })      
         }
-
+        
         this.completed = !this.completed
-
-        if (this.completeCallback != null) {
-            this.completeCallback()
+        if (this.completed) {
+            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record))
+        } else {
+            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record))
         }
-
-        window.dispatchEvent(TaskChanged)
     }
 
     /**
@@ -298,20 +400,22 @@ export class Task {
         if (full) {
             newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="min-width: 50%; min-width: 50%;">
-                ${this.name}
-            </div>
-            <div style="min-width: 10%; max-width: 10%;">
-                ${this.category}
-            </div>
-            <div style="min-width: 7.5%; max-width: 7.5%;">
-                ${TaskSizes[this.size]}
-            </div>
-            <div style="min-width: 12.5%; min-width: 12.5%;">
-                ${TaskImportances[this.importance]}
-            </div>
-            <div style="min-width: 16%; max-width: 16%;">
-                ${this.due.toDateString()}
+            <div style="display: flex; flex-grow: 1">
+                <div style="flex-grow: 1">
+                    ${this.name}
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    ${this.category}
+                </div>
+                <div style="min-width: 10ch; max-width: 10ch;">
+                    ${TaskSizes[this.size]}
+                </div>
+                <div style="min-width: 13ch; min-width: 13ch;">
+                    ${TaskImportances[this.importance]}
+                </div>
+                <div style="min-width: 17ch; max-width: 17ch;">
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this.due.toDateString()}
+                </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
@@ -320,11 +424,16 @@ export class Task {
         } else {
             newElement.innerHTML = `
             <button class="complete"></button>
-            <div style="min-width: 60%; max-width: 60%">
-                ${this.name}
-            </div>
-            <div style="min-width: 26%; max-width: 26%">
-                ${this.due.toDateString()}
+            <div style="display: flex; flex-grow: 1;">
+                <div style="flex-grow: 1">
+                    ${this.name}
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    ${TaskSizes[this.size]}
+                </div>
+                <div style="min-width: 17ch; max-width: 17ch;">
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this.due.toDateString()}
+                </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
@@ -348,8 +457,6 @@ export class Task {
         if (this.category != "Default") {
             newElement.style.color = getColor(this.category)
         }
-
-        this.elements.push(newElement)
         return newElement
     }
 
@@ -358,7 +465,9 @@ export class Task {
      * @returns A <div class="task"> HTML Element
      */
     getTaskListElement() {
-        return this.getTaskListLikeElement(true)
+        const newElement = this.getTaskListLikeElement(true)
+        this.elements.push(newElement)
+        return newElement
     }
     
     /**
@@ -367,7 +476,9 @@ export class Task {
      * @returns A <div class="task"> HTML Element with fewer details.
      */
     getTaskPlannerListElement() {
-        return this.getTaskListLikeElement(false)
+        const newElement = this.getTaskListLikeElement(false)
+        this.elements.push(newElement)
+        return newElement
     }
 
     /**
@@ -375,30 +486,7 @@ export class Task {
      * @returns A <p> HTML Element with a square checkbox.
      */
     getPlannerElement() {
-        this.cleanUpElements()
-
-        var newElement = document.createElement("p")
-        if (this.completed) {
-            newElement.className = " completed"
-        }
-        newElement.innerHTML = `
-        <button class="complete"></button>
-        ${this.name}
-        `
-
-        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
-
-        newElement.getElementsByClassName("complete")[0].addEventListener(
-            "click",
-            completeTaskCallback
-        )
-
-        if (this.category != "Default") {
-            newElement.style.color = getColor(this.category)
-        }
-
-        this.elements.push(newElement)
-        return newElement
+        return this.plannerElement
     }
 }
 

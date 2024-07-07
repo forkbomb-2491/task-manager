@@ -25,13 +25,13 @@
     max-height: 1rem;
     border-radius: 0.125em;
 }
-.helpcontainer button.complete {
+/* .helpcontainer button.complete {
     min-width: 1rem;
     max-width: 1rem;
     min-height: 1rem;
     max-height: 1rem;
     border-radius: 0.125em;
-}
+} */
 
 .daycolumn .completed button.complete {
     background-color: var(--primary-color);
