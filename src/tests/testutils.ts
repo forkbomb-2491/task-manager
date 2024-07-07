@@ -9,7 +9,8 @@ export function mockDoc() {
 }
 
 export function getTask() {
-    return new Task("Test", 1, 4, "test", new Date())
+    const now = new Date()
+    return new Task("Test", 1, 4, "test", new Date(now.getFullYear(), now.getMonth(), now.getDate()))
 }
 
 function loadIndex() {

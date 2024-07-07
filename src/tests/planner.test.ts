@@ -13,6 +13,7 @@ beforeEach(() => {
     taskMgr = new TaskManager()
     // @ts-ignore
     planner = taskMgr.planner
+    planner.render()
 })
 
 describe("Planner Tests", () => {
@@ -20,13 +21,13 @@ describe("Planner Tests", () => {
         const task = getTask()
         taskMgr.addTask(task)
         var kids = document.getElementById(DayCols[new Date().getDay()])!.children
-        assert.equal(kids.length, 1)
+        assert.equal(kids.length, 4)
     })
 
     it("Completing Task Applied to Element", () => {
         const task = getTask()
         taskMgr.addTask(task)
-        var element = document.getElementById(DayCols[new Date().getDay()])!.children[0]
+        var element = document.getElementById(DayCols[new Date().getDay()])!.children[3]
         task.toggleCompleted()
         assert.isTrue(element.className.includes("completed"))
     })
@@ -35,9 +36,9 @@ describe("Planner Tests", () => {
         const task = getTask()
         taskMgr.addTask(task)
         var col = document.getElementById(DayCols[new Date().getDay()])!
-        assert.equal(col.children.length, 1)
+        assert.equal(col.children.length, 4)
         task.delete()
-        assert.equal(col.children.length, 0)
+        assert.equal(col.children.length, 3)
     })
 
     it("Shifting Causes Render", () => {
@@ -48,5 +49,13 @@ describe("Planner Tests", () => {
         planner.shiftRight(1)
         expect(spy).toHaveBeenCalledTimes(2)
     })
+
+    it("Subtasks Add to Planner", () => {
+        const task = getTask()
+        taskMgr.addTask(task)
+        task.adoptChild(getTask())
+        var kids = document.getElementById(DayCols[new Date().getDay()])!.children
+        assert.equal(kids.length, 5)
+    }) 
 })
 

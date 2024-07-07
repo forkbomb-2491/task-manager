@@ -1,4 +1,4 @@
-import { TaskManager, onTaskEvent } from './task';
+import { TaskManager, onTaskAdd, onTaskEvent } from './task';
 import { Task, TaskView } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged } from "./utils";
 
@@ -54,6 +54,9 @@ export class TaskPlanner implements TaskView {
         this.resize(window.innerWidth)
         
         onTaskEvent(() => { this.refresh() })
+        onTaskAdd(e => {
+            this.addTask(this.taskMgr.getTask(e.task.id)!)
+        })
 
         var taskSelect = document.getElementById("tptask")!
         taskSelect.addEventListener(

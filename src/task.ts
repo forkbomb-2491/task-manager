@@ -51,6 +51,9 @@ export class TaskList implements TaskView {
         )
 
         onTaskEvent(_ => this.refresh())
+        onTaskAdd(e => {
+            this.addTask(this.taskMgr.getTask(e.task.id)!)
+        })
     }
 
     private sort(container: Element = document.getElementById("currenttasklist")!) {
@@ -174,7 +177,8 @@ enum TaskEventType {
     "delete",
     "edit",
     "complete",
-    "uncomplete"
+    "uncomplete",
+    "add"
 }
 
 export class TaskEvent extends Event {
@@ -198,6 +202,10 @@ export class TaskEvent extends Event {
         
             case TaskEventType.uncomplete:
                 typeString = "taskuncomplete"
+                break;
+        
+            case TaskEventType.add:
+                typeString = "taskadd"
                 break;
         
             default:
@@ -241,12 +249,21 @@ export function onTaskUncomplete(cb: (event: TaskEvent) => void) {
     )
 }
 
+export function onTaskAdd(cb: (event: TaskEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "taskadd",
+        cb
+    )
+}
 
-export function onTaskEvent(cb: (event: TaskEvent) => void) {
+
+export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean = false) {
     onTaskDelete(cb)
     onTaskEdit(cb)
     onTaskComplete(cb)
     onTaskUncomplete(cb)
+    if (includeAdd) onTaskAdd(cb)
 }
 
 /** 
@@ -808,10 +825,8 @@ export class TaskManager {
         if (task.parent == null) {
             this._tasks.push(task);
         }
-
-        this.planner.addTask(task);
-        this.taskList.addTask(task);
-        this.taskPlanner.addTask(task);
+        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record))
+        
         this.helpMgr.refresh();
         // this.taskNotifier.refresh()
         saveTasks(this._tasks).then();

@@ -1,5 +1,5 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay } from "./utils"
-import { Task, TaskView } from "./task"
+import { Task, TaskView, onTaskAdd } from "./task"
 import { TaskManager } from './task'
 import { onSettingChange } from "./settings"
 
@@ -71,6 +71,9 @@ export class Planner implements TaskView {
         })
 
         onSettingChange("plannerStartDay", e => this.startDay = e.value)
+        onTaskAdd(e => {
+            this.addTask(this.taskMgr.getTask(e.task.id)!)
+        })
     }
 
     // Following 3 methods handle shifting the Planner from the UI
@@ -165,7 +168,7 @@ class DayColumn implements TaskView {
     }
 
     addTask(task: Task) {
-        this.element.appendChild(task.getPlannerElement())
+        this.element.appendChild(task.plannerElement)
     }
 
     /**
@@ -174,6 +177,7 @@ class DayColumn implements TaskView {
      */
     render() {
         this.element.innerHTML = ""
+        this.element.id = DayCols[this.date.getDay()]
 
         var heading = document.createElement("h4")
         heading.innerHTML = WEEKDAY_STRINGS[this._date.getDay()]
