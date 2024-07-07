@@ -1,6 +1,6 @@
 input {
     background-color: rgba(0, 0, 0, 0);
-    border: black dotted 1px;
+    border: var(--primary-text-color) dotted 1px;
     color: var(--primary-text-color);
 
     font-size: medium;
@@ -100,4 +100,8 @@ select:focus-within {
     transition: ease-in-out 200ms;
 
     padding: 1rem;
+}
+
+.checkinblock p {
+    margin-top: 0;
 }

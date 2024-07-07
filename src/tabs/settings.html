@@ -2,12 +2,15 @@
 <div style="display: flex; justify-content: space-between;">
     <div style="min-width: 60%;">
         <h2>Notification Settings</h2>
-        <input type="checkbox" name="checkinenabled" id="checkinenabled" checked="true">
-        <label for="checkinenabled">Receive regular Check-In Notifications during Check-In Blocks</label>
-        <br>
-        <input type="checkbox" name="remindersenabled" id="remindersenabled" checked="true">
-        <label for="remindersenabled">Receive Tasks Notifications upon opening Task Manager</label>
-        <br>
+        <h3>General Settings</h3>
+        <div class="checkinblock">
+            <input type="checkbox" name="checkinenabled" id="checkinenabled" checked="true">
+            <label for="checkinenabled">Receive regular Check-In Notifications during Check-In Blocks</label>
+            <br>
+            <input type="checkbox" name="remindersenabled" id="remindersenabled" checked="true">
+            <label for="remindersenabled">Receive Tasks Notifications upon opening Task Manager</label>
+            <br>
+        </div>
 
 
         <h3>Schedule Check-In Notifications</h3>
@@ -51,52 +54,62 @@
 
         <h2>Planner</h2>
         <h3>First Day of the Week</h3>
-        <p><i>This will be the first day of the week displayed by the planner by default.</i></p>
-        <form id="weekstartform">
-            <input type="radio" name="weekstart" value="0">
-            <label for="0">Sunday</label>
-            <input type="radio" name="weekstart" value="1">
-            <label for="1">Monday</label>
-            <input type="radio" name="weekstart" value="2">
-            <label for="2">Tuesday</label>
-            <input type="radio" name="weekstart" value="3">
-            <label for="3">Wednesday</label>
-            <input type="radio" name="weekstart" value="4">
-            <label for="4">Thursday</label>
-            <input type="radio" name="weekstart" value="5">
-            <label for="5">Friday</label>
-            <input type="radio" name="weekstart" value="6">
-            <label for="6">Saturday</label>
-        </form>
+        <div class="checkinblock">
+            <p><i>This will be the first day of the week displayed by the planner by default.</i></p>
+            <form id="weekstartform">
+                <input type="radio" name="weekstart" value="0">
+                <label for="0">Sunday</label>
+                <input type="radio" name="weekstart" value="1">
+                <label for="1">Monday</label>
+                <input type="radio" name="weekstart" value="2">
+                <label for="2">Tuesday</label>
+                <input type="radio" name="weekstart" value="3">
+                <label for="3">Wednesday</label>
+                <input type="radio" name="weekstart" value="4">
+                <label for="4">Thursday</label>
+                <input type="radio" name="weekstart" value="5">
+                <label for="5">Friday</label>
+                <input type="radio" name="weekstart" value="6">
+                <label for="6">Saturday</label>
+            </form>
+        </div>
 
-        <h2>Help Tab Settings</h2>
+        <h2><div class="helplabel">Help</div> Tab Settings</h2>
         <h3>Algorithm Display Length</h3>
-        <p><i>Length of recommended task list.</i></p>
-        <input type="range" class="settingsslider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
-        <br>
-        Each Help Tab option will suggest up to <b><label for="reclistslider" id="reclistlabel">6</label></b> tasks to you.
+        <div class="checkinblock">
+            <p><i>Length of recommended task list.</i></p>
+            <input type="range" class="settingsslider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
+            <br>
+            Each <div class="helplabel">Help</div> Tab option will suggest up to <b><label for="reclistslider" id="reclistlabel">6</label></b> tasks to you.
+        </div>
         <!-- <input> -->
+        <h3><div class="helplabel">💡</div> Tab Custom Label</h3>
+        <div class="checkinblock">
+            <input id="helplabelinput" value="💡">
+        </div>
 
         <h2>Display</h2>
         <h3>Tab Display</h3>
-        <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
-        <form name="tabsettings" id="tabsettings">
-            <input type="checkbox" id="planneractive" name="taskplan">
-            <label for="tpactive">Planner</label>
-            <input type="checkbox" id="tpactive" name="taskplan">
-            <label for="tpactive">Task Planner</label>
-            <input type="checkbox" id="pomodoroactive" name="pomodoro">
-            <label for="tbactive">Time Block</label>
-            <input type="checkbox" id="eisenhoweractive" name="eisenhower">
-            <label for="eisenhoweractive">Eisenhower</label>
-            <input type="checkbox" id="dopamenuactive" name="dopamenu">
-            <label for="dopamenuactive">Dopamenu</label>
-            <input type="checkbox" id="remindersactive" name="reminders">
-            <label for="remindersactive">Reminders</label>
-        </form>
+        <div class="checkinblock">
+            <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
+            <form name="tabsettings" id="tabsettings">
+                <input type="checkbox" id="planneractive" name="taskplan">
+                <label for="tpactive">Planner</label>
+                <input type="checkbox" id="tpactive" name="taskplan">
+                <label for="tpactive">Task Planner</label>
+                <input type="checkbox" id="pomodoroactive" name="pomodoro">
+                <label for="tbactive">Time Block</label>
+                <input type="checkbox" id="eisenhoweractive" name="eisenhower">
+                <label for="eisenhoweractive">Eisenhower</label>
+                <input type="checkbox" id="dopamenuactive" name="dopamenu">
+                <label for="dopamenuactive">Dopamenu</label>
+                <input type="checkbox" id="remindersactive" name="reminders">
+                <label for="remindersactive">Reminders</label>
+            </form>
+        </div>
 
         <h3>Themes</h3>
-        <form id="themeselector">
+        <form id="themeselector" class="checkinblock">
             <input type="radio" name="theme" value="light">
             <label for="light">Default (Light)</label>
             <input type="radio" name="theme" value="dark">
@@ -147,7 +160,7 @@
             <li>Planner Tab - Contains a weekly view of tasks that allows you to look forward and backward</li>
             <li>Task Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
             <li>Time Block Tab - Contains an alternating worktime/breaktime timer</li>
-            <li>Help Tab - Recommends you certain tasks from your task list based on certain scenarios</li>
+            <li><div class="helplabel">💡</div> Tab - Recommends you certain tasks from your task list based on certain scenarios</li>
             <li>Reminders Tab - Contains previous task reminders</li>
             <li>Settings Tab - Allows you to customize the app such as</li>
             <ul>
@@ -175,9 +188,9 @@
                 <li>Alternate setup (total time, # of breaks)</li>
                 <li>Preset/saved time block settings</li>
             </ul>
-            <li>Help Tab</li>
+            <li><div class="helplabel">💡</div> Tab</li>
             <ul>
-                <li>Customize help tab scenarios</li>
+                <li>Customize <div class="helplabel">💡</div> tab scenarios</li>
                 <li>View tasks through size/importance filters</li>
             </ul>
             <li>Notifications</li>

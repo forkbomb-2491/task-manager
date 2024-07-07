@@ -88,6 +88,11 @@ class App {
             e => {
                 document.getElementById("helptabbutton")!.innerHTML = e.value
                 document.getElementById("helptabheader")!.innerHTML = e.value
+                var helpLabels = document.getElementsByClassName("helplabel")
+                for (let i = 0; i < helpLabels.length; i++) {
+                    const label = helpLabels[i];
+                    label.innerHTML = e.value
+                }
             }
         )
 

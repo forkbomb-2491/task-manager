@@ -30,7 +30,7 @@
         <div class="task" style="display: flex;">
             <form name="subtaskcreate" autocomplete="off" id="tpsubtaskcreate" style="display:flex; justify-content: left;">
                 <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
-                <input type="text" id="tpsubtasktitleinput" name="titleinput" style="flex-grow: 1; font-size: small;">
+                <input type="text" id="tpsubtasktitleinput" name="titleinput" style="flex-grow: 1; font-size: small;" required>
                 <select id="tpsizeinput" name="sizeinput" style="min-width: 9ch; max-width: 9ch; font-size: small;" required>
                     <option name="0">Tiny</option>
                     <option name="1">Small</option>
@@ -38,7 +38,7 @@
                     <option name="3">Big</option>
                     <option name="4">Huge</option>
                 </select>
-                <input type="date" id="tpsubtaskdateinput" name="deadlineinput" style="min-width: 15ch; max-width: 15ch; font-size: small;">
+                <input type="date" id="tpsubtaskdateinput" name="deadlineinput" style="min-width: 17ch; max-width: 17ch; font-size: small;" required>
             </form>
             <div style="background: none; border: 0;" class="deletetask"></div>
         </div>
@@ -49,7 +49,7 @@
             <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;">🏁</div>
             <div style="display: flex; flex-grow: 1;">
                 <div id="tpmaintaskname" style="flex-grow: 1; font-size: small;"></div>
-                <div id="tpdeadlinedisplay" style="min-width: 15ch; max-width: 15ch; font-size: small;"></div>
+                <div id="tpdeadlinedisplay" style="min-width: 17ch; max-width: 17ch; font-size: small;"></div>
             </div>
             <div style="background: none; border: 0;" class="deletetask"></div>
         </div>

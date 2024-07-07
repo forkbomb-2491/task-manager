@@ -165,10 +165,12 @@ export class TaskPlanner {
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
         var date = form.deadlineinput.valueAsDate
+        console.log(form.sizeinput)
+        var size = getFirstSelected(form.sizeinput)!.getAttribute("name")!
     
         var task = new Task(
             title, 
-            0, // Size presumed to be tiny
+            size, // Size presumed to be tiny
             this.selectedTask.importance, // Inherit importance
             this.selectedTask.category, // Inherit category
             date, 

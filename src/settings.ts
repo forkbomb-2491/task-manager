@@ -104,6 +104,14 @@ export class SettingsView {
             }
         )
 
+        document.getElementById("helplabelinput")!.addEventListener(
+            "change",
+            e => {
+                // @ts-ignore
+                this.settings.helpTabName = e.currentTarget!.value
+            }
+        )
+
         this.changeTheme(this.settings.lastTheme)
 
         const recListLen = this.settings.recListLength
@@ -200,6 +208,9 @@ export class SettingsView {
         document.getElementById("dopamenuactive")!.checked = tabsActive.dopamenu
         // @ts-ignore
         document.getElementById("remindersactive")!.checked = tabsActive.reminders
+
+        // @ts-ignore
+        document.getElementById("helplabelinput")!.value = this.settings.helpTabName
     }
 
     private async loadCheckInHandler(): Promise<boolean> {
