@@ -8,6 +8,8 @@ import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } f
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
+import { check } from '@tauri-apps/plugin-updater';
+import { ask } from '@tauri-apps/plugin-dialog';
 
 const DEBUG_TAB = false
 if (DEBUG_TAB) {
@@ -18,6 +20,17 @@ if (DEBUG_TAB) {
 var app: App
 
 await loadTabs()
+
+async function doUpdate() {
+    var update = await check()
+    if (update != null) {
+        if (await ask("Update found! Install it?")) {
+            await update.downloadAndInstall(e => {
+                console.log(e)
+            })
+        }
+    }
+}
 
 class App {
     // Frontend
@@ -38,6 +51,8 @@ class App {
     
     async main() {
         this.taskMgr.start().then()
+
+        doUpdate().then(() => console.log("upodate called"))
 
         // Register callbacks
         document.getElementById("taskcreateform")!.addEventListener(

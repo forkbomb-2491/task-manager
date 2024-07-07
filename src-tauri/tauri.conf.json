@@ -27,7 +27,7 @@
     "plugins": {
         "updater": {
             "active": true,
-            "dialog": true,
+            "dialog": false,
             "endpoints": [
                 "https://gist.githubusercontent.com/monsieurjonees/f307f935c5c26f5817a947df95cf8b12/raw/taskMgrUpdates.json"
             ],

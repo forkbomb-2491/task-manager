@@ -52,6 +52,7 @@
     "dialog:default",
     "dialog:allow-message",
     "dialog:allow-confirm",
-    "dialog:default"
+    "dialog:default",
+    "updater:default"
   ]
 }
