@@ -85,6 +85,26 @@ export class SettingsView {
             }
         )
 
+        document.getElementById("tabsettings")!.addEventListener(
+            "change",
+            _ => {
+                this.settings.tabsActive = {
+                    // @ts-ignore
+                    "planner": document.getElementById("planneractive")!.checked,
+                    // @ts-ignore
+                    "taskplan": document.getElementById("tpactive")!.checked,
+                    // @ts-ignore
+                    "pomodoro": document.getElementById("pomodoroactive")!.checked,
+                    // @ts-ignore
+                    "eisenhower": document.getElementById("eisenhoweractive")!.checked,
+                    // @ts-ignore
+                    "dopamenu": document.getElementById("dopamenuactive")!.checked,
+                    // @ts-ignore
+                    "reminders": document.getElementById("remindersactive")!.checked
+                }
+            }
+        )
+
         this.changeTheme(this.settings.lastTheme)
 
         const recListLen = this.settings.recListLength
@@ -101,7 +121,6 @@ export class SettingsView {
         const remindersCheckbox = document.getElementById("remindersenabled")!
         // @ts-ignore
         remindersCheckbox.checked = this.settings.remindersEnabled
-
 
         this.setSettingsFieldsToSavedValues()
     }
@@ -168,6 +187,20 @@ export class SettingsView {
                 break
             }
         }
+
+        var tabsActive = this.settings.tabsActive
+        // @ts-ignore
+        document.getElementById("planneractive")!.checked = tabsActive.planner
+        // @ts-ignore
+        document.getElementById("tpactive")!.checked = tabsActive.taskplan
+        // @ts-ignore
+        document.getElementById("pomodoroactive")!.checked = tabsActive.pomodoro
+        // @ts-ignore
+        document.getElementById("eisenhoweractive")!.checked = tabsActive.eisenhower
+        // @ts-ignore
+        document.getElementById("dopamenuactive")!.checked = tabsActive.dopamenu
+        // @ts-ignore
+        document.getElementById("remindersactive")!.checked = tabsActive.reminders
     }
 
     private async loadCheckInHandler(): Promise<boolean> {
@@ -523,6 +556,30 @@ export class Settings {
     set helpTabName(name: string) {
         this.setKey("helpTabName", name)
     }
+
+    get tabsActive(): TabsActive {
+        return this.getKey("tabsActive", {
+            "planner": true,
+            "taskplan": true,
+            "pomodoro": true,
+            "eisenhower": false,
+            "dopamenu": false,
+            "reminders": true
+        })
+    }
+
+    set tabsActive(tabs: TabsActive) {
+        this.setKey("tabsActive", tabs)
+    }
+}
+
+export type TabsActive = {
+    "planner": boolean,
+    "taskplan": boolean,
+    "pomodoro": boolean,
+    "eisenhower": boolean,
+    "dopamenu": boolean,
+    "reminders": boolean
 }
 
 type CheckInSettings = {

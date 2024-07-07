@@ -87,3 +87,17 @@ select:focus-within {
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
     /* background-color: rgba(0, 0, 0, 0); */
 }
+
+.checkinblock {
+    flex-grow: 1;
+    background-color: var(--secondary-color);
+
+    /* min-width: 90%; */
+    max-width: 95%;
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+}

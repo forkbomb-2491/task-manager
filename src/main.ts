@@ -3,13 +3,13 @@ import { Task } from './task'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
-import { Settings, SettingsView, onSettingChange, onSettingsLoad } from './settings'
+import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from './task';
 
-const DEBUG_TAB = false
+const DEBUG_TAB = true
 if (DEBUG_TAB) {
     addDebugFuncs()
     document.getElementById("debugtabbutton")!.style.display = "block"
@@ -91,6 +91,11 @@ class App {
             }
         )
 
+        onSettingChange(
+            "tabsActive",
+            e => this.updateTabVisibility(e.value)
+        )
+
         this.settings.load()
 
         document.body.style.display = "block"
@@ -120,6 +125,15 @@ class App {
     private switchPlannerCallback() {
         this.settings.plannerFlipped = !this.settings.plannerFlipped
         this.settings.plannerFlipped = switchPlannerOrientation()
+    }
+
+    private updateTabVisibility(tabsActive: TabsActive) {
+        document.getElementById("plannertabbutton")!.style.display = tabsActive.planner ? "block": "none"
+        document.getElementById("tptabbutton")!.style.display = tabsActive.taskplan ? "block": "none"
+        document.getElementById("pomodorotabbutton")!.style.display = tabsActive.pomodoro ? "block": "none"
+        document.getElementById("eisenhowertabbutton")!.style.display = tabsActive.eisenhower ? "block": "none"
+        document.getElementById("dopamenutabbutton")!.style.display = tabsActive.dopamenu ? "block": "none"
+        document.getElementById("reminderstabbutton")!.style.display = tabsActive.reminders ? "block": "none"
     }
 
     /**

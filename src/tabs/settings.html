@@ -11,32 +11,39 @@
 
 
         <h3>Schedule Check-In Notifications</h3>
-        <form name="remindersettings" id="remindersettings">
-            You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
-            
-            <input type="checkbox" id="remindermon" name="remindermon" value=1>
-            <label for="remindermon">Mondays</label>
-            <input type="checkbox" id="remindertue" name="remindertue" value=2>
-            <label for="remindertue">Tuesdays</label>
-            <input type="checkbox" id="reminderwed" name="reminderwed" value=3>
-            <label for="reminderwed">Wedesdays</label>
-            <input type="checkbox" id="reminderthu" name="reminderthu" value=4>
-            <label for="reminderthu">Thursdays</label>
-            <input type="checkbox" id="reminderfri" name="reminderfri" value=5>
-            <label for="reminderfri">Fridays</label>
-            <br>
-            <input type="checkbox" id="remindersat" name="remindersat" value=6>
-            <label for="remindersat">Saturdays</label>
-            <input type="checkbox" id="remindersun" name="remindersun" value=0>
-            <label for="remindersun">Sundays</label>
-            <br>
-            with the average time between notifs being
-            <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
-            <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 90%;" oninput="notifinterval.innerText=this.value">
-            <div style="display:flex; justify-content: space-between;">
-                <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
-            </div>
-        </form>
+        <!-- <div> -->
+        <div class="checkinblock">
+            <form name="remindersettings" id="remindersettings">
+                You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
+                
+                <input type="checkbox" id="remindermon" name="remindermon" value=1>
+                <label for="remindermon">Mondays</label>
+                <input type="checkbox" id="remindertue" name="remindertue" value=2>
+                <label for="remindertue">Tuesdays</label>
+                <input type="checkbox" id="reminderwed" name="reminderwed" value=3>
+                <label for="reminderwed">Wedesdays</label>
+                <input type="checkbox" id="reminderthu" name="reminderthu" value=4>
+                <label for="reminderthu">Thursdays</label>
+                <input type="checkbox" id="reminderfri" name="reminderfri" value=5>
+                <label for="reminderfri">Fridays</label>
+                <br>
+                <input type="checkbox" id="remindersat" name="remindersat" value=6>
+                <label for="remindersat">Saturdays</label>
+                <input type="checkbox" id="remindersun" name="remindersun" value=0>
+                <label for="remindersun">Sundays</label>
+                <br>
+                with the average time between notifs being
+                <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
+                <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 95%;" oninput="notifinterval.innerText=this.value">
+                <div style="display:flex; justify-content: space-between;">
+                    <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
+                </div>
+            </form>
+        </div>
+        <!-- <br>
+        ➕ -->
+
+
 
         <!-- <h3>Time Block</h3>
         <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 90%;" oninput="timervolume.innerText = this.value">            
@@ -72,18 +79,18 @@
 
         <h2>Display</h2>
         <h3>Tab Display</h3>
-        <p><i>Hide tabs you find unnecessary to you.</i></p>
+        <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
         <form name="tabsettings" id="tabsettings">
             <input type="checkbox" id="planneractive" name="taskplan">
             <label for="tpactive">Planner</label>
             <input type="checkbox" id="tpactive" name="taskplan">
             <label for="tpactive">Task Planner</label>
-            <input type="checkbox" id="tbactive" name="pomodoro">
+            <input type="checkbox" id="pomodoroactive" name="pomodoro">
             <label for="tbactive">Time Block</label>
-            <!-- <input type="checkbox" id="eisenhoweractive" name="eisenhower"> -->
-            <!-- <label for="eisenhoweractive">Eisenhower</label>
+            <input type="checkbox" id="eisenhoweractive" name="eisenhower">
+            <label for="eisenhoweractive">Eisenhower</label>
             <input type="checkbox" id="dopamenuactive" name="dopamenu">
-            <label for="dopamenuactive">Dopamenu</label> -->
+            <label for="dopamenuactive">Dopamenu</label>
             <input type="checkbox" id="remindersactive" name="reminders">
             <label for="remindersactive">Reminders</label>
         </form>
