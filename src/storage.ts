@@ -4,7 +4,7 @@ import { Task, TaskRecord } from "./task";
 import { message } from "@tauri-apps/plugin-dialog";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 
-const TASKS_FN = "tasks2.json"
+const TASKS_FN = "tasks.json"
 export const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings.json";
 
 // Checks to make sure the AppData folder for the App exists.
