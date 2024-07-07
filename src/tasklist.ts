@@ -1,11 +1,11 @@
 import { SortBasis, onWindowFocused } from "./utils";
-import { TaskView, onTaskEvent, onTaskAdd, Task } from "./task";
+import { onTaskEvent, onTaskAdd, Task } from "./task";
 import { TaskManager } from "./taskmanager";
 
 /**
  * A Task View that represents and handles the Tasks tab.
  */
-export class TaskList implements TaskView {
+export class TaskList {
     private taskMgr: TaskManager;
 
     private sortBasis: SortBasis = SortBasis.duedate;

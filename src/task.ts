@@ -1,30 +1,5 @@
 import { padWithLeftZeroes } from "./utils"
 
-/**
- * A View for Tasks. It displays, sorts, and processes user input for
- * the Task Manager. It is typical to have one of these per tab where
- * tasks are manipulated.
- */
-export interface TaskView {
-    /**
-     * Clears the UI for which the TaskView is responsible and reloads all
-     * tasks and relevant elements from scratch.
-     */
-    render(): void
-
-    /**
-     * Checks all existing UI elements to verify they are correctly placed
-     * and that all attributes match internal state.
-     */
-    refresh(): void
-
-    /**
-     * Adds a new Task to the View without refreshing or re-rendering.
-     * @param task The new Task to add
-     */
-    addTask(task: Task): void
-}
-
 export type TaskRecord = {
     "name": string,
     "size": number,

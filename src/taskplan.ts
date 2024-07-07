@@ -1,10 +1,10 @@
 import { onTaskAdd, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
-import { Task, TaskView } from "./task";
+import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
 
 
-export class TaskPlanner implements TaskView {
+export class TaskPlanner {
     private calStartDate: Date = new Date()
     private dates: TaskPlannerDate[] = []
 
@@ -268,7 +268,7 @@ export class TaskPlanner implements TaskView {
     }
 }
 
-class TaskPlannerDate implements TaskView {
+class TaskPlannerDate {
     private taskMgr: TaskManager
     private _selectedTask: Task | null
     private _date: Date

@@ -1,6 +1,5 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { } from "./storage";
 import { Weekdays } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 

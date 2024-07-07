@@ -1,4 +1,4 @@
-import { Task, TaskView, onTaskEvent } from "./task";
+import { Task, onTaskEvent } from "./task";
 import { TaskManager } from "./taskmanager";
 import { onSettingChange } from "./settings";
 import { onWindowFocused } from "./utils";
@@ -16,7 +16,7 @@ export function changeHelpStuff(target: string) {
     }
 }
 
-export class HelpManager implements TaskView {
+export class HelpManager {
     private taskMgr: TaskManager
 
     private panes: HelpPane[]

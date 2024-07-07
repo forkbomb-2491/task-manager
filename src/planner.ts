@@ -1,12 +1,12 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused } from "./utils"
-import { Task, TaskView, onTaskAdd, onTaskAdopt } from "./task"
+import { Task, onTaskAdd, onTaskAdopt } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
 /**
  * The TaskView that represents the Planner tab.
  */
-export class Planner implements TaskView {
+export class Planner {
     private startDate: Date
     private taskMgr: TaskManager
 
@@ -136,7 +136,7 @@ export class Planner implements TaskView {
  * Represents the Planner's Day Columns. This View handles rendering and
  * displaying the day's tasks.
  */
-class DayColumn implements TaskView {
+class DayColumn {
     private taskMgr: TaskManager
     private _date: Date
 
