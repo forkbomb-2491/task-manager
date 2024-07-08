@@ -111,6 +111,8 @@ export class SettingsView {
             "change",
             e => {
                 // @ts-ignore
+                if (e.currentTarget!.value.length < 1) return
+                // @ts-ignore
                 this.settings.helpTabName = e.currentTarget!.value
             }
         )
