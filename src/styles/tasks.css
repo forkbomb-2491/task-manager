@@ -141,4 +141,64 @@ button.complete:hover {
 .sortbutton.active {
     background-color: var(--primary-color);
     font-style: bold;
-} 
+}
+
+.checkcontainer {
+    position: relative;
+    display: inline-block;
+    color: rgba(0, 0, 0, 0);
+    text-shadow: none;
+
+    font-family: "Times New Roman";
+
+    margin: 0.125rem;
+}
+
+.checkcontainer:hover .taskcheckbox {
+    box-shadow: 0 0 0.25rem 0.25rem var(--primary-shadow-color);
+}
+
+.checkcontainer .taskcheckbox.project {
+    /* background-color: #00d26a; */
+    background-color: var(--tp-checkbox-project);
+
+}
+
+.checkcontainer input:checked~.taskcheckbox {
+    color: white;
+}
+
+.checkcontainer .taskcheckbox.nonproject {
+    /* background-color: #785dc8; */
+    background-color: var(--tp-checkbox-nonproject);
+}
+
+.taskcheckbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+
+    min-width: 1rem;
+    max-width: 1rem;
+    min-height: 1rem;
+    max-height: 1rem;
+
+    border-radius: 0.125em;
+    border-color: var(--primary-text-color);
+    border-style: solid;
+
+    box-shadow: 0 0 0.125rem 0.125rem var(--primary-shadow-color);
+    transition: ease-in-out 200ms;
+}
+
+.taskcheckbox p {
+    -webkit-margin-top-collapse: collapse;
+    margin-top: -0.4ch;
+}
+
+.checkcontainer input {
+    top: 0;
+    left: 0;
+    opacity: 0;
+}

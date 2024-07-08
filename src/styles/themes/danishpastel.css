@@ -26,6 +26,9 @@
     --help-button-text: white;
     --help-button-hover: rgb(131, 97, 168);
     --help-button-text-hover: white;
+    /* TaskPlanner page */
+    --tp-checkbox-project: #00d26a;
+    --tp-checkbox-nonproject: #785dc8;
 }
 
 .tabbutton.active {

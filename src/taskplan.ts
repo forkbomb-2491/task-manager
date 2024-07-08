@@ -4,13 +4,14 @@ import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
 
 
+
 export class TaskPlanner {
     private calStartDate: Date = new Date()
     private dates: TaskPlannerDate[] = []
 
     private selectedTask: Task | null = null
 
-    private _fullCal: boolean = false
+    private _fullCal: boolean = true //false
     get fullCal(): boolean {
         return this._fullCal
     }
@@ -369,9 +370,9 @@ class TaskPlannerDate {
         for (let i = 0; i < this.hoverElement.children.length; i++) {
             const st = this.hoverElement.children[i]
             this.element.innerHTML += `
-                <label class="tpcheckcontainer">
+                <label class="checkcontainer">
                     <input type="checkbox" ${st.className.includes('completed') ? "checked": ""} disabled>
-                    <span class="taskcheckbox">
+                    <span class="taskcheckbox project">
                         <p>✔</p>
                     </span>
                 </label>
@@ -381,7 +382,7 @@ class TaskPlannerDate {
             this.element.innerHTML += "<br>";
             this.getFullCalTasks().forEach(t => {
                 this.element.innerHTML += `
-                <label class="tpcheckcontainer">
+                <label class="checkcontainer">
                     <input type="checkbox" ${t.completed ? "checked": ""} disabled>
                     <span class="taskcheckbox nonproject">
                         <p>✔</p>
