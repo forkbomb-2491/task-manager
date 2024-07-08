@@ -2,6 +2,7 @@ import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
 import { Weekdays } from "./utils";
 import { SETTINGS_PATH } from "./storage";
+import { getVersion } from "@tauri-apps/api/app";
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -44,6 +45,8 @@ export class SettingsView {
      */
     load() {
         this.loadCheckInHandler().then()
+
+        getVersion().then(v => document.getElementById("versionlabel")!.innerHTML += v)
 
         document.getElementById("remindersettings")!.addEventListener(
             "submit",
