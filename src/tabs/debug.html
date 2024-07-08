@@ -15,3 +15,12 @@
     <button class="settingsbutton" onclick='window.dispatchEvent(new Event("blocktasksave"))'>Block Tasks Saving</button>
 <!-- <button class="settingsbutton" onclick="bindErrors()">Bind console errors</button> -->
 </div>
+
+<div style="display: flex;"> 
+    <button class="settingsbutton" onclick="fetchTasks()">Fetch tasks from LH</button>
+    <button class="settingsbutton" onclick="postDbg('urmom')">Post urmom</button>
+    <button class="settingsbutton" onclick="postTasks()">Post tasks</button>
+    <button class="settingsbutton" onclick="doMockAuth()">Mock Auth</button>
+</div>
+
+<div id="debugdump"></div>
