@@ -1,4 +1,4 @@
-import { onTaskAdd, onTaskEvent } from './task';
+import { onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
@@ -72,6 +72,7 @@ export class TaskPlanner {
         
         onTaskEvent(() => { this.refresh() })
         onTaskAdd(_ => this.refresh())
+        onTaskDelete(_ => this.refresh())
         onWindowFocused(() => this.refresh())
 
         var taskSelect = document.getElementById("tptask")!
@@ -199,7 +200,6 @@ export class TaskPlanner {
             false
         )
         this.selectedTask.adoptChild(task)
-        this.taskMgr.addTask(task)
     }
 
     private selectTask(task: Task) {
@@ -359,17 +359,22 @@ class TaskPlannerDate {
                 this.element.className = "tpdate hastask"
 
                 this.element.innerHTML = this.label! + "<br>"
-                for (let i = 0; i < this.hoverElement.children.length; i++) {
-                    this.element.innerHTML += "✅ "
-                }
-                if (this.taskPlan.fullCal) {
-                    this.element.innerHTML += "<br>"
-                    for (let i = 0; i < this.getFullCalTasks().length; i++) {
-                        this.element.innerHTML += "☑️ "
-                    }
-                }
+                this.addCheckboxes();
                 this.element.appendChild(this.hoverElement)
             }
+        }
+    }
+
+    private addCheckboxes() {
+        for (let i = 0; i < this.hoverElement.children.length; i++) {
+            const st = this.hoverElement.children[i]
+            this.element.innerHTML += `<input type="checkbox" ${st.className.includes('completed') ? "checked": ""}>`;
+        }
+        if (this.taskPlan.fullCal) {
+            this.element.innerHTML += "<br>";
+            this.getFullCalTasks().forEach(t => {
+                this.element.innerHTML += `<input type="radio" ${t.completed ? "checked": ""} disabled>`;
+            })
         }
     }
 
@@ -383,7 +388,7 @@ class TaskPlannerDate {
 
     render() {
         this.label = `${this._date.getMonth() + 1}/${this._date.getDate()}`
-        this.element.innerHTML = this.label
+        this.element.innerHTML = this.label + "<br>"
         this.hoverElement.innerHTML = ""
 
         if (this._selectedTask != null) {
@@ -428,15 +433,7 @@ class TaskPlannerDate {
         if (this.hoverElement.children.length > 0 || this.getFullCalTasks().length > 0) {
             this.element.className = "tpdate hastask"
             this.element.innerHTML = this.label! + "<br>"
-            for (let i = 0; i < this.hoverElement.children.length; i++) {
-                this.element.innerHTML += "✅ "
-            }
-            if (this.taskPlan.fullCal) {
-                this.element.innerHTML += "<br>"
-                for (let i = 0; i < this.getFullCalTasks().length; i++) {
-                    this.element.innerHTML += "☑️ "
-                }
-            }
+            this.addCheckboxes()
         } else {
             this.element.className = "tpdate"
             this.element.innerHTML = this.label!
