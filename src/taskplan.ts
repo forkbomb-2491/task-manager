@@ -1,4 +1,4 @@
-import { onTaskAdd, onTaskEvent } from './task';
+import { onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
@@ -72,6 +72,7 @@ export class TaskPlanner {
         
         onTaskEvent(() => { this.refresh() })
         onTaskAdd(_ => this.refresh())
+        onTaskDelete(_ => this.refresh())
         onWindowFocused(() => this.refresh())
 
         var taskSelect = document.getElementById("tptask")!
@@ -367,12 +368,26 @@ class TaskPlannerDate {
     private addCheckboxes() {
         for (let i = 0; i < this.hoverElement.children.length; i++) {
             const st = this.hoverElement.children[i]
-            this.element.innerHTML += `<input type="checkbox" ${st.className.includes('completed') ? "checked": ""}>`;
+            this.element.innerHTML += `
+                <label class="tpcheckcontainer">
+                    <input type="checkbox" ${st.className.includes('completed') ? "checked": ""} disabled>
+                    <span class="taskcheckbox">
+                        <p>✔</p>
+                    </span>
+                </label>
+                `;
         }
         if (this.taskPlan.fullCal) {
             this.element.innerHTML += "<br>";
             this.getFullCalTasks().forEach(t => {
-                this.element.innerHTML += `<input type="radio" ${t.completed ? "checked": ""} disabled>`;
+                this.element.innerHTML += `
+                <label class="tpcheckcontainer">
+                    <input type="checkbox" ${t.completed ? "checked": ""} disabled>
+                    <span class="taskcheckbox nonproject">
+                        <p>✔</p>
+                    </span>
+                </label>
+                `;
             })
         }
     }
@@ -430,9 +445,13 @@ class TaskPlannerDate {
             return
         }
         if (this.hoverElement.children.length > 0 || this.getFullCalTasks().length > 0) {
-            this.element.className = "tpdate hastask"
+            this.element.className = "tpdate"
             this.element.innerHTML = this.label! + "<br>"
             this.addCheckboxes()
+        if (this.hoverElement.children.length > 0) {
+            this.element.className = "tpdate hastask"
+        }
+        
         } else {
             this.element.className = "tpdate"
             this.element.innerHTML = this.label!

@@ -39,6 +39,7 @@
 .tpdate {
     z-index: 0;
     overflow-wrap: break-word;
+    overflow: hidden;
     
     /* width: 80%; */
     margin-left: 0.75rem;
@@ -87,7 +88,7 @@
     min-height: auto;
     text-align: left;
     
-    z-index: 0;
+    z-index: 10;
     background-color: var(--tab-hover);
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
@@ -175,4 +176,55 @@
 .tpcontainer ul {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+.tpcheckcontainer {
+    position: relative;
+    color: rgba(0, 0, 0, 0);
+    text-shadow: none;
+}
+
+.tpcheckcontainer:hover .taskcheckbox {
+    box-shadow: 0 0 0.25rem 0.25rem var(--primary-shadow-color);
+}
+
+.tpcheckcontainer .taskcheckbox {
+    background-color: #00d26a;
+}
+
+.tpcheckcontainer input:checked~.taskcheckbox {
+    color: white;
+}
+
+.tpcheckcontainer .taskcheckbox.nonproject {
+    background-color: #785dc8;
+}
+
+.taskcheckbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+
+    min-width: 1rem;
+    max-width: 1rem;
+    min-height: 1rem;
+    max-height: 1rem;
+
+    border-radius: 0.125em;
+    border-color: var(--primary-text-color);
+    border-style: solid;
+
+    box-shadow: 0 0 0.125rem 0.125rem var(--primary-shadow-color);
+    transition: ease-in-out 200ms;
+}
+
+.taskcheckbox p {
+    margin-top: -0.4ch;
+}
+
+.tpcheckcontainer input {
+    top: 0;
+    left: 0;
+    opacity: 0;
 }
