@@ -3,7 +3,7 @@ import { Task } from './task'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
-import { Settings, SettingsEvent, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
+import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
@@ -117,8 +117,6 @@ class App {
             "tabsActive",
             e => this.updateTabVisibility(e.value)
         )
-
-        window.dispatchEvent(new SettingsEvent(0, "lastTheme", "light"))
 
         this.settings.load()
 

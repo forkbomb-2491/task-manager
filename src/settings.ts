@@ -434,10 +434,11 @@ export class Settings {
 
                     this._isLoaded = true
                     window.dispatchEvent(new Event("settingsloaded"))
-    
-                    // @ts-ignore
-                    window.settings = this
                 })
+            }).catch(_ => {
+                this.store.save().then()
+                this._isLoaded = true
+                window.dispatchEvent(new Event("settingsloaded"))
             })
         }
     }
