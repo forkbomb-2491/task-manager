@@ -105,6 +105,18 @@ export function hideTooltip() {
     tooltip.style.display = "none"
 }
 
+export function showTooltipOnHover(element: HTMLElement, text: string) {
+    element.addEventListener(
+        "mouseenter",
+        () => showTooltip(text)
+    )
+
+    element.addEventListener(
+        "mouseleave",
+        () => hideTooltip()
+    )
+}
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */

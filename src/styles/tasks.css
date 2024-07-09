@@ -84,6 +84,20 @@
     padding: 0;
 }
 
+.edittask {
+    display: none;
+    width: 2rem;
+    padding: 0;
+}
+
+.task:hover .edittask {
+    display: block;
+}
+
+.task.completed:hover .edittask {
+    display: none;
+}
+
 .completed div {
     text-decoration: line-through;
     color: var(--secondary-shadow-color);

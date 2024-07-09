@@ -212,6 +212,7 @@ export class Task {
         var ownTaskElement = this.getTaskListLikeElement(true)
         var newContainer = document.createElement("div")
         newContainer.className = "taskcontainer"
+        // ✏️🖉 
         newContainer.setAttribute("name", this.id)
         var subtaskContainer = document.createElement("div")
         subtaskContainer.className = "subtaskcontainer"
@@ -392,21 +393,10 @@ export class Task {
         this.elements = newElements
     }
 
-    /**
-     * Returns a div element of class "task" in the style of those on the Tasks
-     * tab.
-     * @param full True: full length Element, with Category, Size, etc. False:
-     * shortened Element with only name and due date.
-     * @returns Div element of class "task"
-     */
-    private getTaskListLikeElement(full: boolean): HTMLDivElement {
-        this.cleanUpElements()
-
-        var newElement = document.createElement("div")
-        newElement.className = this.completed ? "task completed": "task"
-        if (full) {
-            newElement.innerHTML = `
+    private getTaskListElementHTML() {
+        return `
             <button class="complete"></button>
+            <button class="edittask" style="background: none; border: 0; text-decoration: none;">✏️</button>
             <div style="display: flex; flex-grow: 1">
                 <div style="flex-grow: 1">
                     ${this.name}
@@ -427,7 +417,24 @@ export class Task {
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
             </button>
-            `
+        `
+    }
+
+    /**
+     * Returns a div element of class "task" in the style of those on the Tasks
+     * tab.
+     * @param full True: full length Element, with Category, Size, etc. False:
+     * shortened Element with only name and due date.
+     * @returns Div element of class "task"
+     */
+    private getTaskListLikeElement(full: boolean): HTMLDivElement {
+        this.cleanUpElements()
+
+        var newElement = document.createElement("div")
+        newElement.className = this.completed ? "task completed": "task"
+        if (full) {
+            newElement.innerHTML = this.getTaskListElementHTML()
+            this.addButtonListeners(newElement, true)
         } else {
             newElement.innerHTML = `
             <button class="complete"></button>
@@ -446,8 +453,25 @@ export class Task {
                 🗑️
             </button>
             `
+            this.addButtonListeners(newElement)
         }
-        
+
+        if (this.category != "Default") {
+            newElement.style.color = getColor(this.category)
+        }
+        return newElement
+    }
+
+    private addButtonListeners(newElement: HTMLDivElement, includeEdit: boolean = false) {
+        if (includeEdit) {
+            var editTaskCallback = (_: Event) => { this.editTask(newElement) }
+
+            newElement.getElementsByClassName("edittask")[0].addEventListener(
+                "click",
+                editTaskCallback
+            )
+        }
+
         var deleteTaskCallback = (_: Event) => { this.delete() }
         var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
@@ -460,11 +484,67 @@ export class Task {
             "click",
             deleteTaskCallback
         )
+    }
 
-        if (this.category != "Default") {
-            newElement.style.color = getColor(this.category)
+    private editTask(element: HTMLDivElement) {
+        if (element.className.includes(" editing")) {
+            element.className = "task"
+            element.innerHTML = this.getTaskListElementHTML()
+            this.addButtonListeners(element, true)
+        } else {
+            element.className += " editing"
+            element.innerHTML = `
+            <form class="taskeditform" name="taskcreate" autocomplete="off">
+                <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+                <div style="display: flex; flex-grow: 1;">
+                    <div style="flex-grow: 1;">
+                        <input type = "text" name="titleinput" required value="${this.name}">
+                    </div>
+                    <div style="min-width: 9ch; max-width: 9ch; display: flex;">
+                        <select name="catinput" required>
+                            <option name="default" ${this.category == "Default" ? "selected": ""}>Default</option>
+                            <option name="red" ${this.category == "Red" ? "selected": ""}>Red</option>
+                            <option name="orange" ${this.category == "Orange" ? "selected": ""}>Orange</option>
+                            <option name="yellow" ${this.category == "Yellow" ? "selected": ""}>Yellow</option>
+                            <option name="green" ${this.category == "Green" ? "selected": ""}>Green</option>
+                            <option name="blue" ${this.category == "Blue" ? "selected": ""}>Blue</option>
+                            <option name="purple" ${this.category == "Purple" ? "selected": ""}>Purple</option>
+                        </select>
+                    </div>
+                    <div style="min-width: 10ch; max-width: 10ch;">
+                        <select name = "sizeinput" required>
+                            <option name="0" ${this.size == 0 ? "selected": ""}>Tiny</option>
+                            <option name="1" ${this.size == 1 ? "selected": ""}>Small</option>
+                            <option name="2" ${this.size == 2 ? "selected": ""}>Medium</option>
+                            <option name="3" ${this.size == 3 ? "selected": ""}>Big</option>
+                            <option name="4" ${this.size == 4 ? "selected": ""}>Huge</option>
+                        </select>
+                    </div>
+                    <div style="min-width: 13ch; min-width: 13ch; display: flex;">
+                        <select name="importanceinput" required>
+                            <option name="0" ${this.importance == 0 ? "selected": ""}>Trivial</option>
+                            <option name="1" ${this.importance == 1 ? "selected": ""}>Unimportant</option>
+                            <option name="2" ${this.importance == 2 ? "selected": ""}>Average</option>
+                            <option name="3" ${this.importance == 3 ? "selected": ""}>Important</option>
+                            <option name="4" ${this.importance == 4 ? "selected": ""}>Vital</option>
+                        </select>
+                    </div>
+                    <div style="min-width: 17ch; max-width: 17ch; display: flex;">
+                        <input name="deadlineinput" type="date" value="${this.due.getFullYear()}-${padWithLeftZeroes(String(this.due.getMonth() + 1), 2)}-${padWithLeftZeroes(String(this.due.getDate()), 2)}" required>
+                    </div>
+                </div>
+                <div style="background: none; border: 0;" class="deletetask"></div>
+            </form>
+            `
+            var editTaskCallback = (_: Event) => { this.editTask(element) }
+            element.getElementsByClassName("taskeditform")[0].addEventListener(
+                "submit",
+                e => {
+                    e.preventDefault()
+                    editTaskCallback(e)
+                }
+            )
         }
-        return newElement
     }
 
     /**

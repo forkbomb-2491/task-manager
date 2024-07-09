@@ -10,6 +10,7 @@ import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
 import { check } from '@tauri-apps/plugin-updater';
 import { ask } from '@tauri-apps/plugin-dialog';
+import { showTooltipOnHover } from './utils';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
@@ -54,6 +55,9 @@ class App {
 
         doUpdate().then(() => console.log("upodate called"))
 
+        showTooltipOnHover(document.getElementById("sizetit")!, "Size: Based on how much time or work will go into a task.")
+        showTooltipOnHover(document.getElementById("importancetit")!, "Importance: Based on how important it is that the task is completed.")
+    
         // Register callbacks
         document.getElementById("taskcreateform")!.addEventListener(
             "submit",
