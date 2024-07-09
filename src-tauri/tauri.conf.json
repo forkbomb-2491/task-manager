@@ -22,7 +22,7 @@
         ]
     },
     "productName": "Task Manager",
-    "version": "0.2.2",
+    "version": "0.3.0-alpha",
     "identifier": "dev.pgil.forkbomb.taskmgr",
     "plugins": {
         "updater": {
