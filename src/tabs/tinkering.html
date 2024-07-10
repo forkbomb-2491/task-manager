@@ -1,0 +1,65 @@
+<h1 style="margin-top: 0; flex-grow: 0;">tInKERinG</h1>
+<div style="display: flex; justify-content: space-between;">
+    <div style="min-width: 20%;">
+        <div class="container" style="margin-bottom: 1rem;">
+            <h2>Create a List</h2> 
+            Name Color
+        </div>
+        <div class="container" style="margin-bottom: 1rem; aspect-ratio: 1/0.75;">
+            <div style="display: flex;">
+                <h2 style="margin: 0;">List 1</h2>
+                <div class="flexspacer"></div>
+                <button class="settingsbutton" style="max-width: fit-content; max-height: fit-content;">Select</button>
+            </div>
+        </div>
+        <div class="container" style="margin-bottom: 1rem; aspect-ratio: 1/0.75;">
+            <h2>List 2</h2>
+        </div>
+    </div>
+    <!-- <div style="display: flex; flex-direction: column; justify-content: space-evenly;">
+        <button class="settingsbutton" style="transform: rotate(-90deg);">
+            Create List
+        </button>
+        <button class="settingsbutton" style="transform: rotate(-90deg);">
+            List 2
+        </button>
+        <button class="settingsbutton" style="transform: rotate(-90deg);">
+            List 1
+        </button>
+    </div> -->
+    <div style="width: 1rem;"></div>
+    <div class="container" style="flex-grow: 1;">
+        <h2>List 0</h2>
+        <div class="task" style="justify-content: left;" >
+            <form name="taskcreate"  autocomplete="off">
+                <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+                <div style="display: flex; flex-grow: 1;">
+                    <div style="flex-grow: 1;">
+                        <input type = "text" id = "titleinput" name="titleinput" required>
+                    </div>
+                    <div style="min-width: 10ch; max-width: 10ch;">
+                        <select id = "sizeinput" name = "sizeinput" required>
+                            <option name="0">Tiny</option>
+                            <option name="1">Small</option>
+                            <option name="2">Medium</option>
+                            <option name="3">Big</option>
+                            <option name="4">Huge</option>
+                        </select>
+                    </div>
+                    <div style="min-width: 13ch; min-width: 13ch; display: flex;">
+                        <select id = "importanceinput" name = "importanceinput" required>
+                            <option name="0">Trivial</option>
+                            <option name="1">Unimportant</option>
+                            <option name="2">Average</option>
+                            <option name="3">Important</option>
+                            <option name="4">Vital</option>
+                        </select>
+                    </div>
+                    <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
+                        <input  type="datetime-local" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -40,6 +40,15 @@ async function pullv1Tasks() {
     }
 }
 
+async function pushv1Tasks() {
+    if (await confirm("Are you sure you want to overwrite tasks2.json with tasks.json?")) {
+        window.dispatchEvent(new Event("blocktasksave"))
+        var v1 = await loadFile("tasks2.json", [])
+        await saveFile(v1, "tasks.json")
+        message("Done. Restart the app to apply").then()
+    }
+}
+
 var errorsBound = false
 function bindErrors() {
     if (errorsBound) { return }
@@ -57,5 +66,6 @@ export function addDebugFuncs() {
     window.createOverdueTask = createOverdueTask
     window.createTaskTmrw = createTaskTmrw
     window.pullv1Tasks = () => pullv1Tasks().then()
+    window.pushv1Tasks = () => pushv1Tasks().then()
     window.tauriFetch = fetch
 }

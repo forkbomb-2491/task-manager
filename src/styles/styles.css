@@ -231,3 +231,16 @@ header button {
     text-shadow: 0 0 0.5rem var(--primary-shadow-color);
 }
 
+.container {
+    background-color: var(--secondary-color);
+    display: flex;
+    flex-flow: column;
+
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+}
