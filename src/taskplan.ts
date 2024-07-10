@@ -138,7 +138,7 @@ export class TaskPlanner {
         var importance = Number(importanceOption.getAttribute("name"))
 
         this.filter = t => {
-            return t.importance >= importance && t.size >= size
+            return t._importance >= importance && t._size >= size
         }
 
         this.updateSelector()
@@ -159,7 +159,7 @@ export class TaskPlanner {
             const task = tasks[i];
             var element = document.createElement("option")
             element.setAttribute("name", task.id)
-            element.innerHTML = task.name
+            element.innerHTML = task._name
 
             if (this.selectedTask == task) {
                 element.selected = true
@@ -194,8 +194,8 @@ export class TaskPlanner {
         var task = new Task(
             title, 
             size, // Size presumed to be tiny
-            this.selectedTask.importance, // Inherit importance
-            this.selectedTask.category, // Inherit category
+            this.selectedTask._importance, // Inherit importance
+            this.selectedTask._category, // Inherit category
             date, 
             false
         )
@@ -220,9 +220,9 @@ export class TaskPlanner {
         }
 
         var tpmaintask = document.getElementById("tpmaintaskname")
-        tpmaintask!.innerHTML = task.name
+        tpmaintask!.innerHTML = task._name
         var deadlineDisplay = document.getElementById("tpdeadlinedisplay")
-        deadlineDisplay!.innerHTML = task.due.toDateString()
+        deadlineDisplay!.innerHTML = task._due.toDateString()
     }
 
     private shiftMonth(by: number) {
@@ -282,7 +282,7 @@ export class TaskPlanner {
         var subtaskList = document.getElementById("tpsubtasklist")!
         subtaskList.innerHTML = ""
         this.selectedTask!.subtasks.sort((a, b) => {
-            return a.due.valueOf() - b.due.valueOf()
+            return a._due.valueOf() - b._due.valueOf()
         }).forEach(st => {
             if (st.deleted) return
             subtaskList.appendChild(st.shortenedTaskListElement)
@@ -409,11 +409,11 @@ class TaskPlannerDate {
             var childIds = this._selectedTask.children.filter(
                 t => {
                     const task = this.taskMgr.getTask(t)
-                    return task != null && isSameDay(this.date, task.due) && !task.deleted
+                    return task != null && isSameDay(this.date, task._due) && !task.deleted
                 }
             )
 
-            if (isSameDay(this._date, this._selectedTask.due)) childIds.push(this._selectedTask.id)
+            if (isSameDay(this._date, this._selectedTask._due)) childIds.push(this._selectedTask.id)
 
             var children = childIds.map(
                 t => {
@@ -435,7 +435,7 @@ class TaskPlannerDate {
         if (!this.taskPlan.fullCal) return []
         var exclude = this.selectedTask != null ? [this.selectedTask, ...this.selectedTask!.subtasks]: []
         var tasks = this.taskMgr.getTasks().filter(t => {
-            return isSameDay(t.due, this.date) && !exclude.includes(t)
+            return isSameDay(t._due, this.date) && !exclude.includes(t)
         })
         return tasks
     }

@@ -46,6 +46,11 @@
         <!-- <br>
         ➕ -->
 
+        <h3>Task Reminder Notifications</h3>
+        <div class="checkinblock">
+            You will receive reminders for tasks as early as <b><label for="taskreminderbuffer" id="taskreminderbufferlabel">2</label></b> days before they are due!<br>
+            <input type="range" class="settingsslider" id="taskreminderbuffer" name = "taskreminderbuffer" min="1" max="14" value="2" step="1" style="width: 95%;" oninput="taskreminderbufferlabel.innerText=this.value">
+        </div>
 
 
         <!-- <h3>Time Block</h3>
@@ -98,11 +103,12 @@
                 <input type="checkbox" id="planneractive" name="taskplan">
                 <label for="tpactive">Planner</label>
                 <input type="checkbox" id="tpactive" name="taskplan">
-                <label for="tpactive">Task Planner</label>
+                <label for="tpactive">Project Planner</label>
                 <input type="checkbox" id="pomodoroactive" name="pomodoro">
                 <label for="tbactive">Time Block</label>
                 <input type="checkbox" id="eisenhoweractive" name="eisenhower">
                 <label for="eisenhoweractive">Eisenhower</label>
+                <br>
                 <input type="checkbox" id="dopamenuactive" name="dopamenu">
                 <label for="dopamenuactive">Dopamenu</label>
                 <input type="checkbox" id="remindersactive" name="reminders">
@@ -159,18 +165,17 @@
         <h3>Please share your feedback with us!!</h3>
         <a href="https://forms.gle/f915V9unTXcpqAVg7" target="_blank" class="settingsbutton" style="margin-top: 0.25rem; text-decoration: none;">🔗 Feedback Form</a>
 
-        <h3 style="margin-bottom: 0.2rem;">What's New</h3>
-        <div style="text-align: left;">
-            <input type="checkbox" checked disabled>The default theme is now applied in new installations<br>
-            <input type="checkbox" checked disabled>Tasks added in Project Planner are now added to the Planner tab only once<br>
-            <input type="checkbox" checked disabled><element class="helplabel">💡</element> Tab label can no longer be empty<br>
-            <input type="checkbox" checked disabled>Checkboxes on Project Planner days indicating which ones have tasks are now prettier!
-        </div>
         <h3>Current Features</h3>
         <ul>
             <li>Task Tab - Contains a list view of all tasks and allows you to add tasks to your task lists</li>
+            <ul>
+                <li>Sort task view</li>
+                <li>Task Completion animation</li>
+                <li>Edit existing tasks</li>
+                <li>Add times to tasks</li>
+            </ul>
             <li>Planner Tab - Contains a weekly view of tasks that allows you to look forward and backward</li>
-            <li>Task Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
+            <li>Project Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
             <li>Time Block Tab - Contains an alternating worktime/breaktime timer</li>
             <li><div class="helplabel">💡</div> Tab - Recommends you certain tasks from your task list based on certain scenarios</li>
             <li>Reminders Tab - Contains previous task reminders</li>
@@ -182,18 +187,14 @@
             </ul>
         </ul>
 
-        <h3>Future Features</h3>
+        <!-- <h3>Future Features</h3>
         <ul>
             <li>"Events", tasks without progress checks</li>
             <li>"Notes", tasks without deadlines</li>
             <li>Task Tab</li>
             <ul>
-                <li>Sort task view</li>
                 <li>Create subtasks in Task Tab</li>
                 <li>Option to separate tasklists based on category</li>
-                <li>Task Completion animation</li>
-                <li>Edit existing tasks</li>
-                <li>Add times to tasks</li>
             </ul>
             <li>Time Block Tab</li>
             <ul>
@@ -209,6 +210,6 @@
             <ul>
                 <li>Option for multiple check-in reminder blocks</li>
             </ul>
-        </ul>
+        </ul> -->
     </div>
 </div>

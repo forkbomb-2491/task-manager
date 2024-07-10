@@ -77,19 +77,19 @@ export class TaskList {
             const taskB = this.taskMgr.getTask(b.getAttribute("name")!)!;
             switch (this.sortBasis) {
                 case SortBasis.name:
-                    ret = taskA.name > taskB.name ? 1 : -1;
+                    ret = taskA._name > taskB._name ? 1 : -1;
                     break;
                 case SortBasis.category:
-                    ret = taskA.category > taskB.category ? 1 : -1;
+                    ret = taskA._category > taskB._category ? 1 : -1;
                     break;
                 case SortBasis.size:
-                    ret = taskA.size - taskB.size;
+                    ret = taskA._size - taskB._size;
                     break;
                 case SortBasis.importance:
-                    ret = taskA.importance - taskB.importance;
+                    ret = taskA._importance - taskB._importance;
                     break;
                 case SortBasis.duedate:
-                    ret = taskA.due.valueOf() - taskB.due.valueOf();
+                    ret = taskA._due.valueOf() - taskB._due.valueOf();
                     break;
                 default:
                     break;

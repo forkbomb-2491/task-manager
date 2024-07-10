@@ -123,11 +123,46 @@ export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean 
 export class Task {
     id: string
     
-    name: string
-    size: number
-    importance: number
-    category: string
-    due: Date
+    _name: string
+    get name(): string { return this._name }
+    set name(val: string) { 
+        this._name = val
+        this.refreshElements()
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+
+    _size: number
+    get size(): number { return this._size }
+    set size(val: number) { 
+        this._size = val
+        this.refreshElements()
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+
+    _importance: number
+    get importance(): number { return this._importance }
+    set importance(val: number) { 
+        this._importance = val
+        this.refreshElements()
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+    
+    _category: string
+    get category(): string { return this._category }
+    set category(val: string) { 
+        this._category = val
+        this.refreshElements()
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+    
+    _due: Date
+    get due(): Date { return this._due }
+    set due(val: Date) { 
+        this._due = val
+        this.refreshElements()
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+    
     completed: boolean
 
     private _subtasks: Task[] = []
@@ -144,11 +179,11 @@ export class Task {
 
     get record(): TaskRecord {
         return {
-            "name": this.name,
-            "size": this.size,
-            "importance": this.importance,
-            "category": this.category,
-            "due": this.due,
+            "name": this._name,
+            "size": this._size,
+            "importance": this._importance,
+            "category": this._category,
+            "due": this._due,
             "completed": this.completed,
             "id": this.id,
             "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
@@ -168,7 +203,7 @@ export class Task {
      * How many days until this task is due (rounded DOWN to nearest integer)
      */
     public get dueIn() {
-        var due = new Date(this.due.getFullYear(), this.due.getMonth(), this.due.getDate())
+        var due = new Date(this._due.getFullYear(), this._due.getMonth(), this._due.getDate())
         var now = new Date()
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         return Math.floor((due.valueOf() - today.valueOf()) / 84_600_000)
@@ -190,7 +225,7 @@ export class Task {
         }
         newElement.innerHTML = `
         <button class="complete"></button>
-        ${this.name}
+        ${this._name}
         `
 
         var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
@@ -200,8 +235,8 @@ export class Task {
             completeTaskCallback
         )
 
-        if (this.category != "Default") {
-            newElement.style.color = getColor(this.category)
+        if (this._category != "Default") {
+            newElement.style.color = getColor(this._category)
         }
 
         this.elements.push(newElement)
@@ -226,7 +261,9 @@ export class Task {
     }
 
     get shortenedTaskListElement(): HTMLDivElement {
-        return this.getTaskListLikeElement(false)
+        const newElement = this.getTaskListLikeElement(false)
+        this.elements.push(newElement)
+        return newElement
     }
 
     /**
@@ -253,12 +290,12 @@ export class Task {
         subtasks: TaskRecord[] = [],
         parent: Task | null = null
     ) {
-        this.name = name
-        this.size = Number(size)
-        this.importance = Number(importance)
-        this.category = category
+        this._name = name
+        this._size = Number(size)
+        this._importance = Number(importance)
+        this._category = category
         
-        this.due = new Date(due)
+        this._due = new Date(due)
         // this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
         this.completed = completed
 
@@ -399,25 +436,45 @@ export class Task {
             <button class="edittask" style="background: none; border: 0; text-decoration: none;">✏️</button>
             <div style="display: flex; flex-grow: 1">
                 <div style="flex-grow: 1">
-                    ${this.name}
+                    ${this._name}
                 </div>
                 <div style="min-width: 9ch; max-width: 9ch;">
-                    ${this.category}
+                    ${this._category}
                 </div>
                 <div style="min-width: 10ch; max-width: 10ch;">
-                    ${TaskSizes[this.size]}
+                    ${TaskSizes[this._size]}
                 </div>
                 <div style="min-width: 13ch; min-width: 13ch;">
-                    ${TaskImportances[this.importance]}
+                    ${TaskImportances[this._importance]}
                 </div>
                 <div style="min-width: 17ch; max-width: 17ch;">
-                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this.due.toDateString()}
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
             </button>
         `
+    }
+
+    private getTaskPlanListElementHTML() {
+        return `
+            <button class="complete"></button>
+            <div style="display: flex; flex-grow: 1;">
+                <div style="flex-grow: 1">
+                    ${this._name}
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    ${TaskSizes[this._size]}
+                </div>
+                <div style="min-width: 17ch; max-width: 17ch;">
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this._due.toDateString()}
+                </div>
+            </div>
+            <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
+                🗑️
+            </button>
+            `
     }
 
     /**
@@ -436,28 +493,12 @@ export class Task {
             newElement.innerHTML = this.getTaskListElementHTML()
             this.addButtonListeners(newElement, true)
         } else {
-            newElement.innerHTML = `
-            <button class="complete"></button>
-            <div style="display: flex; flex-grow: 1;">
-                <div style="flex-grow: 1">
-                    ${this.name}
-                </div>
-                <div style="min-width: 9ch; max-width: 9ch;">
-                    ${TaskSizes[this.size]}
-                </div>
-                <div style="min-width: 17ch; max-width: 17ch;">
-                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this.due.toDateString()}
-                </div>
-            </div>
-            <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
-                🗑️
-            </button>
-            `
+            newElement.innerHTML = this.getTaskPlanListElementHTML()
             this.addButtonListeners(newElement)
         }
 
-        if (this.category != "Default") {
-            newElement.style.color = getColor(this.category)
+        if (this._category != "Default") {
+            newElement.style.color = getColor(this._category)
         }
         return newElement
     }
@@ -486,20 +527,42 @@ export class Task {
         )
     }
 
+    private refreshElements() {
+        this.cleanUpElements()
+        var newElements = this.elements.map(e => {
+            var newElement: HTMLElement
+            if (e.className == "taskcontainer") {
+                newElement = this.taskListElement
+                e.replaceWith(newElement)
+            } else if (e.className == "task") {
+                newElement = this.shortenedTaskListElement
+                e.replaceWith(newElement)
+            } else if (e.tagName == "P") {
+                newElement = this.plannerElement
+                e.replaceWith(newElement)
+            } else {
+                newElement = e
+            }
+            return newElement
+        })
+        this.elements = newElements
+    }
+
     private editTask(element: HTMLDivElement) {
         if (element.className.includes(" editing")) {       
             var form: HTMLFormElement = element.getElementsByTagName("form")[0]
-            this.name = form.titleinput.value
-            this.category = form.catinput.value
-            this.due = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
-            this.size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
-            this.importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
+            this._name = form.titleinput.value
+            this._category = form.catinput.value
+            this._due = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
+            this._size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
+            this._importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
 
             window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
 
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()
             this.addButtonListeners(element, true)
+            this.refreshElements()
         } else {
             element.className += " editing"
             element.innerHTML = `
@@ -507,39 +570,39 @@ export class Task {
                 <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
                 <div style="display: flex; flex-grow: 1;">
                     <div style="flex-grow: 1;">
-                        <input type = "text" name="titleinput" required value="${this.name}">
+                        <input type = "text" name="titleinput" required value="${this._name}">
                     </div>
                     <div style="min-width: 9ch; max-width: 9ch; display: flex;">
                         <select name="catinput" required>
-                            <option name="default" ${this.category == "Default" ? "selected": ""}>Default</option>
-                            <option name="red" ${this.category == "Red" ? "selected": ""}>Red</option>
-                            <option name="orange" ${this.category == "Orange" ? "selected": ""}>Orange</option>
-                            <option name="yellow" ${this.category == "Yellow" ? "selected": ""}>Yellow</option>
-                            <option name="green" ${this.category == "Green" ? "selected": ""}>Green</option>
-                            <option name="blue" ${this.category == "Blue" ? "selected": ""}>Blue</option>
-                            <option name="purple" ${this.category == "Purple" ? "selected": ""}>Purple</option>
+                            <option name="default" ${this._category == "Default" ? "selected": ""}>Default</option>
+                            <option name="red" ${this._category == "Red" ? "selected": ""}>Red</option>
+                            <option name="orange" ${this._category == "Orange" ? "selected": ""}>Orange</option>
+                            <option name="yellow" ${this._category == "Yellow" ? "selected": ""}>Yellow</option>
+                            <option name="green" ${this._category == "Green" ? "selected": ""}>Green</option>
+                            <option name="blue" ${this._category == "Blue" ? "selected": ""}>Blue</option>
+                            <option name="purple" ${this._category == "Purple" ? "selected": ""}>Purple</option>
                         </select>
                     </div>
                     <div style="min-width: 10ch; max-width: 10ch;">
                         <select name = "sizeinput" required>
-                            <option name="0" ${this.size == 0 ? "selected": ""}>Tiny</option>
-                            <option name="1" ${this.size == 1 ? "selected": ""}>Small</option>
-                            <option name="2" ${this.size == 2 ? "selected": ""}>Medium</option>
-                            <option name="3" ${this.size == 3 ? "selected": ""}>Big</option>
-                            <option name="4" ${this.size == 4 ? "selected": ""}>Huge</option>
+                            <option name="0" ${this._size == 0 ? "selected": ""}>Tiny</option>
+                            <option name="1" ${this._size == 1 ? "selected": ""}>Small</option>
+                            <option name="2" ${this._size == 2 ? "selected": ""}>Medium</option>
+                            <option name="3" ${this._size == 3 ? "selected": ""}>Big</option>
+                            <option name="4" ${this._size == 4 ? "selected": ""}>Huge</option>
                         </select>
                     </div>
                     <div style="min-width: 13ch; min-width: 13ch; display: flex;">
                         <select name="importanceinput" required>
-                            <option name="0" ${this.importance == 0 ? "selected": ""}>Trivial</option>
-                            <option name="1" ${this.importance == 1 ? "selected": ""}>Unimportant</option>
-                            <option name="2" ${this.importance == 2 ? "selected": ""}>Average</option>
-                            <option name="3" ${this.importance == 3 ? "selected": ""}>Important</option>
-                            <option name="4" ${this.importance == 4 ? "selected": ""}>Vital</option>
+                            <option name="0" ${this._importance == 0 ? "selected": ""}>Trivial</option>
+                            <option name="1" ${this._importance == 1 ? "selected": ""}>Unimportant</option>
+                            <option name="2" ${this._importance == 2 ? "selected": ""}>Average</option>
+                            <option name="3" ${this._importance == 3 ? "selected": ""}>Important</option>
+                            <option name="4" ${this._importance == 4 ? "selected": ""}>Vital</option>
                         </select>
                     </div>
                     <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
-                        <input name="deadlineinput" type="datetime-local" value="${toHTMLDateTimeString(this.due)}" required>
+                        <input name="deadlineinput" type="datetime-local" value="${toHTMLDateTimeString(this._due)}" required>
                     </div>
                 </div>
             </form>

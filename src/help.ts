@@ -29,13 +29,13 @@ export class HelpManager {
                 document.getElementById("overwhelmedtasks")!,
                 (task: Task) => {
                     var importance = 0
-                    importance += (4 - task.size) * 4
+                    importance += (4 - task._size) * 4
                     importance += (task.dueIn <= 7) ? ((7 - task.dueIn) * 2) : (0)
-                    importance += task.importance
+                    importance += task._importance
                     return importance
                 },
                 (task: Task) => {
-                    return (task.size < 3)
+                    return (task._size < 3)
                 },
             ),
             new HelpPane(
@@ -43,13 +43,13 @@ export class HelpManager {
                 document.getElementById("cantstarttasks")!,
                 (task: Task) => {
                     var importance = 0
-                    importance += (4 - task.size) * 4
+                    importance += (4 - task._size) * 4
                     importance += (task.dueIn <= 7) ? ((7 - task.dueIn) * 2) : (0)
-                    importance += 4 - task.importance
+                    importance += 4 - task._importance
                     return importance
                 },
                 (task: Task) => {
-                    return (task.size < 3)
+                    return (task._size < 3)
                 },
             ),
             new HelpPane(
@@ -58,8 +58,8 @@ export class HelpManager {
                 (task: Task) => {
                     var importance = 0
                     importance += (task.dueIn <= 7) ? ((7 - task.dueIn) * 3) : (0)
-                    importance += (task.importance) * 4
-                    importance += task.size * 3
+                    importance += (task._importance) * 4
+                    importance += task._size * 3
                     return importance
                 },
                 (_: Task) => {

@@ -13,7 +13,6 @@ function setSliderMinsTo1() {
 
 function createOverdueTask() {
     window.taskMgr.addTask(new Task(
-        window.taskMgr,
         "overdue",
         4,
         4,
@@ -24,7 +23,6 @@ function createOverdueTask() {
 
 function createTaskTmrw() {
     window.taskMgr.addTask(new Task(
-        window.taskMgr,
         "tmrw",
         4,
         4,

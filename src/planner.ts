@@ -124,7 +124,7 @@ export class Planner {
     addTask(task: Task) {
         for (let index = 0; index < this.dayColumns.length; index++) {
             const col = this.dayColumns[index];
-            if (isSameDay(col.date, task.due)) {
+            if (isSameDay(col.date, task._due)) {
                 col.addTask(task)
                 return
             }
@@ -191,7 +191,7 @@ class DayColumn {
         this.element.appendChild(document.createElement("div"))
 
         var tasks = this.taskMgr.getTasks().filter((t) => {
-            return isSameDay(this._date, t.due) && !t.deleted
+            return isSameDay(this._date, t._due) && !t.deleted
         }, this)
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];

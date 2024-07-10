@@ -21,7 +21,7 @@
             "icons/icon.ico"
         ]
     },
-    "productName": "Task Manager",
+    "productName": "Task Manager (DEV)",
     "version": "0.3.0-alpha.1",
     "identifier": "dev.pgil.forkbomb.taskmgr",
     "plugins": {
@@ -38,7 +38,7 @@
         "withGlobalTauri": true,
         "windows": [
             {
-                "title": "Task Manager",
+                "title": "Task Manager (DEV)",
                 "width": 1080,
                 "height": 700,
                 "minWidth": 1080,

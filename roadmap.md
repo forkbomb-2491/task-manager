@@ -7,10 +7,11 @@
 ## Future
 
 ### v0.3 (Next Release)
-- [ ] Editing Tasks (in progress)
-- [ ] Custom Category Names
+- [x] Editing Tasks
+- [x] Add due time
+- [ ] ~Custom Category Names~
+- [ ] Separate Task Lists (with colors assignable)
 - [ ] Calendar View
-- [ ] Sorting Tasks in Tasks Tab
+- [x] Sorting Tasks in Tasks Tab
 
 ### v0.4
-- [ ] Categories → Separate Task Lists
