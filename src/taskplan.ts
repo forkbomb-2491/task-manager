@@ -1,7 +1,7 @@
 import { onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
-import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
+import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused, toHTMLDateTimeString } from "./utils";
 
 
 
@@ -182,15 +182,14 @@ export class TaskPlanner {
         // @ts-ignore; Necessary to make this whole darn thing work
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
-        var date = form.deadlineinput.valueAsDate
-        console.log(form.sizeinput)
+        var date = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
         var size = getFirstSelected(form.sizeinput)!.getAttribute("name")!
 
         var box = document.getElementById("tpsubtaskcreatebox")!
         box.style.scale = "1.03"
         window.setTimeout(() => box.style.scale = "1.0", 100)
         form.reset()
-        form.deadlineinput.valueAsDate = new Date()
+        form.deadlineinput.value = toHTMLDateTimeString(new Date())
     
         var task = new Task(
             title, 

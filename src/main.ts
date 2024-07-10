@@ -10,7 +10,7 @@ import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
 import { check } from '@tauri-apps/plugin-updater';
 import { ask } from '@tauri-apps/plugin-dialog';
-import { showTooltipOnHover } from './utils';
+import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
@@ -95,10 +95,11 @@ class App {
             }
         )
 
+        const now = new Date()
         // @ts-ignore; Populate fields' default values
-        document.getElementById("deadlineinput")!.valueAsDate = new Date()
+        document.getElementById("deadlineinput")!.value = toHTMLDateTimeString(now)
         // @ts-ignore; Populate fields' default values
-        document.getElementById("tpsubtaskdateinput")!.valueAsDate = new Date()
+        document.getElementById("tpsubtaskdateinput")!.value = toHTMLDateTimeString(now)
         
         onSettingsLoad(() => {
             this.changeTab(this.settings.lastTab)
@@ -142,7 +143,7 @@ class App {
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
         var cat = form.catinput.value
-        var date = form.deadlineinput.valueAsDate
+        var date = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
         var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
         var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
 
@@ -150,7 +151,7 @@ class App {
         box.style.scale = "1.03"
         window.setTimeout(() => box.style.scale = "1.0", 100)
         form.reset()
-        form.deadlineinput.valueAsDate = new Date()
+        form.deadlineinput.value = toHTMLDateTimeString(new Date())
         
         var task = new Task(title, size, importance, cat, date, false)
         this.taskMgr.addTask(task)

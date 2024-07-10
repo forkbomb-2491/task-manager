@@ -117,6 +117,37 @@ export function showTooltipOnHover(element: HTMLElement, text: string) {
     )
 }
 
+export function toHTMLDateTimeString(date: Date) {
+    var ret = String(date.getFullYear())
+    ret += "-" + padWithLeftZeroes(String(date.getMonth() + 1), 2)
+    ret += "-" + padWithLeftZeroes(String(date.getDate()), 2)
+    ret += " " + padWithLeftZeroes(String(date.getHours()), 2)
+    ret += ":" + padWithLeftZeroes(String(date.getMinutes()), 2)
+    return ret
+}
+
+// export enum DateFormat {
+//     "american",
+//     "everyoneElse"
+// }
+
+// export enum TimeFormat {
+//     "_12hr",
+//     "_24hr"
+// }
+
+// export function getTaskDateString(date: Date, dateFormat: DateFormat = 0, timeFormat: TimeFormat = 0) {
+//     var ret = ""
+//     switch (dateFormat) {
+//         case DateFormat.american:
+            
+//             break;
+    
+//         default:
+//             break;
+//     }
+// }
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */

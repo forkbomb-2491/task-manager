@@ -1,4 +1,4 @@
-import { padWithLeftZeroes } from "./utils"
+import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
 
 export type TaskRecord = {
     "name": string,
@@ -259,7 +259,7 @@ export class Task {
         this.category = category
         
         this.due = new Date(due)
-        this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
+        // this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
         this.completed = completed
 
         if (id == null) {
@@ -487,7 +487,16 @@ export class Task {
     }
 
     private editTask(element: HTMLDivElement) {
-        if (element.className.includes(" editing")) {
+        if (element.className.includes(" editing")) {       
+            var form: HTMLFormElement = element.getElementsByTagName("form")[0]
+            this.name = form.titleinput.value
+            this.category = form.catinput.value
+            this.due = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
+            this.size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
+            this.importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
+
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()
             this.addButtonListeners(element, true)
@@ -529,11 +538,10 @@ export class Task {
                             <option name="4" ${this.importance == 4 ? "selected": ""}>Vital</option>
                         </select>
                     </div>
-                    <div style="min-width: 17ch; max-width: 17ch; display: flex;">
-                        <input name="deadlineinput" type="date" value="${this.due.getFullYear()}-${padWithLeftZeroes(String(this.due.getMonth() + 1), 2)}-${padWithLeftZeroes(String(this.due.getDate()), 2)}" required>
+                    <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
+                        <input name="deadlineinput" type="datetime-local" value="${toHTMLDateTimeString(this.due)}" required>
                     </div>
                 </div>
-                <div style="background: none; border: 0;" class="deletetask"></div>
             </form>
             `
             var editTaskCallback = (_: Event) => { this.editTask(element) }

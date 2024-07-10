@@ -8,7 +8,24 @@ import { TaskManager } from "./taskmanager";
 export class TaskList {
     private taskMgr: TaskManager;
 
-    private sortBasis: SortBasis = SortBasis.duedate;
+    private _sortBasis: SortBasis = SortBasis.duedate;
+    private get sortBasis(): SortBasis { return this._sortBasis }
+    private set sortBasis(basis: SortBasis) {
+        if (this.sortBasis == basis) {
+            this.sortReverse = !this.sortReverse
+        } else {
+            this.sortReverse = false
+        }
+        this._sortBasis = basis;
+        this.sort();
+
+        document.getElementById("alphasort")!.innerHTML = `${this.sortBasis == SortBasis.name ? (this.sortReverse ? "↑": "↓") + " ":""}Name`
+        document.getElementById("categorysort")!.innerHTML = `${this.sortBasis == SortBasis.category ? (this.sortReverse ? "↑": "↓") + " ":""}Color`
+        document.getElementById("sizesort")!.innerHTML = `${this.sortBasis == SortBasis.size ? (this.sortReverse ? "↑": "↓") + " ":""}Size`
+        document.getElementById("importancesort")!.innerHTML = `${this.sortBasis == SortBasis.importance ? (this.sortReverse ? "↑": "↓") + " ":""}Importance`
+        document.getElementById("duedatesort")!.innerHTML = `${this.sortBasis == SortBasis.duedate ? (this.sortReverse ? "↑": "↓") + " ":""}Due Date`
+    }
+
     private sortReverse: boolean = false;
 
     constructor(taskMgr: TaskManager) {
@@ -18,6 +35,32 @@ export class TaskList {
             "click",
             (_) => { this.toggleCompletedVisibility(); }
         );
+
+        document.getElementById("alphasort")!.addEventListener(
+            "click",
+            (_) => this.sortBasis = SortBasis.name
+        )
+
+        document.getElementById("categorysort")!.addEventListener(
+            "click",
+            (_) => this.sortBasis = SortBasis.category
+        )
+
+        document.getElementById("sizesort")!.addEventListener(
+            "click",
+            (_) => this.sortBasis = SortBasis.size
+        )
+
+        document.getElementById("importancesort")!.addEventListener(
+            "click",
+            (_) => this.sortBasis = SortBasis.importance
+        )
+
+        document.getElementById("duedatesort")!.addEventListener(
+            "click",
+            (_) => this.sortBasis = SortBasis.duedate
+
+        )
 
         onTaskEvent(_ => this.refresh());
         onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!));

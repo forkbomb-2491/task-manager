@@ -43,6 +43,12 @@
         "src/**"
       ]
     },
+    {
+      "identifier": "http:default",
+      "allow": [
+        "http://localhost:5000/*"
+      ]
+    },
     "shell:allow-open",
     "notification:default",
     "notification:default",
@@ -53,6 +59,7 @@
     "dialog:allow-message",
     "dialog:allow-confirm",
     "dialog:default",
-    "updater:default"
+    "updater:default",
+    "http:default"
   ]
 }

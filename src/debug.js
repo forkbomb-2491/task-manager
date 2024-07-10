@@ -1,6 +1,7 @@
 import { message, confirm } from '@tauri-apps/plugin-dialog'
 import { loadFile, saveFile } from './storage'
 import { Task } from './task'
+import { fetch } from '@tauri-apps/plugin-http'
 
 function setSliderMinsTo1() {
     document.getElementById("workduratslider").min = "1"
@@ -58,4 +59,5 @@ export function addDebugFuncs() {
     window.createOverdueTask = createOverdueTask
     window.createTaskTmrw = createTaskTmrw
     window.pullv1Tasks = () => pullv1Tasks().then()
+    window.tauriFetch = fetch
 }

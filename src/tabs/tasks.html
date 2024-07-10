@@ -66,11 +66,10 @@
                     <option name="4">Vital</option>
                 </select>
             </div>
-            <div style="min-width: 17ch; max-width: 17ch; display: flex;">
-                <input id="deadlineinput" type="date" required>
+            <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
+                <input id="deadlineinput" type="datetime-local" required>
             </div>
         </div>
-        <div style="background: none; border: 0;" class="deletetask"></div>
     </form>
 </div>
 <div>
@@ -83,19 +82,19 @@
         </div>
             
         <div style="flex-grow: 1;">
-            <button class="sortbutton" id="alphasort">↑ Name</button>
+            <button class="sortbutton" id="alphasort">Name</button>
         </div>
         <div style="min-width: 9.5ch; max-width: 9.5ch; display: flex;">
-            <button class="sortbutton" id="categorysort">↑ Color</button>
+            <button class="sortbutton" id="categorysort">Color</button>
         </div>
         <div style="min-width: 10ch; max-width: 10ch; display: flex;">
-            <button class="sortbutton" id="sizesort">↑ Size</button>
+            <button class="sortbutton" id="sizesort">Size</button>
         </div>
         <div style="min-width: 13ch; max-width: 13ch; display: flex;">
-            <button class="sortbutton" id="importancesort">↑ Importance</button>
+            <button class="sortbutton" id="importancesort">Importance</button>
         </div>
         <div style="min-width: 17ch; max-width: 17ch; display: flex;">
-            <button class="sortbutton" id="duedatesort">↑ Due Date</button>
+            <button class="sortbutton" id="duedatesort">↓ Due Date</button>
         </div>
         <div style="background: none; border: 0;" class="deletetask"></div>
     </div>
