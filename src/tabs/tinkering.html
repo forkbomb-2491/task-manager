@@ -3,7 +3,28 @@
     <div style="min-width: 20%;">
         <div class="container" style="margin-bottom: 1rem;">
             <h2>Create a List</h2> 
-            Name Color
+            <div style="display: flex;">
+                <div style="flex-grow: 1;">
+                    <input type = "text" style="width: 90%;" name="listtitleinput" required>
+                </div>
+                <div style="min-width: 9ch; max-width: 9ch;">
+                    <select id = "catinput" name = "catinput" required>
+                        <option name="default">None</option>
+                        <option name="red">Red</option>
+                        <option name="orange">Orange</option>
+                        <option name="yellow">Yellow</option>
+                        <option name="green">Green</option>
+                        <option name="blue">Blue</option>
+                        <option name="purple">Purple</option>
+                    </select>
+                </div>
+            </div>
+            
+            <br>
+            <h3>Description</h3>
+            <div style="width: 95%">
+                <input type = "text" style="width: 100%;" name="listdesc" required>
+            </div>
         </div>
         <div class="container" style="margin-bottom: 1rem; aspect-ratio: 1/0.75;">
             <div style="display: flex;">
