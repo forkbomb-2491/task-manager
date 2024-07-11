@@ -3,9 +3,7 @@ use sqlx::{
     // Column, Row, Pool
     Pool
 };
-// use tauri::{
-//     AppHandle, Manager, Runtime, Window
-// };
+use tauri::{path::PathResolver, AppHandle, Manager, Runtime};
 
 type Db = sqlx::sqlite::Sqlite;
 
@@ -24,3 +22,19 @@ async fn connect(path: &str) -> Result<Pool<Db>, sqlx::Error> {
     Ok(pool)
 }
 
+pub struct HistoryManager {
+    pool: Pool<Db>,
+    loaded: bool
+}
+
+impl HistoryManager {
+    pub async fn load<R: Runtime>(&mut self, app: AppHandle<R>) -> Result<(), sqlx::Error> {
+        let mut path = app.path()
+            .app_data_dir()
+            .unwrap();
+        path.set_file_name("history.db");
+        self.pool = connect(path.to_str().expect("AppData failed to resolve")).await?;
+        self.loaded = true;
+        Ok(())
+    } 
+}

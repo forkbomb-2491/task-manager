@@ -40,10 +40,6 @@ export class TaskManager {
         this.taskNotifier = new TaskNotifier(this);
         this.algorithm = new TheAlgorithm(this)
 
-        // window.addEventListener(
-        //     "focus",
-        //     _ => this.refresh()
-        // );
         onTaskEvent(_ => {
             saveTasks(this._tasks).then()
             if (this.syncEnabled) {
