@@ -18,11 +18,13 @@ export function changeHelpStuff(target: string) {
 
 export class HelpManager {
     private taskMgr: TaskManager
-
     private panes: HelpPane[]
+    private overDue: boolean
 
     constructor(taskMgr: TaskManager) {
         this.taskMgr = taskMgr
+        // @ts-ignore
+        this.overDue = !document.getElementById("helptoggleoverdue")!.checked
         this.panes = [
             new HelpPane(
                 this.taskMgr,
@@ -103,10 +105,22 @@ export class HelpManager {
             
         ]
         onWindowFocused(() => this.render())
+        // Listener for checkbox
+        document.getElementById("helptoggleoverdue")!.addEventListener(
+            "change",
+            // @ts-ignore
+            _ => {this.overdue = !document.getElementById("helptoggleoverdue")!.checked
+            console.log(this.overDue);
+            this.render()
+            
+            }
+        )
+        
     }
 
     render(): void {
         this.panes.forEach(pane => {
+            pane.overdue = this.overDue         
             pane.render()
         });
     }
@@ -118,6 +132,18 @@ export class HelpManager {
     addTask(_: Task): void {
         this.render()
     }
+
+    
+    public get overdue() : boolean {
+        return this.overDue
+    }
+
+    
+    public set overdue(v : boolean) {
+        this.overDue = v;
+    }
+    
+    
 }
 
 class HelpPane {
@@ -127,6 +153,7 @@ class HelpPane {
     private theAlgorithm: (t: Task) => number
     private taskFilter: (t: Task) => boolean
     private _recListLength: number
+    private overDue: boolean = true
 
     get recListLength(): number {
         return this._recListLength
@@ -161,10 +188,29 @@ class HelpPane {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
         // Filter Overdo Tasks Button
+        if (this.overdue) {
+        tasks = tasks.filter(
+            t=> {
+                return (t.dueIn > 0)
+            }
+        )
+    }
         // return tasks.slice(0, nTasks)
         return tasks.slice(0, this._recListLength)
 
     }
+
+    
+    public get overdue() : boolean {
+        return this.overDue
+    }
+    
+    
+    public set overdue(v : boolean) {
+        this.overDue = v;
+    }
+    
+    
 
     render(): void {
         this.element.innerHTML = ""
