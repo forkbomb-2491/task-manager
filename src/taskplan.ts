@@ -223,6 +223,8 @@ export class TaskPlanner {
         tpmaintask!.innerHTML = task.name
         var deadlineDisplay = document.getElementById("tpdeadlinedisplay")
         deadlineDisplay!.innerHTML = task.due.toDateString()
+
+        this.refresh()
     }
 
     private shiftMonth(by: number) {
