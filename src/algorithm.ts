@@ -4,14 +4,11 @@ import { TaskManager } from "./taskmanager";
 
 
 export class TheAlgorithm {
-    private db: Database
+    private db: Database | undefined
     private taskMgr: TaskManager
 
     constructor(taskMgr: TaskManager, path: string = DATABASE_PATH) {
         this.taskMgr = taskMgr
-        this.db = new Database(path)
-
-        // @ts-ignore
-        window.db = this.db
+        Database.load("sqlite:" + path).then(db => this.db = db)
     }
 }
