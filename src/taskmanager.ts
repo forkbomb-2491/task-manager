@@ -157,5 +157,8 @@ export class TaskManager {
         }
         window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record));
         saveTasks(this._tasks).then();
+        if (this.syncEnabled) {
+            sendTasks(this._tasks).then()
+        }
     }
 }

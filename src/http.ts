@@ -64,7 +64,7 @@ export async function fetchTasks(): Promise<TaskRecord[]> {
 }
 
 export async function sendTasks(tasks: Task[]) {
-    var toSend = tasks.map(t => t.record)
+    var toSend = tasks.filter(t => !t.deleted).map(t => t.record)
     await fetch(API_URL + "/tasks", {
         method: "POST",
         body: JSON.stringify(toSend),

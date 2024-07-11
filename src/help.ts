@@ -66,6 +66,41 @@ export class HelpManager {
                     return true
                 },
             ),
+
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("bigupcomingview")!,
+                t => {
+                    return t.size/2 + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size >= 2 && t.importance >= 2 
+                },
+            ),
+
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("smallupcomingview")!,
+                t => {
+                    return t.size + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size <= 2 && t.importance >= 2 
+                },
+            ),
+
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("bigdistantview")!,
+                t => {
+                    return t.size + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
+                },
+            ),
+
+            
         ]
         onWindowFocused(() => this.render())
     }
@@ -125,6 +160,7 @@ class HelpPane {
         tasks = tasks.sort((t1, t2) => {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
+        // Filter Overdo Tasks Button
         // return tasks.slice(0, nTasks)
         return tasks.slice(0, this._recListLength)
 
