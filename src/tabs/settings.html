@@ -154,7 +154,31 @@
             <input type="radio" name="theme" value="olaf">
             <label for="olaf">St. Olaf</label>
         </form>
+        <h2>Task Sync</h2>
+        <div class="checkinblock">
+            <input type="checkbox" id="syncenabled">Sync your tasks to the cloud
+            <div id="syncinfo" style="margin-top: 0.5rem; display: none;">
+                Checking your sync status...
+            </div>
+            <div id="syncsigninbox" style="display: none;">
+                <h3>Sign In</h3>
+                <form id="syncsigninform">
+                    Username: <input name="username" style="margin-top: 0.25rem;" required><br>
+                    Password: <input type="password" name="password" style="margin-top: 0.25rem;" required>
+                    <input type="submit" class="settingsbutton" style="margin-top: 0.5rem;">
+                </form>
+            </div>
+            <div id="syncbuttonbox" style="display: none;">
+                You're signed in!
+                <h3>Sync Options</h3>
+                <div style="display: flex;">
+                    <button id="pushnowbutton" class="settingsbutton" style="margin-right: 1rem;">Overwrite Server w/Local</button>
+                    <button id="pullfrombutton" class="settingsbutton">Overwrite Local w/Server</button>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <div class="tpcontainer" style="min-width: 30%; margin-left: 1rem; margin-right: 1rem;">
         <h2>Welcome to Task Manager</h2>

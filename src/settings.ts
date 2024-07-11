@@ -1,8 +1,9 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { Weekdays } from "./utils";
+import { Weekdays, getElement } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
+import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -87,6 +88,16 @@ export class SettingsView {
             }
         )
 
+        document.getElementById("syncenabled")!.addEventListener(
+            "change",
+            _ => {
+                // @ts-ignore
+                const element: HTMLInputElement = document.getElementById("syncenabled")!
+                this.settings.syncEnabled = element.checked
+                this.syncSettingsChange(element.checked).then()
+            }
+        )
+
         document.getElementById("tabsettings")!.addEventListener(
             "change",
             _ => {
@@ -124,7 +135,7 @@ export class SettingsView {
         const slider: HTMLInputElement = document.getElementById("reclistslider")!.value = recListLen
         document.getElementById("reclistlabel")!.innerHTML = `${recListLen}`
 
-        
+
         const checkInBox = document.getElementById("checkinenabled")!
         // @ts-ignore
         checkInBox.checked = this.settings.checkinsEnabled
@@ -133,6 +144,23 @@ export class SettingsView {
         const remindersCheckbox = document.getElementById("remindersenabled")!
         // @ts-ignore
         remindersCheckbox.checked = this.settings.remindersEnabled
+
+
+        const syncCheckbox = document.getElementById("syncenabled")!
+        // @ts-ignore
+        syncCheckbox.checked = this.settings.syncEnabled
+
+        if (this.settings.syncEnabled) {
+            this.syncSettingsChange(true).then()
+        }
+
+        document.getElementById("syncsigninform")!.addEventListener(
+            "submit",
+            e => {
+                e.preventDefault()
+                this.syncSignInFormSubmit()
+            }
+        )
 
         this.setSettingsFieldsToSavedValues()
     }
@@ -324,6 +352,56 @@ export class SettingsView {
         }
 
         document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
+    }
+
+    private syncSignedIn() {
+        getElement("syncinfo").style.display = "none"
+        getElement("syncsigninbox").style.display = "none"
+        getElement("syncbuttonbox").style.display = "block"
+    }
+    
+    private async syncSignInFormSubmit() {
+        getElement("syncinfo").style.display = "block"
+        getElement("syncinfo").innerHTML = "Signing in..."
+        getElement("syncsigninbox").style.display = "none"
+
+        // @ts-ignore
+        var form: HTMLFormElement = document.getElementById("syncsigninform")!
+        const uname = form.username.value
+        const passwd = form.password.value
+
+        form.reset()
+
+        try {
+            const token = await signIn(uname, passwd)
+            this.settings.syncToken = token
+            this.syncSignedIn()
+        } catch (error) {
+            getElement("syncinfo").innerHTML = "<element style='color: red;'>Username or password incorrect. Please try again.</element>"
+            getElement("syncsigninbox").style.display = "block"
+        }
+    }
+
+    private async syncSettingsChange(newStatus: boolean) {
+        if (newStatus) {
+            getElement("syncinfo").innerHTML = "Checking your sync status..."
+            getElement("syncinfo").style.display = "block"
+            var isAuthed = await isAuthenticated()
+            if (!isAuthed) {
+                if (this.settings.syncToken != "" && await logInWithToken(this.settings.syncToken)) return this.syncSignedIn()
+                getElement("syncinfo").style.display = "none"
+                getElement("syncsigninbox").style.display = "block"
+                return
+            }
+            this.syncSignedIn()
+        } else {
+            getElement("syncinfo").style.display = "none"
+            getElement("syncsigninbox").style.display = "none"
+            getElement("syncbuttonbox").style.display = "none"
+
+            await logOut(this.settings.syncToken)
+            this.settings.syncToken = ""
+        }
     }
 }
 
@@ -586,6 +664,22 @@ export class Settings {
 
     set tabsActive(tabs: TabsActive) {
         this.setKey("tabsActive", tabs)
+    }
+
+    get syncToken(): string {
+        return this.getKey("syncToken", "")
+    }
+
+    set syncToken(token: string) {
+        this.setKey("syncToken", token, false)
+    }
+
+    get syncEnabled(): boolean {
+        return this.getKey("syncEnabled", false)
+    }
+
+    set syncEnabled(val: boolean) {
+        this.setKey("syncEnabled", val)
     }
 }
 

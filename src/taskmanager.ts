@@ -2,10 +2,12 @@ import { TaskList } from "./tasklist";
 import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Planner } from "./planner";
-import { onSettingsLoad } from "./settings";
+import { onSettingChange, onSettingsLoad } from "./settings";
 import { saveTasks, loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
 import { Task, onTaskEvent, TaskEvent, TaskEventType } from "./task";
+import { ask, message } from "@tauri-apps/plugin-dialog";
+import { fetchTasks, sendTasks } from "./http";
 
 /**
  * The Task Manager.
@@ -25,6 +27,7 @@ export class TaskManager {
     private taskNotifier: TaskNotifier;
 
     private settingsLoaded: boolean = false;
+    private syncEnabled: boolean = false;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -37,14 +40,57 @@ export class TaskManager {
         //     "focus",
         //     _ => this.refresh()
         // );
-        onTaskEvent(_ => saveTasks(this._tasks).then());
+        onTaskEvent(_ => {
+            saveTasks(this._tasks).then()
+            if (this.syncEnabled) {
+                sendTasks(this._tasks).then()
+            }
+        });
+
+        document.getElementById("pushnowbutton")!.addEventListener("click", _ => this.sendTasks())
+        document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
 
         onSettingsLoad(() => this.settingsLoaded = true);
+        onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
     }
 
     async start() {
         await this.loadTasks();
         this.render();
+    }
+
+    private async fetchTasks() {
+        if (!await ask("Are you sure you want to overwrite your local tasks with those on the server?")) {
+            return
+        }
+
+        this._tasks = (await fetchTasks()).map(
+            o => new Task(
+                o.name,
+                o.size,
+                o.importance,
+                o.category,
+                o.due,
+                o.completed,
+                o.id,
+                o.subtasks,
+                null
+            )
+        );
+
+        this.render();
+        await saveTasks(this._tasks)
+
+        message("Done").then()
+    }
+
+    private async sendTasks() {
+        if (!await ask("Are you sure you want to overwrite the tasks on the server with your local ones?")) {
+            return
+        }
+
+        await sendTasks(this._tasks)
+        message("Done").then()
     }
 
     private async loadTasks() {
@@ -76,7 +122,6 @@ export class TaskManager {
         } else {
             onSettingsLoad(() => this.taskNotifier.refresh());
         }
-
     }
 
     private flattenTaskList(currentList: Task[]): Task[] {

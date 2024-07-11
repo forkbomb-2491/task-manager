@@ -148,6 +148,10 @@ export function toHTMLDateTimeString(date: Date) {
 //     }
 // }
 
+export function getElement(id: string) {
+    return document.getElementById(id)!
+}
+
 /**
  * An enum for the daycolumns' IDs in the HTML.
  */
