@@ -26,6 +26,8 @@
 
     aspect-ratio: 3/2;
 
+    font-size: small;
+
     padding: 1rem;
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);

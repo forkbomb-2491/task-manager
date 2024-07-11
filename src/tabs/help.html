@@ -3,7 +3,15 @@
         --primary-color: purple;
     }
 </style> -->
-<h1 style="margin-top: 0;" id="helptabheader">Help</h1>
+
+<div style="display: flex; justify-content: space-between">
+    <h1 style="margin-top: 0;" id="helptabheader">Help</h1>
+    <div>
+        <label for="helptoggleoverdue">Show Overdue Tasks</label>
+        <input type="checkbox" id="helptoggleoverdue" name="helptoggleoverdue" value=1 checked="true">
+    </div>
+    <!-- <button class="settingsbutton" id="helptoggleoverdue" style="font-size: small;">Switch Orientation</button> -->
+</div>
 <div style="display: flex; justify-content: space-between;">
     <div class="helpcontainer" style="min-width: 33%; max-width: 33%;">
         <button class="helpbutton top" name="overwhelmed">Feeling overwhelmed?</button>
@@ -63,6 +71,7 @@
         </div>
         <div class="helpcontent" name="filterview">
             <h2>Get tasks by filters</h2>
+            <!-- <div id="filterview"></div> -->
         </div>
     </div>
 </div>
