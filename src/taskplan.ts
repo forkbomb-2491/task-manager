@@ -11,7 +11,7 @@ export class TaskPlanner {
 
     private selectedTask: Task | null = null
 
-    private _fullCal: boolean = true //false
+    private _fullCal: boolean = false
     get fullCal(): boolean {
         return this._fullCal
     }
@@ -95,7 +95,7 @@ export class TaskPlanner {
         const left = document.getElementById("tpleftside")!
         const container = document.getElementById("taskplan")!
 
-        if (this.isStacked && width > 1600) {
+        if (this.isStacked && width > 1500) {
             container.style.flexDirection = "row"
             right.style.width = "80%"
             right.style.marginLeft = "2rem"
@@ -103,7 +103,7 @@ export class TaskPlanner {
 
             left.style.width = "30%"
             this.isStacked = false
-        } else if (!this.isStacked && width < 1600) {
+        } else if (!this.isStacked && width < 1500) {
             container.style.flexDirection = "column"
             right.style.width = ""
             right.style.marginLeft = ""

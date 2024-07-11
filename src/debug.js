@@ -2,6 +2,7 @@ import { message, confirm } from '@tauri-apps/plugin-dialog'
 import { loadFile, saveFile } from './storage'
 import { Task } from './task'
 import { fetch } from '@tauri-apps/plugin-http'
+import { Schedule, sendNotification } from '@tauri-apps/plugin-notification'
 
 function setSliderMinsTo1() {
     document.getElementById("workduratslider").min = "1"
@@ -61,11 +62,25 @@ function bindErrors() {
     console.error("hi")
 }
 
+function testNotif() {
+    const testDate = new Date(new Date().valueOf() + 5000)
+    console.log(testDate)
+    sendNotification({
+        title: "urmom",
+        inboxLines: [
+            "hello from the other side",
+            "at least I can say that I tried",
+            "to tell you"
+        ]
+    })
+}
+
 export function addDebugFuncs() {
     window.setSliderMinsTo1 = setSliderMinsTo1
     window.createOverdueTask = createOverdueTask
     window.createTaskTmrw = createTaskTmrw
     window.pullv1Tasks = () => pullv1Tasks().then()
     window.pushv1Tasks = () => pushv1Tasks().then()
+    window.testNotif = testNotif
     window.tauriFetch = fetch
 }

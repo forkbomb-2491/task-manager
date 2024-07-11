@@ -4,6 +4,9 @@
 - [x] Project Planner
 - [x] Check-Ins & Notifications
 
+### Bug Fixes
+- [ ] Project Planner subtask list doesn't sort on task selection
+
 ## Future
 
 ### v0.3 (Next Release)
@@ -15,3 +18,7 @@
 - [x] Sorting Tasks in Tasks Tab
 
 ### v0.4
+- [ ] More and more comprehensive recommendations (some may be implemented in v0.3)
+    - Potential features include:
+        1. Time estimation tools
+        2. Due date suggestions based on task attributes
