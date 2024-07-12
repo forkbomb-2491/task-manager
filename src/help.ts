@@ -19,12 +19,12 @@ export function changeHelpStuff(target: string) {
 export class HelpManager {
     private taskMgr: TaskManager
     private panes: HelpPane[]
-    private overDue: boolean
+    private _overdue: boolean
 
     constructor(taskMgr: TaskManager) {
         this.taskMgr = taskMgr
         // @ts-ignore
-        this.overDue = !document.getElementById("helptoggleoverdue")!.checked
+        this._overdue = !document.getElementById("helptoggleoverdue")!.checked
         this.panes = [
             new HelpPane(
                 this.taskMgr,
@@ -68,7 +68,6 @@ export class HelpManager {
                     return true
                 },
             ),
-
             new HelpPane(
                 this.taskMgr,
                 document.getElementById("bigupcomingview")!,
@@ -79,7 +78,6 @@ export class HelpManager {
                     return t.size >= 2 && t.importance >= 2 
                 },
             ),
-
             new HelpPane(
                 this.taskMgr,
                 document.getElementById("smallupcomingview")!,
@@ -90,7 +88,6 @@ export class HelpManager {
                     return t.size <= 2 && t.importance >= 2 
                 },
             ),
-
             new HelpPane(
                 this.taskMgr,
                 document.getElementById("bigdistantview")!,
@@ -101,18 +98,16 @@ export class HelpManager {
                     return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
                 },
             ),
-
-            
         ]
         onWindowFocused(() => this.render())
         // Listener for checkbox
         document.getElementById("helptoggleoverdue")!.addEventListener(
             "change",
-            // @ts-ignore
-            _ => {this.overdue = !document.getElementById("helptoggleoverdue")!.checked
-            console.log(this.overDue);
-            this.render()
-            
+            _ => {
+                // @ts-ignore
+                this.overdue = !document.getElementById("helptoggleoverdue")!.checked
+                console.log(this._overdue);
+                this.render()
             }
         )
         
@@ -120,7 +115,7 @@ export class HelpManager {
 
     render(): void {
         this.panes.forEach(pane => {
-            pane.overdue = this.overDue         
+            pane.overdue = this._overdue         
             pane.render()
         });
     }
@@ -135,12 +130,12 @@ export class HelpManager {
 
     
     public get overdue() : boolean {
-        return this.overDue
+        return this._overdue
     }
 
     
     public set overdue(v : boolean) {
-        this.overDue = v;
+        this._overdue = v;
     }
     
     
@@ -153,7 +148,7 @@ class HelpPane {
     private theAlgorithm: (t: Task) => number
     private taskFilter: (t: Task) => boolean
     private _recListLength: number
-    private overDue: boolean = true
+    private _overdue: boolean = true
 
     get recListLength(): number {
         return this._recListLength
@@ -202,12 +197,12 @@ class HelpPane {
 
     
     public get overdue() : boolean {
-        return this.overDue
+        return this._overdue
     }
     
     
     public set overdue(v : boolean) {
-        this.overDue = v;
+        this._overdue = v;
     }
     
     

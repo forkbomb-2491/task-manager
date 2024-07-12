@@ -8,7 +8,7 @@ import { TaskPlanner } from "./taskplan";
 import { Task, onTaskEvent, TaskEvent, TaskEventType } from "./task";
 import { ask, message } from "@tauri-apps/plugin-dialog";
 import { fetchTasks, sendTasks } from "./http";
-import { TheAlgorithm } from "./algorithm";
+// import { TheAlgorithm } from "./algorithm";
 
 /**
  * The Task Manager.
@@ -27,7 +27,7 @@ export class TaskManager {
     private taskPlanner: TaskPlanner;
     private taskNotifier: TaskNotifier;
 
-    private algorithm: TheAlgorithm
+    // private algorithm: TheAlgorithm
 
     private settingsLoaded: boolean = false;
     private syncEnabled: boolean = false;
@@ -38,7 +38,7 @@ export class TaskManager {
         this.helpMgr = new HelpManager(this);
         this.taskPlanner = new TaskPlanner(this);
         this.taskNotifier = new TaskNotifier(this);
-        this.algorithm = new TheAlgorithm(this)
+        // this.algorithm = new TheAlgorithm(this)
 
         onTaskEvent(_ => {
             saveTasks(this._tasks).then()
