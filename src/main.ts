@@ -9,7 +9,7 @@ import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
 import { check } from '@tauri-apps/plugin-updater';
-import { ask } from '@tauri-apps/plugin-dialog';
+import { ask, message } from '@tauri-apps/plugin-dialog';
 
 const DEBUG_TAB = false
 if (DEBUG_TAB) {
@@ -28,6 +28,7 @@ async function doUpdate() {
             await update.downloadAndInstall(e => {
                 console.log(e)
             })
+            await message("Update installed! Please relaunch the app.")
         }
     }
 }
