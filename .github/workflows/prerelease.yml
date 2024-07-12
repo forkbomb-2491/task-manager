@@ -16,7 +16,7 @@ jobs:
           - platform: 'macos-latest' # for Intel based macs.
             args: '--target universal-apple-darwin'
           - platform: 'windows-latest'
-            args: ''
+            args: '-c src-tauri/prerelease.conf.json'
 
     runs-on: ${{ matrix.platform }}
     steps:
