@@ -1,7 +1,9 @@
-name: 'publish'
+name: 'publish_dev'
 
 on:
   workflow_dispatch:
+
+# This workflow will trigger on each push to the `release` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
 
 jobs:
   publish-tauri:
@@ -11,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest'
+          - platform: 'macos-latest' # for Intel based macs.
             args: '--target universal-apple-darwin'
           - platform: 'windows-latest'
             args: ''
@@ -43,9 +45,9 @@ jobs:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: 'v__VERSION__'
           releaseBody: | 
-            ## Changes
+            ## Roadmap/Features (implemented checked)
             - [x] {insert changes here...}
-
+            _As a pre-release, this version of Task Manager does not have all features we intend to put in this release implemented, and those that are are likely buggy._
             ## Installation Instructions and Notes
             Since our app is so new, both macOS and Windows erroneously flag Task Manager as malware. **So long as you download an official release, the installer is malware-free**. However, you may have to take the measures outlined in the instructions below to assuage your computer's fears.
 
@@ -61,5 +63,5 @@ jobs:
             8. Right click on Task Manager and select "Open"
             9. Select "Open" again
           releaseDraft: true
-          prerelease: false
+          prerelease: true
           args: ${{ matrix.args }}
