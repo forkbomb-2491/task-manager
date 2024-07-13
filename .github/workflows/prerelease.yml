@@ -47,7 +47,9 @@ jobs:
           releaseBody: | 
             ## Roadmap/Features (implemented checked)
             - [x] {insert changes here...}
-            _As a pre-release, this version of Task Manager does not have all features we intend to put in this release implemented, and those that are are likely buggy._
+            
+            _ℹ️ As a pre-release, this version of Task Manager does not have all features we intend to put in this release implemented, and those that are are likely buggy._
+            
             ## Installation Instructions and Notes
             Since our app is so new, both macOS and Windows erroneously flag Task Manager as malware. **So long as you download an official release, the installer is malware-free**. However, you may have to take the measures outlined in the instructions below to assuage your computer's fears.
 
