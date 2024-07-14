@@ -1,4 +1,4 @@
-import { loadTabs } from './storage'
+import { DATABASE_PATH, loadTabs } from './storage'
 import { Task } from './task'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
@@ -11,10 +11,15 @@ import { TaskManager } from "./taskmanager";
 import { check } from '@tauri-apps/plugin-updater';
 import { ask } from '@tauri-apps/plugin-dialog';
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
+import { invoke } from '@tauri-apps/api/core';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
     addDebugFuncs()
+    // @ts-ignore
+    window.invoke = invoke
+    // @ts-ignore
+    window.DATABASE_PATH = DATABASE_PATH
     document.getElementById("debugtabbutton")!.style.display = "block"
 }
 

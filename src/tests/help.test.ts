@@ -13,13 +13,15 @@ beforeEach(() => {
     taskMgr = new TaskManager()
     // @ts-ignore
     helpMgr = taskMgr.helpMgr
+    // @ts-ignore
+    taskMgr.render()
 })
 
 describe("Help UI & Tasks", () => {
-    it("Add Task Adds to Help Panes", () => {
+    it("Add Task Adds to Upper Help Panes", () => {
         taskMgr.addTask(getTask())
         // @ts-ignore
-        helpMgr.panes.forEach(pane => {
+        helpMgr.panes.slice(0, 3).forEach(pane => {
             // @ts-ignore
             assert.equal(pane.element.children.length, 1)
         })
@@ -53,14 +55,14 @@ describe("Help UI & Tasks", () => {
         }
         window.dispatchEvent(new SettingsEvent(0, "recListLength", 1))
         // @ts-ignore
-        helpMgr.panes.forEach(pane => {
+        helpMgr.panes.slice(0,3).forEach(pane => {
             // @ts-ignore
             assert.equal(pane.element.children.length, 1)
         })
 
         window.dispatchEvent(new SettingsEvent(0, "recListLength", 8))
         // @ts-ignore
-        helpMgr.panes.forEach(pane => {
+        helpMgr.panes.slice(0,3).forEach(pane => {
             // @ts-ignore
             assert.equal(pane.element.children.length, 8)
         })

@@ -16,6 +16,8 @@
 - [ ] Separate Task Lists (with colors assignable)
 - [ ] Calendar View
 - [x] Sorting Tasks in Tasks Tab
+- [ ] Sorting Applies to Subtasks too
+- [x] Help Tab has Toggle Overdue
 
 ### v0.4
 - [ ] More and more comprehensive recommendations (some may be implemented in v0.3)
