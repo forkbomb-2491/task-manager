@@ -13,7 +13,7 @@
     <!-- <button class="settingsbutton" id="helptoggleoverdue" style="font-size: small;">Switch Orientation</button> -->
 </div>
 <div style="display: flex; justify-content: space-between;">
-    <div class="helpcontainer" style="min-width: 33%; max-width: 33%;">
+    <div class="helpcontainer" style="min-width: 24ch; max-width: 24ch;">
         <button class="helpbutton top" name="overwhelmed">Feeling overwhelmed?</button>
         <button class="helpbutton top" name="cantstart">Can't Get Started?</button>
         <button class="helpbutton top" name="sidetracked">Getting Sidetracked?</button>
@@ -71,7 +71,60 @@
         </div>
         <div class="helpcontent" name="filterview">
             <h2>Get tasks by filters</h2>
-            <!-- <div id="filterview"></div> -->
+            <form name="tpform" id="tpform">
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="sortbutton" style="min-width: 25%;">Color</div>
+                    <div class="sortbutton" style="min-width: 35%;">Size</div>
+                    <div class="sortbutton" style="min-width: 25%;">Importance</div>
+                    <div class="sortbutton" style="min-width: 30%;">Due</div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <select style="min-width: 13%" id = "colorfilterview" name = "catinput" required>
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="default">Default</option>
+                        <option name="red">Red</option>
+                        <option name="orange">Orange</option>
+                        <option name="yellow">Yellow</option>
+                        <option name="green">Green</option>
+                        <option name="blue">Blue</option>
+                        <option name="purple">Purple</option>
+                    </select>
+                    <select style="width: 12%;" id = "sizefilterview" name = "sizeinput" required style="font-size: small">
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="0">Tiny</option>
+                        <option name="1">Small</option>
+                        <option name="2">Medium</option>
+                        <option name="3">Big</option>
+                        <option name="4">Huge</option>
+                    </select>
+                    <select style="width: 15%;" id = "sizefilterview2" name = "sizeinput" required style="font-size: small">
+                        <option name="0">and up</option>
+                        <option name="1" selected = true>only</option>
+                        <option name="2">and under</option>
+                    </select>
+                    <select style="width: 20%;" id = "importancefilterview" name = "importanceinput" required style="font-size: small">
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="0">Trivial</option>
+                        <option name="1">Unimportant</option>
+                        <option name="2">Average</option>
+                        <option name="3">Important</option>
+                        <option name="4">Vital</option>
+                    </select>
+                    <select style="width: 15%;" id = "importancefilterview2" name = "sizeinput" required style="font-size: small">
+                        <option name="0">and up</option>
+                        <option name="1" selected = true>only</option>
+                        <option name="2">and under</option>
+                    </select>
+                    <input id="deadlinefilterview" type="date" required>
+                    <select style="width: 15%;" id = "deadlinefilterview2" name = "sizeinput" style="font-size: small">
+                        <option name="0">or before</option>
+                        <option name="1" selected = true>exactly</option>
+                        <option name="2">or after</option>
+                    </select>
+                </div>    
+            </form>
+            <div id="filterview"></div>
+
         </div>
     </div>
 </div>

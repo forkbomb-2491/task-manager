@@ -98,6 +98,18 @@ export class HelpManager {
                     return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
                 },
             ),
+            // Filterview
+            // new HelpPane(
+            //     this.taskMgr,
+            //     document.getElementById("filterview")!,
+            //     t => {
+            //         return t.size + t.importance - t.dueIn
+            //     },
+            //     (t: Task) => {
+            //         return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
+            //     },
+            // ),
+            
         ]
         onWindowFocused(() => this.render())
         // Listener for checkbox
