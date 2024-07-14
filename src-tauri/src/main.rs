@@ -3,7 +3,7 @@
 
 // use tauri::{async_runtime::{spawn, spawn_blocking, TokioRuntime}, Runtime};
 
-// mod algorithm;
+mod algorithm;
 mod history;
 
 fn main() {
@@ -17,7 +17,11 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_notification::init())
-        .invoke_handler(tauri::generate_handler![history::init_history, history::history_exec, history::close_history, history::history_select])
+        .invoke_handler(tauri::generate_handler![
+            algorithm::init_algo,
+            algorithm::record_create_event,
+            algorithm::record_complete_event
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

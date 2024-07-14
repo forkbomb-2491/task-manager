@@ -1,11 +1,12 @@
+use serde_json::{json, Value as JsonValue};
 use sqlx::{
-    migrate::MigrateDatabase, Pool
+    migrate::MigrateDatabase, sqlite::SqliteRow, Error, FromRow, Pool
 };
-use tauri::{async_runtime::Mutex, AppHandle, Manager, Runtime};
+use crate::algorithm::DueEvent;
 
 type Db = sqlx::sqlite::Sqlite;
 
-async fn connect(path: &str) -> Result<Pool<Db>, sqlx::Error> {
+async fn connect(path: &str) -> Result<Pool<Db>, Error> {
     if !Db::database_exists(path).await.unwrap_or(false) {
         Db::create_database(&("sqlite:".to_string().to_owned() + path)).await?;
     }
@@ -14,56 +15,93 @@ async fn connect(path: &str) -> Result<Pool<Db>, sqlx::Error> {
     Ok(pool)
 }
 
-static mut POOL: Option<Mutex<Pool<Db>>> = None;
-
-#[tauri::command]
-pub async fn init_history<R: Runtime>(app: AppHandle<R>) -> Result<(), String> {
-    let path = app.path().app_data_dir().unwrap().to_str().expect("AppData failed to resolve").to_owned() + "/history.db";
-    unsafe {
-        if !POOL.is_none() {
-            return Ok(());
-        }
-        POOL = Some(Mutex::new(connect(&path).await.expect("Error loading database.")));
-    }
-    Ok(())
+pub struct History {
+    pool: Option<Pool<Db>>,
+    is_loaded: bool
 }
 
-#[tauri::command]
-pub async fn close_history() -> Result<(), String> {
-    println!("closingf");
-    unsafe {
-        if POOL.is_none() {
-            return Ok(());
+impl History {
+    pub fn new() -> History {
+        return History { pool: None, is_loaded: false };
+    }
+
+    async fn execute(&mut self, query: &str, values: Vec<JsonValue>) -> Result<Option<(u64, i64)>, Error> {
+        if !self.is_loaded { return Ok(None) }
+        let mut query = sqlx::query(query);
+        for val in values {
+            if val.is_null() {
+                query = query.bind(None::<JsonValue>);
+            } else if val.is_string() {
+                query = query.bind(val.as_str().unwrap().to_owned())
+            } else {
+                query = query.bind(val);
+            }
         }
-        let pool = POOL.as_mut().unwrap().lock().await;
-        pool.close().await;
+        let result = query.execute(&*self.pool.as_mut().unwrap()).await?;
+        Ok(Some((result.rows_affected(), result.last_insert_rowid())))
+    }
+
+    async fn select_all<T>(&mut self, query: &str, values: Vec<JsonValue>) -> Result<Option<Vec<T>>, Error>
+    where 
+        T: for<'r> FromRow<'r, SqliteRow> + std::marker::Send + std::marker::Unpin,
+    {
+        if !self.is_loaded { return Ok(None) }
+        let mut query = sqlx::query_as(query);
+        for val in values {
+            if val.is_null() {
+                query = query.bind(None::<JsonValue>);
+            } else if val.is_string() {
+                query = query.bind(val.as_str().unwrap().to_owned())
+            } else {
+                query = query.bind(val);
+            }
+        }
+        let rows: Vec<T> = query.fetch_all(&*self.pool.as_mut().unwrap()).await?;
+        Ok(Some(rows))
+    }
+
+    pub async fn load(&mut self, path: &str) -> Result<(), Error> {
+        if self.is_loaded { return Ok(()); }
+        self.pool = Some(connect(path).await?);
+        self.is_loaded = true;
+        self.execute("CREATE TABLE DueEvents (\
+            type INTEGER, \
+            time BIGINT, \
+            id TEXT, \
+            list TEXT, \
+            importance INTEGER, \
+            size INTEGER, \
+            due BIGINT \
+        )", Vec::new()).await?;
         Ok(())
     }
-}
 
-#[tauri::command]
-pub async fn history_exec(query: String) -> Result<(), String> {
-    unsafe {
-        if POOL.is_none() {
-            return Err("History not initialized".to_string());
-        }
-        let pool = POOL.as_mut().unwrap().lock().await;
-        let query = sqlx::query(&query);
-        let result = query.execute(&*pool).await;
-        println!("{result:?}");
-        Ok(())
-    }
-}
+    pub async fn insert_due_event(&mut self, event: DueEvent) -> Result<(), String> {
+        if self.pool.is_none() { return Err("Pool not loaded.".to_string()); }
+        let values = Vec::from([
+            json!(event.event_type as i32),
+            json!(event.timestamp),
+            json!(event.id),
+            json!(event.list),
+            json!(event.importance),
+            json!(event.size),
+            json!(event.due)
+        ]);
+        let result = self.execute(
+            " \
+            INSERT INTO DueEvents \
+            (type, time, id, list, importance, size, due) \
+            VALUES \
+            ($1, $2, $3, $4, $5, $6, $7)", 
+            values
+        ).await;
+        if result.is_ok() { Ok(()) }
+        else {
+            let error = &result.err().unwrap();
+            if error.to_string().contains("1") {
 
-#[tauri::command]
-pub async fn history_select(query: String) -> Result<(), String> {
-    unsafe {
-        if POOL.is_none() {
-            return Err("History not initialized".to_string());
+            }
+            Err(format!("{error}").to_owned()) 
         }
-        let pool = POOL.as_mut().unwrap().lock().await;
-        let query = sqlx::query(&query);
-        let _result = query.fetch_all(&*pool).await;
-        Ok(())
     }
 }
