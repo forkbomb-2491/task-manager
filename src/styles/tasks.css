@@ -224,31 +224,69 @@ button.complete:hover {
 
 .tasklistnav {
     display: block;
-    min-width: 20%;  
-    flex-flow: column;
+    min-width: 20%;
+    padding: 0.25rem;
 }
 
-.tasklistnav div {
+.tasklistnav:not(.horizontal) {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    margin-top: -0.25rem;
+}
+
+.tasklistnav:not(.horizontal) > div {
     margin-bottom: 1rem;
+    aspect-ratio: 1/0.5;
 }
 
 .tasklistnav.horizontal {
     display: flex; 
     margin-bottom: 1rem;
+    flex-flow: row;
 }
 
-.tasklistnav.horizontal div {
+.tasklistnav.horizontal > div {
     flex-grow: 1; 
-    aspect-ratio: 1/0.5;
 }
 
-.tasklist {
+.container.tasklist {
     flex-grow: 1; 
     padding-left: 1.5rem; 
     padding-right: 1.5rem;
     margin-left: 1rem;
 }
 
-.tasklist.horizontal {
+.container.tasklist:not(.horizontal) {
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.container.tasklist.horizontal {
     margin-left: 0px;
+}
+
+.tasklistbutton {
+    display: flex;
+    background-color: transparent;
+    /* background-image: radial-gradient(var(--primary-color), var(--secondary-color)); */
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    vertical-align: middle;
+
+    /* width: 30%; */
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+
 }

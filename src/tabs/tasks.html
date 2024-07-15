@@ -1,7 +1,7 @@
 <h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
-<div class="tasklistcontainer">
-    <div class="tasklistnav" style="display: flex; margin-bottom: 1rem;">
-        <div class="container" style="margin-right: 1rem; max-width: 33%; flex-grow: 1; aspect-ratio: 1/0.5;">
+<div class="tasklistcontainer" style="max-height: calc(100% - 3.1415926536rem);">
+    <div class="tasklistnav">
+        <div class="container">
             <h2>Create a List</h2>
             <div style="display: flex;">
                 <div style="flex-grow: 1;">
@@ -25,18 +25,20 @@
                 <input type="text" style="width: 100%;" name="listdesc" required>
             </div>
             <br>
-            <button class="settingsbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
         </div>
-        <div class="container" style="margin-right: 1rem; max-width: 33%; flex-grow: 1; aspect-ratio: 1/0.5;">
-            <button class="settingsbutton" style="width: 100%; max-height: fit-content;">List 0</button>
-            task 1
-        </div>
-        <div class="container" style="flex-grow: 1; max-width: 33%; aspect-ratio: 1/0.5;">
-            <button class="settingsbutton" style="width: 100%; max-height: fit-content;">List 1</button>
-            task 1
+        <button class="settingsbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
+        <div>
+            <div class="container">
+                <button class="tasklistbutton" style="width: 100%; max-height: fit-content;">List 1</button>
+                task 1
+            </div>
+            <div class="container">
+                <button class="tasklistbutton" style="width: 100%; max-height: fit-content;">Option 2</button>
+                task 1
+            </div>
         </div>
     </div>
-    <div class="container" style="margin-left: 1rem; flex-grow: 1; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container tasklist">
         <h2>Current List Title</h2>
 
         <h3>Create New Task</h2>
@@ -105,7 +107,7 @@
             </form>
         </div>
         <div style="justify-content: right; display: flex;">
-            <input type="checkbox" id="smartduedatebox" name="smartduedate">
+            <input type="checkbox" id="smartduedatebox" name="smartduedate" checked>
             <label for="smartduedate" style="margin-left: 1ch;">✨ Automatically adjust due date of new tasks</label>
             <element id="smartduedateinfo" style="font-size: small; margin-left: 1ch;">ⓘ</element>
         </div>

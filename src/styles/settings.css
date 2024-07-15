@@ -93,7 +93,7 @@ select:focus-within {
     background-color: var(--secondary-color);
 
     /* min-width: 90%; */
-    max-width: 95%;
+    max-width: 100%;
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
 

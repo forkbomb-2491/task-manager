@@ -247,17 +247,20 @@ header button {
     transition: ease-in-out 200ms;
 
     padding: 1rem;
+    margin-bottom: 1rem;
+    /* margin-top: 1rem; */
 }
 
 .container h2 {
-    margin-top: 0.1;
-    margin-bottom: 0.05;
+    margin-top: 0.01rem;
+    margin-bottom: 0.15rem;
+    /* font-style: italic; */
 }
 
 .container h3 {
     font-size: medium;
     /* margin-top: 0; */
-    margin-bottom: 0.1;
+    margin-bottom: 0.5rem;
     font-style: italic;
     /* color: var(--secondary-text-color); */
 }
