@@ -1,4 +1,4 @@
-import { SortBasis, onWindowFocused } from "./utils";
+import { SortBasis, onWindowFocused, showTooltipOnHover } from "./utils";
 import { onTaskEvent, onTaskAdd, Task } from "./task";
 import { TaskManager } from "./taskmanager";
 
@@ -60,6 +60,11 @@ export class TaskList {
             "click",
             (_) => this.sortBasis = SortBasis.duedate
 
+        )
+
+        showTooltipOnHover(
+            document.getElementById("smartduedateinfo")!,
+            "Task Manager can learn from your previous tasks how long it takes you to get them done. Check this box to have your tasks' due dates adjusted accordingly."
         )
 
         onTaskEvent(_ => this.refresh());

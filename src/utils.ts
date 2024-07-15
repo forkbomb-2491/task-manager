@@ -91,7 +91,11 @@ window.addEventListener(
     "mousemove",
     e => {
         if (tooltip.style.display == "none" || ttMoveOnCooldown) return
-        tooltip.style.left = `${e.x + 10}px`
+        if (e.x < window.innerWidth/2) {
+            tooltip.style.right = `${e.x + 10}px`
+        } else {
+            tooltip.style.right = `${10 + (window.innerWidth - e.x)}px`
+        }
         tooltip.style.top = `${e.y + 10}px`
     }
 )

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 508.14 269.69">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-4 {
+        clip-path: url(#clippath-1);
+      }
+
+      .cls-2 {
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 32px;
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" width="269.64" height="269.69"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <rect class="cls-1" x="238.5" y="0" width="269.64" height="269.69"/>
+    </clipPath>
+  </defs>
+  <g id="_Mirror_Repeat_" data-name="&amp;lt;Mirror Repeat&amp;gt;">
+    <g class="cls-3">
+      <line class="cls-2" x1="16" y1="16" x2="253.64" y2="253.69"/>
+    </g>
+  </g>
+  <g id="_Mirror_Repeat_-2" data-name="&amp;lt;Mirror Repeat&amp;gt;">
+    <g class="cls-4">
+      <line class="cls-2" x1="492.14" y1="16" x2="254.5" y2="253.69"/>
+    </g>
+  </g>
+</svg>
