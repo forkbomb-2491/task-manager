@@ -15,6 +15,11 @@ async fn connect(path: &str) -> Result<Pool<Db>, Error> {
     Ok(pool)
 }
 
+#[allow(dead_code)]
+async fn kill(path: &str) -> Result<(), Error> {
+    Db::drop_database(&("sqlite:".to_string().to_owned() + path)).await
+}
+
 pub struct History {
     pool: Option<Pool<Db>>,
     is_loaded: bool
@@ -75,6 +80,11 @@ impl History {
         )", Vec::new()).await?;
         Ok(())
     }
+    
+    #[allow(dead_code)]
+    pub async fn close(&mut self) {
+        self.pool.as_mut().unwrap().close().await;
+    }
 
     pub async fn insert_due_event(&mut self, event: DueEvent) -> Result<(), String> {
         if self.pool.is_none() { return Err("Pool not loaded.".to_string()); }
@@ -103,5 +113,24 @@ impl History {
             }
             Err(format!("{error}").to_owned()) 
         }
+    }
+
+    pub async fn filter_due_events(&mut self, conditions: Vec<String>) -> Result<Option<Vec<DueEvent>>, Error> {
+        let mut query = "SELECT * FROM DueEvents".to_string();
+        if conditions.len() > 0 {
+            let conditions = conditions.join(" AND ");
+            query += &(" WHERE ".to_string() + &conditions);
+        }
+        Ok(self.select_all::<DueEvent>(&query, Vec::new()).await?)
+    }
+
+    pub async fn clear_due_events(&mut self, conditions: Vec<String>) -> Result<(), String> {
+        let mut query = "DELETE FROM DueEvents".to_string();
+        if conditions.len() > 0 {
+            let conditions = conditions.join(" AND ");
+            query += &(" WHERE ".to_string() + &conditions);
+        }
+        self.execute(&query, Vec::new()).await.expect("Error deleting entries.");
+        Ok(())
     }
 }

@@ -60,6 +60,8 @@ class App {
 
         doUpdate().then(() => console.log("upodate called"))
 
+        invoke("init_algo").then()
+
         showTooltipOnHover(document.getElementById("sizetit")!, "Size: Based on how much time or work will go into a task.")
         showTooltipOnHover(document.getElementById("importancetit")!, "Importance: Based on how important it is that the task is completed.")
     

@@ -22,6 +22,7 @@ tauri-plugin-dialog = "2.0.0-beta.9"
 tauri-plugin-http = "2.0.0-beta.11"
 tauri-plugin-sql = { version = "2.0.0-beta.8", features = ["sqlite"] }
 sqlx = { version = "0.7", features = ["runtime-async-std"] }
+tokio = { version = "1.38.0", features = ["macros"] }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

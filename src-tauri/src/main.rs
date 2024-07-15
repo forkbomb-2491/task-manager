@@ -5,6 +5,7 @@
 
 mod algorithm;
 mod history;
+mod testutils;
 
 fn main() {
     tauri::Builder::default()
@@ -20,7 +21,10 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             algorithm::init_algo,
             algorithm::record_create_event,
-            algorithm::record_complete_event
+            algorithm::record_complete_event,
+            algorithm::get_suggested_due_offset,
+            algorithm::clear_due_events,
+            algorithm::remove_due_event
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

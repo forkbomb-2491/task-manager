@@ -16,3 +16,11 @@
     <button class="settingsbutton" onclick='window.dispatchEvent(new Event("blocktasksave"))'>Block Tasks Saving</button>
 <!-- <button class="settingsbutton" onclick="bindErrors()">Bind console errors</button> -->
 </div>
+
+<div style="display: flex;"> 
+    <button class="settingsbutton" onclick="pushTasksAsCreates()">Push tasks as CreateEvs</button>
+    <button class="settingsbutton" onclick="pushTasksAsCompletes()">Push tasks as Completes</button>
+    <button class="settingsbutton" onclick="clearDueEvents()">Reset due events in DB</button>
+</div>
+
+<div id="debugDump"></div>
