@@ -216,3 +216,39 @@ button.complete:hover {
     left: 0;
     opacity: 0;
 }
+
+.tasklistcontainer {
+    display: flex; 
+    justify-content: space-between;
+}
+
+.tasklistnav {
+    display: block;
+    min-width: 20%;  
+    flex-flow: column;
+}
+
+.tasklistnav div {
+    margin-bottom: 1rem;
+}
+
+.tasklistnav.horizontal {
+    display: flex; 
+    margin-bottom: 1rem;
+}
+
+.tasklistnav.horizontal div {
+    flex-grow: 1; 
+    aspect-ratio: 1/0.5;
+}
+
+.tasklist {
+    flex-grow: 1; 
+    padding-left: 1.5rem; 
+    padding-right: 1.5rem;
+    margin-left: 1rem;
+}
+
+.tasklist.horizontal {
+    margin-left: 0px;
+}

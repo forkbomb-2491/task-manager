@@ -250,14 +250,14 @@ header button {
 }
 
 .container h2 {
-    margin-top: 0.2;
-    margin-bottom: 0.1;
+    margin-top: 0.1;
+    margin-bottom: 0.05;
 }
 
 .container h3 {
     font-size: medium;
     /* margin-top: 0; */
-    margin-bottom: 0.25;
+    margin-bottom: 0.1;
     font-style: italic;
     /* color: var(--secondary-text-color); */
 }

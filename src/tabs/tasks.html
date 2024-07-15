@@ -1,7 +1,7 @@
 <h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
-<div style="display: flex; justify-content: space-between;">
-    <div style="min-width: 20%;  flex-flow: column;">
-        <div class="container" style="margin-bottom: 1rem;">
+<div class="tasklistcontainer">
+    <div class="tasklistnav" style="display: flex; margin-bottom: 1rem;">
+        <div class="container" style="margin-right: 1rem; max-width: 33%; flex-grow: 1; aspect-ratio: 1/0.5;">
             <h2>Create a List</h2>
             <div style="display: flex;">
                 <div style="flex-grow: 1;">
@@ -24,17 +24,19 @@
             <div style="width: 95%">
                 <input type="text" style="width: 100%;" name="listdesc" required>
             </div>
-        </div>
-        <!-- <div class="container" style="margin-bottom: 1rem;"> -->
+            <br>
             <button class="settingsbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
-        <!-- </div> -->
-        <div class="container" style="margin-bottom: 1rem; aspect-ratio: 1/0.5;">
+        </div>
+        <div class="container" style="margin-right: 1rem; max-width: 33%; flex-grow: 1; aspect-ratio: 1/0.5;">
+            <button class="settingsbutton" style="width: 100%; max-height: fit-content;">List 0</button>
+            task 1
+        </div>
+        <div class="container" style="flex-grow: 1; max-width: 33%; aspect-ratio: 1/0.5;">
             <button class="settingsbutton" style="width: 100%; max-height: fit-content;">List 1</button>
             task 1
         </div>
     </div>
-    <div style="width: 1rem;"></div>
-    <div class="container" style="flex-grow: 1; padding-left: 1.5rem; padding-right: 1.5rem;">
+    <div class="container" style="margin-left: 1rem; flex-grow: 1; padding-left: 1.5rem; padding-right: 1.5rem;">
         <h2>Current List Title</h2>
 
         <h3>Create New Task</h2>
@@ -143,7 +145,7 @@
                     Completed Tasks
                 </h3>
             </div>
-            <div class="tasklist" id="completedtasklist">
+                <div class="tasklist" id="completedtasklist">
             </div>
         </div>
     </div>
