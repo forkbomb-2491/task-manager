@@ -1,4 +1,4 @@
-import { SortBasis, onWindowFocused, showTooltipOnHover } from "./utils";
+import { SortBasis, onWindowFocused, registerShowHideButton, showTooltipOnHover } from "./utils";
 import { onTaskEvent, onTaskAdd, Task } from "./task";
 import { TaskManager } from "./taskmanager";
 
@@ -31,10 +31,7 @@ export class TaskList {
     constructor(taskMgr: TaskManager) {
         this.taskMgr = taskMgr;
 
-        document.getElementById("completedtasksbutton")!.addEventListener(
-            "click",
-            (_) => { this.toggleCompletedVisibility(); }
-        );
+        registerShowHideButton("completedtasksbutton", "completedtasklist")
 
         document.getElementById("alphasort")!.addEventListener(
             "click",
@@ -64,7 +61,8 @@ export class TaskList {
 
         showTooltipOnHover(
             document.getElementById("smartduedateinfo")!,
-            "Task Manager can learn from your previous tasks how long it takes you to get them done. Check this box to have your tasks' due dates adjusted accordingly."
+            "Check this box to have your task's due dates adjusted according to what Task-Manager's learned about you."
+            // Task Manager can learn from your previous tasks how long it takes you to get them done.
         )
 
         onTaskEvent(_ => this.refresh());
@@ -166,14 +164,5 @@ export class TaskList {
             document.getElementById("currenttasklist")!.appendChild(task.taskListElement);
         }
         this.sort();
-    }
-
-    private toggleCompletedVisibility() {
-        var list = document.getElementById("completedtasklist")!;
-        if (list.style.display == "none") {
-            list.style.display = "block";
-        } else {
-            list.style.display = "none";
-        }
     }
 }

@@ -215,12 +215,13 @@ header button {
 
 .showhidebutton {
     font-family: var(--primary-font-family);
-    color: var(--secondary-color);
+    color: var(--primary-text-color);
 
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
     margin-top: auto; 
-    margin-bottom: auto; 
+    margin-bottom: auto;
+    margin-left: -0.9ch;
     border: 0; 
     background: none;
 }
@@ -231,11 +232,14 @@ header button {
     text-shadow: 0 0 0.5rem var(--primary-shadow-color);
 }
 
+.showhidebutton.folded {
+    transform: rotate(-90deg);
+}
+
 .container {
     background-color: var(--secondary-color);
     display: flex;
     flex-flow: column;
-
 
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
@@ -243,4 +247,17 @@ header button {
     transition: ease-in-out 200ms;
 
     padding: 1rem;
+}
+
+.container h2 {
+    margin-top: 0.2;
+    margin-bottom: 0.1;
+}
+
+.container h3 {
+    font-size: medium;
+    /* margin-top: 0; */
+    margin-bottom: 0.25;
+    font-style: italic;
+    /* color: var(--secondary-text-color); */
 }

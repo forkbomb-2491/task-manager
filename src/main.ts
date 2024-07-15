@@ -35,6 +35,7 @@ async function doUpdate() {
                 console.log(e)
             })
         }
+        
     }
 }
 

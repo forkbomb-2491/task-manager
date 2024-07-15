@@ -14,6 +14,7 @@
 - [ ] ✨ (In progress) Due date offset recommendations based on past tasks
 - [ ] Calendar View
 - [ ] Sorting Applies to Subtasks too
+- [ ] Drop down notification/info box
 - [ ] ~Custom Category Names~
 - [x] Editing Tasks
 - [x] Add due time
@@ -25,3 +26,6 @@
 
 ### v0.4
 - [ ] Even more and more comprehensive recommendations
+
+### v0.5
+TBD

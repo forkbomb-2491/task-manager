@@ -4,8 +4,6 @@ use tauri::{Manager, Runtime};
 
 use crate::history::History;
 
-// use crate::task::TaskRecord;
-
 static mut HISTORY: Option<History> = None;
 
 unsafe fn init_history() {

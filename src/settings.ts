@@ -1,9 +1,10 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { Weekdays, getElement } from "./utils";
+import { Weekdays, getElement, onWindowFocused, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
 import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
+import { Update, check } from "@tauri-apps/plugin-updater";
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -19,6 +20,8 @@ export class SettingsView {
 
     private checkInHandler: CheckInHandler | undefined
     private settings: Settings
+
+    private update: Update | undefined
 
     constructor(settings: Settings | null = null) {
         if (settings != null) {
@@ -37,6 +40,51 @@ export class SettingsView {
                 }
             }
         )
+
+        registerShowHideButton("notifsettingsshowhide", "notifsettingsdiv")
+        registerShowHideButton("plannersettingsshowhide", "plannersettingsdiv")
+        registerShowHideButton("helpsettingsshowhide", "helpsettingsdiv")
+        registerShowHideButton("displaysettingsshowhide", "displaysettingsdiv")
+
+        this.checkForUpdates().then()
+        onWindowFocused(() => this.checkForUpdates().then())
+    }
+
+    private async checkForUpdates() {
+        if (this.update != undefined) return
+        
+        var update = await check()
+        if (update != null) {
+            document.getElementById("updateversionlabel")!.innerText = update.version
+            document.getElementById("updatenotesdiv")!.innerText = update.body!
+            document.getElementById("installupdatebutton")!.addEventListener(
+                "click",
+                _ => this.installUpdate(update!).then()
+            )
+            document.getElementById("updatecontainer")!.style.display = "block"
+        }
+    }
+
+    private async installUpdate(update: Update) {
+        document.getElementById("installupdatebutton")!.style.display = "none"
+        const statusLabel = document.getElementById("installstatuslabel")!
+        statusLabel.innerText = "Starting download..."
+        statusLabel.style.display = "block"
+        var size: number
+        await update.downloadAndInstall((
+            e => {
+                if (e.event == "Started") {
+                    statusLabel.innerText = "Download started..."
+                    size = e.data.contentLength!
+                } else if (e.event == "Progress") {
+                    statusLabel.innerText = `Downloading... ${
+                        Math.round(e.data.chunkLength/size * 100)
+                    }% Complete`
+                } else {
+                    statusLabel.innerText = "✅ Install Complete! Please relaunch Task Manager."
+                }
+            }
+        ))
     }
 
     /**

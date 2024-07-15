@@ -130,6 +130,24 @@ export function toHTMLDateTimeString(date: Date) {
     return ret
 }
 
+export function registerShowHideButton(buttonId: string, targetId: string, display: string = "block") {
+    const button = document.getElementById(buttonId)!
+    const target = document.getElementById(targetId)!
+    button.className = "showhidebutton"
+    button.addEventListener(
+        "click",
+        _ => {
+            if (button.className.includes("folded")) {
+                button.className = "showhidebutton"
+                target.style.display = display
+            } else {
+                button.className = "showhidebutton folded"
+                target.style.display = "none"
+            }
+        }
+    )
+}
+
 // export enum DateFormat {
 //     "american",
 //     "everyoneElse"
