@@ -43,7 +43,7 @@ describe("Task Events", () => {
     })
 
     it("Task Adoption works", () => {
-        var child = new Task("test", 1, 1, "hhhh", new Date())
+        var child = new Task("test", 1, 1, new Date())
         task.adoptChild(child)
 
         assert.equal(child.parent, task)
@@ -53,7 +53,7 @@ describe("Task Events", () => {
     it("Task Adoption Event", () => {
         var eventReceived: TaskEvent | undefined
         onTaskAdopt(e => eventReceived = e)
-        var child = new Task("test", 1, 1, "hhhh", new Date())
+        var child = new Task("test", 1, 1, new Date())
         task.adoptChild(child)
 
         assert.notEqual(eventReceived, undefined)
@@ -122,7 +122,7 @@ describe("Task Manager Tests", () => {
     var taskMgr = new TaskManager()
 
     it("Add Task Works", () => {
-        taskMgr.addTask(new Task("test", 1, 2, "red", new Date()))
+        taskMgr.addTask(new Task("test", 1, 2, new Date()), "Default")
         assert.notEqual(taskMgr.tasks.length, 0)
     })
 })
@@ -140,13 +140,13 @@ describe("Task Tab Tests", () => {
     var completedList = document.getElementById("completedtasklist")!
 
     it("Task Added to Task List", () => {
-        taskMgr.addTask(new Task("test", 1, 2, "red", new Date()))
+        taskMgr.addTask(new Task("test", 1, 2, new Date()), "Default")
         assert.strictEqual(currentList.children.length, 1)
     })
     
     it("Completion Removes from List", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         assert.strictEqual(currentList.children.length, 1)
         task.toggleCompleted()
         assert.strictEqual(currentList.children.length, 0)
@@ -154,7 +154,7 @@ describe("Task Tab Tests", () => {
     })
 
     it("Deletion Removes from List", () => {
-        taskMgr.addTask(new Task("test", 1, 2, "red", new Date()))
+        taskMgr.addTask(new Task("test", 1, 2, new Date()), "Default")
         assert.strictEqual(currentList.children.length, 1)
         taskMgr.tasks[0].delete()
         assert.strictEqual(currentList.children.length, 0)
@@ -164,7 +164,7 @@ describe("Task Tab Tests", () => {
 describe("Task Time Tests", () => {
     it("Date Correct from Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
-        var task = new Task("test", 1, 1, "", testDate)
+        var task = new Task("test", 1, 1, testDate)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -172,7 +172,7 @@ describe("Task Time Tests", () => {
 
     it("Date Correct from 23:59", () => {
         var testDate = new Date(2024, 0, 1, 23, 59)
-        var task = new Task("test", 1, 1, "", testDate)
+        var task = new Task("test", 1, 1, testDate)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -181,7 +181,7 @@ describe("Task Time Tests", () => {
     it("Timestamp to Date Works Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var tsDate = new Date(testDate.valueOf())
-        var task = new Task("test", 1, 1, "", tsDate)
+        var task = new Task("test", 1, 1, tsDate)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -190,7 +190,7 @@ describe("Task Time Tests", () => {
     it("Timestamp to Date Works 23:59", () => {
         var testDate = new Date(2024, 0, 1, 23, 59)
         var tsDate = new Date(testDate.valueOf())
-        var task = new Task("test", 1, 1, "", tsDate)
+        var task = new Task("test", 1, 1, tsDate)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -198,7 +198,7 @@ describe("Task Time Tests", () => {
     
     it("Date and Time Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
-        var task = new Task("test", 1, 1, "", testDate)
+        var task = new Task("test", 1, 1, testDate)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -208,8 +208,8 @@ describe("Task Time Tests", () => {
     
     it("Date and Time Midnight from Record", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
-        var taskRecord = new Task("test", 1, 1, "", testDate).record
-        var task = new Task(taskRecord.name, taskRecord.size, taskRecord.importance, taskRecord.category, taskRecord.due)
+        var taskRecord = new Task("test", 1, 1, testDate).record
+        var task = new Task(taskRecord.name, taskRecord.size, taskRecord.importance, taskRecord.due)
         assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task._due.getMonth(), testDate.getMonth())
         assert.strictEqual(task._due.getDate(), testDate.getDate())
@@ -225,7 +225,7 @@ describe("Task Edits", () => {
         taskMgr = new TaskManager()
         // @ts-ignore 2341
         taskMgr.render()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
     })
 
     it("Task List Update on Task Edit", () => {

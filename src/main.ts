@@ -1,5 +1,4 @@
-import { DATABASE_PATH, loadTabs } from './storage'
-import { Task } from './task'
+import { loadTabs } from './storage'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
@@ -8,8 +7,8 @@ import { Settings, SettingsEvent, SettingsView, TabsActive, onSettingChange, onS
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
-import { check } from '@tauri-apps/plugin-updater';
-import { ask } from '@tauri-apps/plugin-dialog';
+// import { check } from '@tauri-apps/plugin-updater';
+// import { ask } from '@tauri-apps/plugin-dialog';
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -19,7 +18,6 @@ if (DEBUG_TAB) {
     // @ts-ignore
     window.invoke = invoke
     // @ts-ignore
-    window.DATABASE_PATH = DATABASE_PATH
     document.getElementById("debugtabbutton")!.style.display = "block"
 }
 
@@ -27,17 +25,16 @@ var app: App
 
 await loadTabs()
 
-async function doUpdate() {
-    var update = await check()
-    if (update != null) {
-        if (await ask("Update found! Install it?")) {
-            await update.downloadAndInstall(e => {
-                console.log(e)
-            })
-        }
-        
-    }
-}
+// async function doUpdate() {
+//     var update = await check()
+//     if (update != null) {
+//         if (await ask("Update found! Install it?")) {
+//             await update.downloadAndInstall(e => {
+//                 console.log(e)
+//             })
+//         }
+//     }
+// }
 
 class App {
     // Frontend
@@ -59,18 +56,12 @@ class App {
     async main() {
         this.taskMgr.start().then()
 
-        doUpdate().then(() => console.log("upodate called"))
-
         invoke("init_algo").then()
 
         showTooltipOnHover(document.getElementById("sizetit")!, "Size: Based on how much time or work will go into a task.")
         showTooltipOnHover(document.getElementById("importancetit")!, "Importance: Based on how important it is that the task is completed.")
     
         // Register callbacks
-        document.getElementById("taskcreateform")!.addEventListener(
-            "submit",
-            (e) => { this.createTaskCallback(e) }
-        )
         
         document.getElementById("switchplanner")!.addEventListener(
             "click",
@@ -154,27 +145,6 @@ class App {
             // @ts-ignore
             window.taskMgr = this.taskMgr
         }
-    }
-
-    private createTaskCallback(event: SubmitEvent) {
-        event.preventDefault()
-        
-        // @ts-ignore; Necessary to make this whole darn thing work
-        var form: HTMLFormElement = event.target
-        var title = form.titleinput.value
-        var cat = form.catinput.value
-        var date = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
-        var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
-        var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
-
-        var box = document.getElementById("taskcreatebox")!
-        box.style.scale = "1.03"
-        window.setTimeout(() => box.style.scale = "1.0", 100)
-        form.reset()
-        form.deadlineinput.value = toHTMLDateTimeString(new Date())
-        
-        var task = new Task(title, size, importance, cat, date, false)
-        this.taskMgr.addTask(task)
     }
 
     private switchPlannerCallback() {

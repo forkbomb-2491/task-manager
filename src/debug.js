@@ -71,7 +71,7 @@ async function pushTasksAsCreates() {
         const tasks = window.taskMgr.getTasks()
         for (let i = 0; i < tasks.length; i++) {
             const task = tasks[i];
-            await recordCreateEvent(task);
+            await recordCreateEvent(task, task.category);
         }
         await message("Done.")
     }
@@ -82,7 +82,7 @@ async function pushTasksAsCompletes() {
         const tasks = window.taskMgr.getTasks()
         for (let i = 0; i < tasks.length; i++) {
             const task = tasks[i];
-            if (task.completed) { await recordCompleteEvent(task); }
+            if (task.completed) { await recordCompleteEvent(task, task.category); }
         }
         await message("Done.")
     }

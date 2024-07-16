@@ -1,10 +1,10 @@
+import { v4 as uuid4 } from 'uuid'
 import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
 
 export type TaskRecord = {
     "name": string,
     "size": number,
     "importance": number,
-    "category": string,
     "due": Date,
     "completed": boolean,
     "id": string,
@@ -24,7 +24,9 @@ export class TaskEvent extends Event {
     private _task: TaskRecord
     get task(): TaskRecord { return this._task }
 
-    constructor(type: TaskEventType, task: TaskRecord) {
+    readonly listUUID: string | null
+
+    constructor(type: TaskEventType, task: TaskRecord, listUUID: string | null = null) {
         var typeString: string
         switch (type) {
             case TaskEventType.delete:
@@ -57,6 +59,7 @@ export class TaskEvent extends Event {
         super(typeString!)
 
         this._task = task
+        this.listUUID = listUUID
     }
 }
 
@@ -117,6 +120,77 @@ export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean 
     if (includeAdopt) onTaskAdopt(cb)
 }
 
+export type ListRecord = {
+    name: string,
+    uuid: string,
+    color: TaskColor,
+    tasks: TaskRecord[]
+}
+
+export function onListEdit(cb: () => void) {
+    window.addEventListener(
+        "listedited",
+        _ => cb()
+    )
+}
+
+export class List {
+    readonly uuid: string
+
+    private _name: string
+    get name(): string { return this._name }
+    set name(val: string) {
+        this._name = val
+        window.dispatchEvent(new Event("listedited"))
+    }
+
+    readonly color: TaskColor
+
+    private _tasks: Task[] = []
+    get tasks(): Task[] {
+        return [...this._tasks]
+    }
+
+    get record(): ListRecord {
+        return {
+            name: this._name,
+            uuid: this.uuid,
+            color: this.color,
+            tasks: this._tasks.filter(t => !t.deleted).map(t => t.record)
+        }
+    }
+
+    constructor(name: string, color: TaskColor, tasks: Task[] = [], uuid: string | null = null) {
+        if (uuid == null) {
+            this.uuid = uuid4()
+        } else {
+            this.uuid = uuid
+        }
+
+        this._name = name
+        this.color = color
+        this._tasks = tasks
+        this._tasks.forEach(
+            t => t.category = String(TaskColor[color])
+        )
+    }
+
+    static fromRecord(record: ListRecord): List {
+        return new List(
+            record.name,
+            record.color,
+            record.tasks.map(t => Task.fromRecord(t)),
+            record.uuid,
+        )
+    }
+
+    public addTask(task: Task) {
+        this._tasks.push(task)
+        task.category = this.uuid
+        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid));
+    }
+}
+
 /** 
 * This class represents a Task.
 */
@@ -147,12 +221,15 @@ export class Task {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
     
-    _category: string
+    _category: string = "Default"
     get category(): string { return this._category }
     set category(val: string) { 
         this._category = val
+        this._subtasks.forEach(st => {
+            st.category = val
+        });
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        // window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
     
     _due: Date
@@ -182,7 +259,6 @@ export class Task {
             "name": this._name,
             "size": this._size,
             "importance": this._importance,
-            "category": this._category,
             "due": this._due,
             "completed": this.completed,
             "id": this.id,
@@ -272,7 +348,6 @@ export class Task {
      * @param name The Task's Name
      * @param size The Task's Size [0, 5)
      * @param importance The Task's Importance [0, 5)
-     * @param category Arbitrary category string
      * @param due The date the Task is due
      * @param completed If the Task is completed (default: false)
      * @param id The Task's unique ID, if any (default: generates new)
@@ -283,7 +358,6 @@ export class Task {
         name: string, 
         size: string | number, 
         importance: string | number, 
-        category: string, 
         due: Date, 
         completed: boolean = false,
         id: string | null = null,
@@ -293,7 +367,6 @@ export class Task {
         this._name = name
         this._size = Number(size)
         this._importance = Number(importance)
-        this._category = category
         
         this._due = new Date(due)
         // this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
@@ -310,7 +383,6 @@ export class Task {
                 o.name,
                 o.size,
                 o.importance,
-                o.category,
                 o.due,
                 o.completed,
                 o.id,
@@ -323,6 +395,18 @@ export class Task {
 
     static generateId() {
         return padWithLeftZeroes(`${Math.round(999999 * Math.random())}`, 6)
+    }
+
+    static fromRecord(record: TaskRecord): Task {
+        return new Task(
+            record.name,
+            record.size,
+            record.importance,
+            record.due,
+            record.completed,
+            record.id,
+            record.subtasks.map(st => Task.fromRecord(st))
+        )
     }
 
     /**
@@ -352,8 +436,8 @@ export class Task {
             }
         })
 
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
-        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._category))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._category))
     }
 
     /**
@@ -371,7 +455,7 @@ export class Task {
         }
 
         this.deleted = true
-        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record, this._category))
 
         this._subtasks.forEach(sub => {
             sub.delete()
@@ -406,9 +490,9 @@ export class Task {
         
         this.completed = !this.completed
         if (this.completed) {
-            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record))
+            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._category))
         } else {
-            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record))
+            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record, this._category))
         }
     }
 
@@ -437,9 +521,6 @@ export class Task {
             <div style="display: flex; flex-grow: 1">
                 <div style="flex-grow: 1">
                     ${this._name}
-                </div>
-                <div style="min-width: 9ch; max-width: 9ch;">
-                    ${this._category}
                 </div>
                 <div style="min-width: 10ch; max-width: 10ch;">
                     ${TaskSizes[this._size]}
@@ -533,15 +614,19 @@ export class Task {
             var newElement: HTMLElement
             if (e.className == "taskcontainer") {
                 newElement = this.taskListElement
+                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else if (e.className == "task") {
                 newElement = this.shortenedTaskListElement
+                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else if (e.tagName == "P") {
                 newElement = this.plannerElement
+                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else {
                 newElement = e
+                newElement.style.color = getColor(this._category)
             }
             return newElement
         })
@@ -552,12 +637,11 @@ export class Task {
         if (element.className.includes(" editing")) {       
             var form: HTMLFormElement = element.getElementsByTagName("form")[0]
             this._name = form.titleinput.value
-            this._category = form.catinput.value
             this._due = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
             this._size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
             this._importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
 
-            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.category))
 
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()
@@ -571,17 +655,6 @@ export class Task {
                 <div style="display: flex; flex-grow: 1;">
                     <div style="flex-grow: 1;">
                         <input type = "text" name="titleinput" required value="${this._name}">
-                    </div>
-                    <div style="min-width: 9ch; max-width: 9ch; display: flex;">
-                        <select name="catinput" required>
-                            <option name="default" ${this._category == "Default" ? "selected": ""}>Default</option>
-                            <option name="red" ${this._category == "Red" ? "selected": ""}>Red</option>
-                            <option name="orange" ${this._category == "Orange" ? "selected": ""}>Orange</option>
-                            <option name="yellow" ${this._category == "Yellow" ? "selected": ""}>Yellow</option>
-                            <option name="green" ${this._category == "Green" ? "selected": ""}>Green</option>
-                            <option name="blue" ${this._category == "Blue" ? "selected": ""}>Blue</option>
-                            <option name="purple" ${this._category == "Purple" ? "selected": ""}>Purple</option>
-                        </select>
                     </div>
                     <div style="min-width: 10ch; max-width: 10ch;">
                         <select name = "sizeinput" required>
@@ -680,6 +753,41 @@ export enum TaskImportances {
     "Average",
     "Important",
     "Vital"
+}
+
+export enum TaskColor {
+    "Default",
+    "Red",
+    "Orange",
+    "Yellow",
+    "Green",
+    "Blue",
+    "Purple"
+}
+
+export function colorStrToEnum(color: string) {
+    switch (color) {
+        case "Red":
+            return TaskColor.Red
+    
+        case "Orange":
+            return TaskColor.Orange
+    
+        case "Yellow":
+            return TaskColor.Yellow
+    
+        case "Green":
+            return TaskColor.Green
+    
+        case "Blue":
+            return TaskColor.Blue
+    
+        case "Purple":
+            return TaskColor.Purple
+
+        default:
+            return TaskColor.Default
+    }
 }
 
 function getColor(color: string) {

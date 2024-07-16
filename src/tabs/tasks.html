@@ -1,115 +1,105 @@
 <h1 style="margin-top: 0; flex-grow: 0;">Tasks</h1>
 <div class="tasklistcontainer" style="max-height: calc(100% - 3.2rem);">
-    <div class="tasklistnav">
-        <div class="container">
-            <h2>Create a List</h2>
-            <div style="display: flex;">
-                <div style="flex-grow: 1;">
-                    <input type="text" style="width: 90%;" name="listtitleinput" required>
-                </div>
-                <div style="min-width: 9ch; max-width: 9ch;">
-                    <select name="catinput" required>
-                        <option name="default">None</option>
-                        <option name="red">Red</option>
-                        <option name="orange">Orange</option>
-                        <option name="yellow">Yellow</option>
-                        <option name="green">Green</option>
-                        <option name="blue">Blue</option>
-                        <option name="purple">Purple</option>
-                    </select>
-                </div>
-            </div>
-
-            <h3>Description</h3>
-            <div style="width: 95%">
-                <input type="text" style="width: 100%;" name="listdesc" required>
-            </div>
-            <br>
-        </div>
-        <button class="settingsbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
+    <div class="tasklistnav" style="width:30%;">
         <div>
             <div class="container">
-                <button class="tasklistbutton" style="width: 100%; max-height: fit-content;">List 1</button>
-                task 1
+                <form name="listcreate" id="listcreate">
+                    <h2>Create a List</h2>
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <h3>List Name</h3>
+                            <h3>List Color</h3>
+                        </div>
+                        <div style="display: flex;">
+                            <input type="text" style="flex-grow: 1;" name="listtitleinput" required>
+                            <select name="catinput" style="width: 9ch; margin-left: 1rem;" required>
+                                <option name="0">None</option>
+                                <option name="1">Red</option>
+                                <option name="2">Orange</option>
+                                <option name="3">Yellow</option>
+                                <option name="4">Green</option>
+                                <option name="5">Blue</option>
+                                <option name="6">Purple</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- <div style="width: 100%">
+                        <h3>Description</h3>
+                        <input type="text" style="width: 100%;" name="listdesc" required>
+                    </div> -->
+                    <input type="submit" class="settingsbutton" value="Create List" style="margin-top: 1rem;">
+                </form>
             </div>
-            <div class="container">
-                <button class="tasklistbutton" style="width: 100%; max-height: fit-content;">Option 2</button>
-                task 1
-            </div>
+            <button class="settingsbutton" id="showalltasksbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
+        </div>
+        <div id="tasklistpreviews">
         </div>
     </div>
     <div class="container tasklist">
-        <h2>Current List Title</h2>
-
-        <h3>Create New Task</h2>
-        <div style="display: flex; justify-content: left; padding-left: 0.75rem; padding-right: 0.75rem;">
-            <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="">
-            </div>
-
-            <div style="flex-grow: 1;">
-                <div class="sortbutton" id="nametit">Name</div>
-            </div>
-            <div style="min-width: 9ch; max-width: 9ch; display: flex;">
-                <div class="sortbutton" id="categorytit">Color</div>
-            </div>
-            <div style="min-width: 10ch; max-width: 10ch; display: flex;">
-                <div class="sortbutton" id="sizetit">Size ⓘ</div>
-            </div>
-            <div style="min-width: 13ch; max-width: 13ch; display: flex;">
-                <div class="sortbutton" id="importancetit">Importance ⓘ</div>
-            </div>
-            <div style="min-width: 17.5ch; max-width: 17.5ch; display: flex;">
-                <div class="sortbutton" id="duedatetit">Due Date</div>
-            </div>
-            <div style="background: none; border: 0;" class="deletetask"></div>
+        <div class="listheader" style="display: flex">
+            <button id="listnamechange" style="background: none; border: 0; text-decoration: none;">✏️</button>
+            <h2 id="selectedlisttitle">Title</h2>
+            <div class="flexspacer"></div>
+            <button class="blank" id="listdeletebutton" style="font-size: large;">🗑️</button>
         </div>
-        <div class="task" style="justify-content: left;" id="taskcreatebox">
-            <form name="taskcreate" id="taskcreateform" autocomplete="off">
-                <input type="submit"
-                    style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
-                <div style="display: flex; flex-grow: 1;">
-                    <div style="flex-grow: 1;">
-                        <input type="text" id="titleinput" name="titleinput" required>
-                    </div>
-                    <div style="min-width: 9ch; max-width: 9ch; display: flex;">
-                        <select id="catinput" name="catinput" required>
-                            <option name="default">Default</option>
-                            <option name="red">Red</option>
-                            <option name="orange">Orange</option>
-                            <option name="yellow">Yellow</option>
-                            <option name="green">Green</option>
-                            <option name="blue">Blue</option>
-                            <option name="purple">Purple</option>
-                        </select>
-                    </div>
-                    <div style="min-width: 10ch; max-width: 10ch;">
-                        <select id="sizeinput" name="sizeinput" required>
-                            <option name="0">Tiny</option>
-                            <option name="1">Small</option>
-                            <option name="2">Medium</option>
-                            <option name="3">Big</option>
-                            <option name="4">Huge</option>
-                        </select>
-                    </div>
-                    <div style="min-width: 13ch; min-width: 13ch; display: flex;">
-                        <select id="importanceinput" name="importanceinput" required>
-                            <option name="0">Trivial</option>
-                            <option name="1">Unimportant</option>
-                            <option name="2">Average</option>
-                            <option name="3">Important</option>
-                            <option name="4">Vital</option>
-                        </select>
-                    </div>
-                    <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
-                        <input id="deadlineinput" type="datetime-local" required>
-                    </div>
+
+        <div id="taskcreatesection">
+            <h3>Create New Task</h2>
+            <div style="display: flex; justify-content: left; padding-left: 0.75rem; padding-right: 0.75rem;">
+                <div style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="">
                 </div>
-            </form>
-        </div>
-        <div style="justify-content: right; display: flex;">
-            <input type="checkbox" id="smartduedatebox" name="smartduedate" checked>
-            <label for="smartduedate" style="margin-left: 1ch;">✨ Automatically adjust due date of new tasks</label>
-            <element id="smartduedateinfo" style="font-size: small; margin-left: 1ch;">ⓘ</element>
+    
+                <div style="flex-grow: 1;">
+                    <div class="sortbutton" id="nametit">Name</div>
+                </div>
+                <div style="min-width: 10ch; max-width: 10ch; display: flex;">
+                    <div class="sortbutton" id="sizetit">Size ⓘ</div>
+                </div>
+                <div style="min-width: 13ch; max-width: 13ch; display: flex;">
+                    <div class="sortbutton" id="importancetit">Importance ⓘ</div>
+                </div>
+                <div style="min-width: 17.5ch; max-width: 17.5ch; display: flex;">
+                    <div class="sortbutton" id="duedatetit">Due Date</div>
+                </div>
+                <div style="background: none; border: 0;" class="deletetask"></div>
+            </div>
+            <div class="task" style="justify-content: left;" id="taskcreatebox">
+                <form name="taskcreate" id="taskcreateform" autocomplete="off">
+                    <input type="submit"
+                        style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
+                    <div style="display: flex; flex-grow: 1;">
+                        <div style="flex-grow: 1;">
+                            <input type="text" id="titleinput" name="titleinput" required>
+                        </div>
+                        <div style="min-width: 10ch; max-width: 10ch;">
+                            <select id="sizeinput" name="sizeinput" required>
+                                <option name="0">Tiny</option>
+                                <option name="1">Small</option>
+                                <option name="2">Medium</option>
+                                <option name="3">Big</option>
+                                <option name="4">Huge</option>
+                            </select>
+                        </div>
+                        <div style="min-width: 13ch; min-width: 13ch; display: flex;">
+                            <select id="importanceinput" name="importanceinput" required>
+                                <option name="0">Trivial</option>
+                                <option name="1">Unimportant</option>
+                                <option name="2">Average</option>
+                                <option name="3">Important</option>
+                                <option name="4">Vital</option>
+                            </select>
+                        </div>
+                        <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
+                            <input id="deadlineinput" type="datetime-local" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div style="justify-content: right; display: flex;">
+                <input type="checkbox" id="smartduedatebox" name="smartduedate" checked>
+                <label for="smartduedate" style="margin-left: 1ch;">✨ Automatically adjust due date of new tasks</label>
+                <element id="smartduedateinfo" style="font-size: small; margin-left: 1ch; cursor: pointer;">ⓘ</element>
+            </div>
         </div>
         <div>
             <div style="display: flex;">
@@ -122,9 +112,6 @@
 
                 <div style="flex-grow: 1;">
                     <button class="sortbutton" id="alphasort">Name</button>
-                </div>
-                <div style="min-width: 9.5ch; max-width: 9.5ch; display: flex;">
-                    <button class="sortbutton" id="categorysort">Color</button>
                 </div>
                 <div style="min-width: 10ch; max-width: 10ch; display: flex;">
                     <button class="sortbutton" id="sizesort">Size</button>

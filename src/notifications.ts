@@ -201,7 +201,6 @@ export class TaskNotifier {
 
         onSettingChange("remindersEnabled", e => {
             this.enabledInSettings = e.value
-            console.log(e.value)
         })
     }
 

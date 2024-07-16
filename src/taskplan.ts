@@ -195,7 +195,7 @@ export class TaskPlanner {
             title, 
             size, // Size presumed to be tiny
             this.selectedTask._importance, // Inherit importance
-            this.selectedTask._category, // Inherit category
+            // this.selectedTask._category, // Inherit category
             date, 
             false
         )

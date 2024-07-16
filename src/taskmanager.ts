@@ -2,12 +2,12 @@ import { TaskList } from "./tasklist";
 import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Planner } from "./planner";
-import { onSettingChange, onSettingsLoad } from "./settings";
+import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
 import { saveTasks, loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, onTaskEvent, TaskEvent, TaskEventType } from "./task";
-import { ask, message } from "@tauri-apps/plugin-dialog";
-import { fetchTasks, sendTasks } from "./http";
+import { Task, onTaskEvent, List, colorStrToEnum, TaskColor, onListEdit } from "./task";
+// import { ask, message } from "@tauri-apps/plugin-dialog";
+// import { fetchTasks, sendTasks } from "./http";
 // import { TheAlgorithm } from "./algorithm";
 
 /**
@@ -15,10 +15,19 @@ import { fetchTasks, sendTasks } from "./http";
  */
 
 export class TaskManager {
-    private _tasks: Task[] = [];
+    private _lists: List[] = [];
 
     get tasks(): Task[] {
-        return [...this._tasks];
+        var tasks: Task[] = []
+        this._lists.forEach(list => {
+            list.tasks.forEach(task => {
+                tasks.push(task)
+            })
+        })
+        return tasks;
+    }
+    get lists(): List[] {
+        return [...this._lists]
     }
 
     private taskList: TaskList;
@@ -27,10 +36,8 @@ export class TaskManager {
     private taskPlanner: TaskPlanner;
     private taskNotifier: TaskNotifier;
 
-    // private algorithm: TheAlgorithm
-
     private settingsLoaded: boolean = false;
-    private syncEnabled: boolean = false;
+    // private syncEnabled: boolean = false;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -41,17 +48,22 @@ export class TaskManager {
         // this.algorithm = new TheAlgorithm(this)
 
         onTaskEvent(_ => {
-            saveTasks(this._tasks).then()
-            if (this.syncEnabled) {
-                sendTasks(this._tasks).then()
-            }
+            saveTasks(this._lists).then()
+            // if (this.syncEnabled) {
+            //     sendTasks(this._tasks).then()
+            // }
         });
 
-        document.getElementById("pushnowbutton")!.addEventListener("click", _ => this.sendTasks())
-        document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
+        onListEdit(() => {
+            saveTasks(this._lists).then()
+            console.log("hi")
+        })
+
+        // document.getElementById("pushnowbutton")!.addEventListener("click", _ => this.sendTasks())
+        // document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
 
         onSettingsLoad(() => this.settingsLoaded = true);
-        onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
+        // onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
     }
 
     async start() {
@@ -59,54 +71,45 @@ export class TaskManager {
         this.render();
     }
 
-    private async fetchTasks() {
-        if (!await ask("Are you sure you want to overwrite your local tasks with those on the server?")) {
-            return
-        }
+    // private async fetchTasks() {
+    //     if (!await ask("Are you sure you want to overwrite your local tasks with those on the server?")) {
+    //         return
+    //     }
 
-        this._tasks = (await fetchTasks()).map(
-            o => new Task(
-                o.name,
-                o.size,
-                o.importance,
-                o.category,
-                o.due,
-                o.completed,
-                o.id,
-                o.subtasks,
-                null
-            )
-        );
+    //     this._tasks = (await fetchTasks()).map(
+    //         o => new Task(
+    //             o.name,
+    //             o.size,
+    //             o.importance,
+    //             o.category,
+    //             o.due,
+    //             o.completed,
+    //             o.id,
+    //             o.subtasks,
+    //             null
+    //         )
+    //     );
 
-        this.render();
-        await saveTasks(this._tasks)
+    //     this.render();
+    //     await saveTasks(this._tasks)
 
-        message("Done").then()
-    }
+    //     message("Done").then()
+    // }
 
-    private async sendTasks() {
-        if (!await ask("Are you sure you want to overwrite the tasks on the server with your local ones?")) {
-            return
-        }
+    // private async sendTasks() {
+    //     if (!await ask("Are you sure you want to overwrite the tasks on the server with your local ones?")) {
+    //         return
+    //     }
 
-        await sendTasks(this._tasks)
-        message("Done").then()
-    }
+    //     await sendTasks(this._tasks)
+    //     message("Done").then()
+    // }
 
     private async loadTasks() {
-        this._tasks = (await loadTasks()).map(
-            o => new Task(
-                o.name,
-                o.size,
-                o.importance,
-                o.category,
-                o.due,
-                o.completed,
-                o.id,
-                o.subtasks,
-                null
-            )
-        );
+        var tasks = await loadTasks()
+        tasks.forEach(list => {
+            this._lists.push(List.fromRecord(list))
+        })
 
         this.render();
     }
@@ -137,7 +140,7 @@ export class TaskManager {
     }
 
     getTasks() {
-        return this.flattenTaskList(this._tasks);
+        return this.flattenTaskList(this.tasks);
     }
 
     getTask(id: string): Task | null {
@@ -151,14 +154,35 @@ export class TaskManager {
         return null;
     }
 
-    addTask(task: Task) {
+    addTask(task: Task, list: string) {
+        var list_: List | undefined
+        for (let i = 0; i < this._lists.length; i++) {
+            const l = this._lists[i];
+            if (l.name == list || l.uuid == list) {
+                list_ = l
+                break
+            }
+        }
+        if (list_ == undefined) {
+            list_ = new List(list, colorStrToEnum(list))
+            this._lists.push(list_)
+        }
+
         if (task.parent == null) {
-            this._tasks.push(task);
+            list_!.addTask(task);
         }
-        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record));
-        saveTasks(this._tasks).then();
-        if (this.syncEnabled) {
-            sendTasks(this._tasks).then()
-        }
+        
+        saveTasks(this._lists).then();
+    }
+
+    newList(name: string, color: TaskColor) {
+        var list = new List(name, color)
+        this._lists.push(list)
+        saveTasks(this._lists).then()
+    }
+    
+    deleteList(list: List) {
+        this._lists = this._lists.filter(l => l.uuid != list.uuid)
+        saveTasks(this._lists).then()
     }
 }

@@ -1,12 +1,14 @@
-import { SortBasis, onWindowFocused, registerShowHideButton, showSheet, showTooltipOnHover } from "./utils";
-import { onTaskEvent, onTaskAdd, Task } from "./task";
+import { SortBasis, onWindowFocused, registerShowHideButton, showSheet, showTooltipOnHover, toHTMLDateTimeString } from "./utils";
+import { onTaskEvent, onTaskAdd, Task, List, TaskColor } from "./task";
 import { TaskManager } from "./taskmanager";
+import { ask } from "@tauri-apps/plugin-dialog";
 
 /**
  * A Task View that represents and handles the Tasks tab.
  */
 export class TaskList {
     private taskMgr: TaskManager;
+    private selectedList: List | null = null
 
     private _sortBasis: SortBasis = SortBasis.duedate;
     private get sortBasis(): SortBasis { return this._sortBasis }
@@ -38,11 +40,6 @@ export class TaskList {
             (_) => this.sortBasis = SortBasis.name
         )
 
-        document.getElementById("categorysort")!.addEventListener(
-            "click",
-            (_) => this.sortBasis = SortBasis.category
-        )
-
         document.getElementById("sizesort")!.addEventListener(
             "click",
             (_) => this.sortBasis = SortBasis.size
@@ -56,7 +53,72 @@ export class TaskList {
         document.getElementById("duedatesort")!.addEventListener(
             "click",
             (_) => this.sortBasis = SortBasis.duedate
+        )
 
+        document.getElementById("showalltasksbutton")!.addEventListener(
+            "click",
+            _ => {
+                this.selectedList = null
+                this.render()
+            }
+        )
+
+        document.getElementById("taskcreateform")!.addEventListener(
+            "submit",
+            (e) => { this.createTaskCallback(e) }
+        )
+
+        document.getElementById("listcreate")!.addEventListener(
+            "submit",
+            (e) => { this.createListCallback(e) }
+        )
+
+        document.getElementById("listdeletebutton")!.addEventListener(
+            "click",
+            async _ => {
+                if (this.selectedList!.tasks.filter(t => !t.deleted).length > 0) {
+                    if (!await ask("This list is not empty. Are you sure you want to PERMANENTLY delete it?")) {
+                        return
+                    }
+                }
+                this.taskMgr.deleteList(this.selectedList!)
+                this.selectedList = null
+                this.render()
+            }
+        )
+
+        document.getElementById("listnamechange")!.addEventListener(
+            "click",
+            e => {
+                // @ts-ignore
+                const button: HTMLButtonElement = e.currentTarget
+                const title = document.getElementById("selectedlisttitle")!;
+                if (button.innerText == "✏️") {
+                    button.style.display = "initial"
+                    button.innerText = "✅"
+
+                    var input = document.createElement("input")
+                    title.replaceWith(
+                        input
+                    )
+                    input.id = "selectedlisttitle"
+                } else {
+                    // @ts-ignore
+                    if (title.value.length == 0) return
+                    button.style.display = ""
+                    button.innerText = "✏️"
+                    // @ts-ignore
+                    this.selectedList!.name = title.value
+                    title.contentEditable = "false"
+
+                    var h2 = document.createElement("h2")
+                    title.replaceWith(
+                        h2
+                    )
+                    h2.id = "selectedlisttitle"
+                    this.render()
+                }
+            }
         )
 
         showTooltipOnHover(
@@ -121,19 +183,97 @@ export class TaskList {
         });
     }
 
+    private createTaskCallback(event: SubmitEvent) {
+        event.preventDefault()
+        
+        // @ts-ignore; Necessary to make this whole darn thing work
+        var form: HTMLFormElement = event.target
+        var title = form.titleinput.value
+        var date = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
+        var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
+        var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
+
+        var box = document.getElementById("taskcreatebox")!
+        box.style.scale = "1.03"
+        window.setTimeout(() => box.style.scale = "1.0", 100)
+        form.reset()
+        form.deadlineinput.value = toHTMLDateTimeString(new Date())
+        
+        var task = new Task(title, size, importance, date, false)
+        task.category = TaskColor[this.selectedList!.color]
+        this.taskMgr.addTask(task, this.selectedList!.name)
+    }
+
+    private createListCallback(event: SubmitEvent) {
+        event.preventDefault()
+        
+        // @ts-ignore; Necessary to make this whole darn thing work
+        var form: HTMLFormElement = event.target
+        var title = form.listtitleinput.value
+        var color = Number(form.catinput.selectedOptions.item(0).getAttribute("name"))
+
+        form.reset()
+        this.taskMgr.newList(title, color)
+        this.render()
+    }
+
     /**
      * Loads tasks from the List's TaskManager and sorts them into the
      * completed and current task lists.
      */
     render() {
+        var previews = document.getElementById("tasklistpreviews")!
+        previews.innerHTML = ""
+        this.taskMgr.lists.sort((a, b) => a.name > b.name ? 1 : -1).forEach(list => {
+            if (this.selectedList != null && list.uuid == this.selectedList.uuid) return
+
+            var newElement = document.createElement("div")
+            newElement.className = "container"
+            newElement.innerHTML = `
+            <h2>${list.name}</h2>
+            <br>
+            `
+            newElement.style.cursor = "pointer"
+
+            newElement.addEventListener(
+                "click",
+                _ => {
+                    this.selectedList = list
+                    this.render()
+                }
+            )
+
+            for (let i = 0; i < list.tasks.filter(t => !t.deleted && !t.completed).length; i++) {
+                const task = list.tasks.filter(t => !t.deleted && !t.completed)[i];
+                if (i == 2) break
+                newElement.appendChild(task.shortenedTaskListElement)
+            }
+
+            previews.appendChild(newElement)
+        })
+
         var currentList = document.getElementById("currenttasklist")!;
         var completedList = document.getElementById("completedtasklist")!;
-
+        
         // Wipe current contents
         currentList.innerHTML = "";
         completedList.innerHTML = "";
 
-        var tasks = this.taskMgr.tasks;
+        if (this.selectedList == null) {
+            document.getElementById("selectedlisttitle")!.innerText = "All Tasks"
+            document.getElementById("taskcreatesection")!.style.display = "none"
+
+            document.getElementById("listdeletebutton")!.style.display = "none"
+            document.getElementById("listnamechange")!.style.display = "none"
+        } else {
+            document.getElementById("selectedlisttitle")!.innerText = this.selectedList!.name
+            document.getElementById("taskcreatesection")!.style.display = "initial"
+
+            document.getElementById("listdeletebutton")!.style.display = "initial"
+            document.getElementById("listnamechange")!.style.display = ""
+        }
+
+        var tasks = this.selectedList != null ? this.selectedList.tasks : this.taskMgr.tasks;
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];
             if (task.deleted) { continue; }

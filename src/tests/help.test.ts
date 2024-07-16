@@ -19,7 +19,7 @@ beforeEach(() => {
 
 describe("Help UI & Tasks", () => {
     it("Add Task Adds to Upper Help Panes", () => {
-        taskMgr.addTask(getTask())
+        taskMgr.addTask(getTask(), "Default")
         // @ts-ignore
         helpMgr.panes.slice(0, 3).forEach(pane => {
             // @ts-ignore
@@ -29,7 +29,7 @@ describe("Help UI & Tasks", () => {
 
     it("Completing Task Removes from Recs", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         task.toggleCompleted()
         // @ts-ignore
         helpMgr.panes.forEach(pane => {
@@ -40,7 +40,7 @@ describe("Help UI & Tasks", () => {
 
     it("Deleting Task Removes from Recs", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         task.delete()
         // @ts-ignore
         helpMgr.panes.forEach(pane => {
@@ -51,7 +51,7 @@ describe("Help UI & Tasks", () => {
 
     it("Rec List Length Updates via Settings Event", () => {
         for (let i = 0; i < 10; i++) {
-            taskMgr.addTask(getTask())
+            taskMgr.addTask(getTask(), "Default")
         }
         window.dispatchEvent(new SettingsEvent(0, "recListLength", 1))
         // @ts-ignore

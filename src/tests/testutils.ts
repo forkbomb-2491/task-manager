@@ -37,7 +37,7 @@ export function mockDoc() {
  */
 export function getTask(size: number = 1, importance: number = 4) {
     const now = new Date()
-    return new Task("Test", size, importance, "test", new Date())
+    return new Task("Test", size, importance, new Date())
 }
 
 function loadIndex() {

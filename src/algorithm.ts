@@ -5,20 +5,20 @@ export async function clearDueEvents() {
     await invoke("clear_due_events")
 }
 
-export async function recordCreateEvent(task: Task | TaskRecord) {
+export async function recordCreateEvent(task: Task | TaskRecord, list: string) {
     await invoke("record_create_event", {
         id: task.id,
-        color: task.category,
+        color: list,
         importance: task.importance,
         size: task.size,
         due: task.due.valueOf()
     })
 }
 
-export async function recordCompleteEvent(task: Task | TaskRecord) {
+export async function recordCompleteEvent(task: Task | TaskRecord, list: string) {
     await invoke("record_complete_event", {
         id: task.id,
-        color: task.category,
+        color: list,
         importance: task.importance,
         size: task.size,
         due: task.due.valueOf()
@@ -42,11 +42,17 @@ async function removeDueEvent(taskId: string, create: boolean, complete: boolean
 }
 
 onTaskAdd(e => {
-    recordCreateEvent(e.task).then()
+    if (e.listUUID == null) {
+        console.error("Tried to save task event to DB, but no list UUID was provided.")
+    }
+    recordCreateEvent(e.task, e.listUUID!).then()
 })
 
 onTaskComplete(e => {
-    recordCompleteEvent(e.task).then()
+    if (e.listUUID == null) {
+        console.error("Tried to save task event to DB, but no list UUID was provided.")
+    }
+    recordCompleteEvent(e.task, e.listUUID!).then()
 })
 
 onTaskUncomplete(e => {
