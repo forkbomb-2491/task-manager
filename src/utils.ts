@@ -148,6 +148,17 @@ export function registerShowHideButton(buttonId: string, targetId: string, displ
     )
 }
 
+export function showSheet(heading: string, contentHTML: string) {
+    document.getElementById("sheetheading")!.innerText = heading
+    document.getElementById("sheetcontent")!.innerHTML = contentHTML
+    const sheet = document.getElementById("sheet")!
+    sheet.style.animation = "sheetfade 150ms reverse"
+    sheet.style.display = "initial"
+    window.setTimeout(() => {
+        sheet.style.animation = "none"
+    }, 140)
+}
+
 // export enum DateFormat {
 //     "american",
 //     "everyoneElse"

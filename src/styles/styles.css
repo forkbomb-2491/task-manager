@@ -264,3 +264,50 @@ header button {
     font-style: italic;
     /* color: var(--secondary-text-color); */
 }
+
+@keyframes sheetfade {
+    from {
+        opacity: 1;
+        filter: blur(0%);
+    }
+    to {
+        opacity: 0;
+        filter: blur(100%);
+    }
+}
+
+.sheet {
+    position: absolute;
+    display: flex;
+    z-index: 1000;
+    margin-inline: auto;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.sheet .container {
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+    max-width: 60%;
+    min-width: 20%;
+    width: fit-content;
+    height: fit-content;
+    max-height: calc(100vh - 20rem);
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sheet .settingsbutton {
+    width: fit-content;
+}
+
+button.blank {
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+}

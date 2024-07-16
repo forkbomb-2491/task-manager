@@ -90,6 +90,18 @@ class App {
             _ => this.pomoStop(true)
         )
 
+        document.getElementById("dismisssheet")!.addEventListener(
+            "click",
+            _ => {
+                const sheet = document.getElementById("sheet")!;
+                sheet.style.animation = "sheetfade 160ms"
+                window.setTimeout(() => {
+                    sheet.style.display = "none"
+                    sheet.style.animation = "none"
+                }, 140)
+            }
+        )
+
         document.getElementById("pomostop")!.addEventListener(
             "click",
             _ => {

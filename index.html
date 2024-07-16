@@ -64,6 +64,17 @@
         
     </header>
     <body style="display: none;">
+        <div class="sheet" id="sheet" style="display: none;">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between;">
+                    <h1 id="sheetheading" style="margin-top: 0;">
+                        Sheet Heading
+                    </h1>
+                    <button class="blank" style="font-size: xx-large; margin-top: -1rem;" id="dismisssheet">×</button>
+                </div>
+                <div id="sheetcontent">Content Here</div>
+            </div>
+        </div>
         <div class="tabcontainer">
             <div class="tab visible" name="tasks" id="tasktab" src="/src/tabs/tasks.html"></div>
             <div class="tab" name="planner" src="/src/tabs/planner.html"></div>

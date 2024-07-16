@@ -1,4 +1,4 @@
-import { SortBasis, onWindowFocused, registerShowHideButton, showTooltipOnHover } from "./utils";
+import { SortBasis, onWindowFocused, registerShowHideButton, showSheet, showTooltipOnHover } from "./utils";
 import { onTaskEvent, onTaskAdd, Task } from "./task";
 import { TaskManager } from "./taskmanager";
 
@@ -63,6 +63,20 @@ export class TaskList {
             document.getElementById("smartduedateinfo")!,
             "Check this box to have your task's due dates adjusted according to what Task-Manager's learned about you."
             // Task Manager can learn from your previous tasks how long it takes you to get them done.
+        )
+        document.getElementById("smartduedateinfo")!.addEventListener(
+            "click",
+            _ => {
+                showSheet("Automatic Due Date Adjustment (\"The Algorithm\")", `
+                    Task Manager learns how long it takes you to get things done based on tasks' list,
+                    size, and importance values. When you create a task, the app records the initial due
+                    date you set. It then records the completion date when you finish it. Using that
+                    information, Task Manager estimates how much you <i>mis</i>estimate how long it takes to 
+                    get things done, and moves the due date to compensate. If you tend to overrun due dates,
+                    for example, Task Manager will automatically move the task's due date up a few days to 
+                    try to help you get it done on time.
+                    `)
+            }
         )
 
         onTaskEvent(_ => this.refresh());
