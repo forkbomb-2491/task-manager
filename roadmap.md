@@ -15,7 +15,7 @@
 - [ ] Drop down notification
 - [ ] ~Custom Category Names~
 - [x] Project Planner has filter for different lists
-- [x] ✨ Due date offset recommendations based on past tasks
+- [x] ✨ Due date offset ~recommendations~ __adjustments__ based on past tasks
 - [x] Separate Task Lists (with colors assignable)
 - [x] Editing Tasks
 - [x] Add due time
@@ -25,8 +25,8 @@
 
 #### Bugs
 - [ ] Changing task due date does not move planner element.
-- [ ] Tasks do not adopt color of parent list without refresh.
 - [ ] Tasks do not appear in project planner after being made in Tasks tab without refresh.
+- [x] Tasks do not adopt color of parent list without refresh.
 - [x] Certain private properties of the Task class were public, potentially preventing task modifications from being registered by event listeners.
 
 ### v0.4

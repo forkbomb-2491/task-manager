@@ -1,4 +1,3 @@
-// @ts-ignore
 import { v4 as uuid4 } from 'uuid'
 import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
 
@@ -190,7 +189,7 @@ export class List {
 
     public addTask(task: Task) {
         this._tasks.push(task)
-        task.category = TaskColor[this.color]
+        task.category = String(TaskColor[this.color])
         task.list = this.uuid
         window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid));
     }

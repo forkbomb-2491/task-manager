@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"
   }

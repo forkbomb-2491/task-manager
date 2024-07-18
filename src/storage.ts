@@ -1,7 +1,6 @@
 import { path } from "@tauri-apps/api"
 import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { List, ListRecord, TaskColor, TaskRecord, colorStrToEnum } from "./task";
-// @ts-ignore
 import { v4 as uuid4 } from 'uuid';
 import { message } from "@tauri-apps/plugin-dialog";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
