@@ -22,7 +22,7 @@ export class TaskList {
         this.sort();
 
         document.getElementById("alphasort")!.innerHTML = `${this.sortBasis == SortBasis.name ? (this.sortReverse ? "↑": "↓") + " ":""}Name`
-        document.getElementById("categorysort")!.innerHTML = `${this.sortBasis == SortBasis.category ? (this.sortReverse ? "↑": "↓") + " ":""}Color`
+        // document.getElementById("categorysort")!.innerHTML = `${this.sortBasis == SortBasis.category ? (this.sortReverse ? "↑": "↓") + " ":""}Color`
         document.getElementById("sizesort")!.innerHTML = `${this.sortBasis == SortBasis.size ? (this.sortReverse ? "↑": "↓") + " ":""}Size`
         document.getElementById("importancesort")!.innerHTML = `${this.sortBasis == SortBasis.importance ? (this.sortReverse ? "↑": "↓") + " ":""}Importance`
         document.getElementById("duedatesort")!.innerHTML = `${this.sortBasis == SortBasis.duedate ? (this.sortReverse ? "↑": "↓") + " ":""}Due Date`
