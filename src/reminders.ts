@@ -45,23 +45,23 @@ export class RemindersContainer {
         if (task.dueIn < 0) {
             newElement.innerHTML = `
             <div style="width: 100%;">
-                Checked in on ${task._name}! </br>
-                Have you made any progress on ${task._name}? It was due ${(task.dueIn*(-1))-1} day(s) ago!
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? It was due ${(task.dueIn*(-1))-1} day(s) ago!
             </div>
         `
         } else if (task.dueIn == 0) {
             newElement.innerHTML = `
             <div style="width: 100%;">
-                Checked in on ${task._name}! </br>
-                Have you made any progress on ${task._name}? It's due today!
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? It's due today!
             </div>
         `
         }
         else {
             newElement.innerHTML = `
             <div style="width: 100%;">
-                Checked in on ${task._name}! </br>
-                Have you made any progress on ${task._name}? You have ${task.dueIn} day(s) until it's due!
+                Checked in on ${task.name}! </br>
+                Have you made any progress on ${task.name}? You have ${task.dueIn} day(s) until it's due!
             </div>
         `
         }

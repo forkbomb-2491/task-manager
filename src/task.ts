@@ -1,3 +1,4 @@
+// @ts-ignore
 import { v4 as uuid4 } from 'uuid'
 import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
 
@@ -171,7 +172,10 @@ export class List {
         this.color = color
         this._tasks = tasks
         this._tasks.forEach(
-            t => t.category = String(TaskColor[color])
+            t => {
+                t.category = String(TaskColor[color])
+                t.list = this.uuid
+            }
         )
     }
 
@@ -186,7 +190,8 @@ export class List {
 
     public addTask(task: Task) {
         this._tasks.push(task)
-        task.category = this.uuid
+        task.category = TaskColor[this.color]
+        task.list = this.uuid
         window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid));
     }
 }
@@ -197,7 +202,7 @@ export class List {
 export class Task {
     id: string
     
-    _name: string
+    private _name: string
     get name(): string { return this._name }
     set name(val: string) { 
         this._name = val
@@ -205,7 +210,7 @@ export class Task {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
 
-    _size: number
+    private _size: number
     get size(): number { return this._size }
     set size(val: number) { 
         this._size = val
@@ -213,7 +218,7 @@ export class Task {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
 
-    _importance: number
+    private _importance: number
     get importance(): number { return this._importance }
     set importance(val: number) { 
         this._importance = val
@@ -221,7 +226,7 @@ export class Task {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
     
-    _category: string = "Default"
+    private _category: string = "Default"
     get category(): string { return this._category }
     set category(val: string) { 
         this._category = val
@@ -231,13 +236,29 @@ export class Task {
         this.refreshElements()
         // window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
+
+    private _list: string = ""
+    get list(): string {
+        return this._list
+    }
+    set list(val: string) {
+        this._list = val
+        this._subtasks.forEach(t => t.list = val)
+    }
     
-    _due: Date
+    private _due: Date
     get due(): Date { return this._due }
     set due(val: Date) { 
         this._due = val
         this.refreshElements()
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+    }
+
+    private _smarted: boolean = false
+    get smarted(): boolean { return this._smarted }
+    set smarted(val: boolean) {
+        this._smarted = val
+        this.refreshElements()
     }
     
     completed: boolean
@@ -342,6 +363,12 @@ export class Task {
         return newElement
     }
 
+    get miniTaskListElement(): HTMLDivElement{
+        const newElement = this.getMiniTaskListElement()
+        this.elements.push(newElement)
+        return newElement
+    }
+
     /**
      * The Task's default constructor. Should be called mainly by UI callbacks
      * and the Storage Manager.
@@ -436,8 +463,8 @@ export class Task {
             }
         })
 
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._category))
-        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._category))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list))
     }
 
     /**
@@ -455,7 +482,7 @@ export class Task {
         }
 
         this.deleted = true
-        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record, this._category))
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, this.record, this._list))
 
         this._subtasks.forEach(sub => {
             sub.delete()
@@ -490,9 +517,9 @@ export class Task {
         
         this.completed = !this.completed
         if (this.completed) {
-            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._category))
+            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._list))
         } else {
-            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record, this._category))
+            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record, this._list))
         }
     }
 
@@ -529,7 +556,7 @@ export class Task {
                     ${TaskImportances[this._importance]}
                 </div>
                 <div style="min-width: 17ch; max-width: 17ch;">
-                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this._due.toDateString()}
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
@@ -549,12 +576,25 @@ export class Task {
                     ${TaskSizes[this._size]}
                 </div>
                 <div style="min-width: 17ch; max-width: 17ch;">
-                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}</div>${this._due.toDateString()}
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
             </button>
+            `
+    }
+
+    private getMiniTaskListElementHTML() {
+        return `
+            <div style="display: flex; flex-grow: 1;">
+                <div style="flex-grow: 1;">
+                    ${this._name}
+                </div>
+                <div style="min-width: 15ch; max-width: 15ch;">
+                    <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
+                </div>
+            </div>
             `
     }
 
@@ -578,6 +618,18 @@ export class Task {
             this.addButtonListeners(newElement)
         }
 
+        if (this._category != "Default") {
+            newElement.style.color = getColor(this._category)
+        }
+        return newElement
+    }
+
+    private getMiniTaskListElement() {
+        this.cleanUpElements()
+        var newElement = document.createElement("div")
+        newElement.className = this.completed ? "task completed": "task"
+        newElement.innerHTML = this.getMiniTaskListElementHTML()
+        // this.addButtonListeners(newElement)
         if (this._category != "Default") {
             newElement.style.color = getColor(this._category)
         }

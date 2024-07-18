@@ -1,0 +1,7 @@
+From pgil, whose messy code causes problems, some tips:
+
+1. Things will not work if loadTabs() has not been called yet
+    a. The upshot: never attempt to interface with HTML in constructors, do it in render() or whatever
+    
+2. Things will re-render themselves all the time
+    a. Make sure u have a piece of state somewhere that can store the HTML's state whenever it changes

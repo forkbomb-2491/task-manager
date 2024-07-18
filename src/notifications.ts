@@ -215,19 +215,19 @@ export class TaskNotifier {
         if (!this.notifList.includes(task) && this.enabledInSettings){
             if (task.dueIn < 0) {
                 sendNotification({
-                    title: "Checking on " + task._name + "!",
-                    body: "Have you made any progress on " + task._name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
                 })
             } else if (task.dueIn == 0) {
                 sendNotification({
-                    title: "Checking on " + task._name + "!",
-                    body: "Have you made any progress on " + task._name + "? It's due today!"
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? It's due today!"
                 })
             }
             else {
                 sendNotification({
-                    title: "Checking on " + task._name + "!",
-                    body: "Have you made any progress on " + task._name + "? You have " + task.dueIn + " day(s) until it's due!"
+                    title: "Checking on " + task.name + "!",
+                    body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " day(s) until it's due!"
                 })
             }
             this.notifList.push(task)
@@ -273,7 +273,7 @@ export class TaskNotifier {
         this.remindersContainer.render()
         this.tasks.sort(
             (t1, t2) => {
-                return t1._due.valueOf() - t2._due.valueOf()
+                return t1.due.valueOf() - t2.due.valueOf()
             }
         )
 

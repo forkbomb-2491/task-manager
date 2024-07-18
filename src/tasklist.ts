@@ -156,19 +156,19 @@ export class TaskList {
             const taskB = this.taskMgr.getTask(b.getAttribute("name")!)!;
             switch (this.sortBasis) {
                 case SortBasis.name:
-                    ret = taskA._name > taskB._name ? 1 : -1;
+                    ret = taskA.name > taskB.name ? 1 : -1;
                     break;
                 case SortBasis.category:
-                    ret = taskA._category > taskB._category ? 1 : -1;
+                    ret = taskA.category > taskB.category ? 1 : -1;
                     break;
                 case SortBasis.size:
-                    ret = taskA._size - taskB._size;
+                    ret = taskA.size - taskB.size;
                     break;
                 case SortBasis.importance:
-                    ret = taskA._importance - taskB._importance;
+                    ret = taskA.importance - taskB.importance;
                     break;
                 case SortBasis.duedate:
-                    ret = taskA._due.valueOf() - taskB._due.valueOf();
+                    ret = taskA.due.valueOf() - taskB.due.valueOf();
                     break;
                 default:
                     break;
@@ -246,7 +246,7 @@ export class TaskList {
             for (let i = 0; i < list.tasks.filter(t => !t.deleted && !t.completed).length; i++) {
                 const task = list.tasks.filter(t => !t.deleted && !t.completed)[i];
                 if (i == 2) break
-                newElement.appendChild(task.shortenedTaskListElement)
+                newElement.appendChild(task.miniTaskListElement)
             }
 
             previews.appendChild(newElement)

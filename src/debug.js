@@ -71,7 +71,7 @@ async function pushTasksAsCreates() {
         const tasks = window.taskMgr.getTasks()
         for (let i = 0; i < tasks.length; i++) {
             const task = tasks[i];
-            await recordCreateEvent(task, task.category);
+            await recordCreateEvent(task, task.list);
         }
         await message("Done.")
     }

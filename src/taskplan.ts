@@ -1,4 +1,4 @@
-import { onTaskAdd, onTaskDelete, onTaskEvent } from './task';
+import { List, onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused, toHTMLDateTimeString } from "./utils";
@@ -9,6 +9,7 @@ export class TaskPlanner {
     private calStartDate: Date = new Date()
     private dates: TaskPlannerDate[] = []
 
+    private selectedList: List | null = null
     private selectedTask: Task | null = null
 
     private _fullCal: boolean = false
@@ -86,7 +87,20 @@ export class TaskPlanner {
                 )
                 this.selectTask(task!)
             }
-        )
+        )        
+
+        var taskSelect = document.getElementById("tplistfilter")!
+        taskSelect.addEventListener(
+            "change",
+            e => {
+                var list = this.taskMgr.getList(
+                    // @ts-ignore
+                    getFirstSelected(e.currentTarget)!.getAttribute("name")!
+                )
+                this.selectedList = list
+                this.updateFilter()
+            }
+        )        
     }
 
     private isStacked: boolean = false
@@ -136,9 +150,34 @@ export class TaskPlanner {
             return e.selected
         })[0]
         var importance = Number(importanceOption.getAttribute("name"))
+        
+        var listSelect = document.getElementById("tplistfilter")!
+        listSelect.innerHTML = ""
+        var lists = this.taskMgr.lists
+        
+        for (let i = 0; i < lists.length; i++) {
+            const list = lists[i]
+            var element = document.createElement("option")
+            element.setAttribute("name", list.uuid)
+            element.innerHTML = list.name
+            
+            if (this.selectedList != null && list.uuid == this.selectedList.uuid) {
+                element.selected = true
+            }
+            listSelect.appendChild(element)
+        }
+        
+        var nolist = document.createElement("option")
+        nolist.setAttribute("name", "none")
+        nolist.innerHTML = "All Tasks"
+        listSelect.appendChild(nolist)
 
+        if (this.selectedList == null) {
+            nolist.selected = true
+        }
+   
         this.filter = t => {
-            return t._importance >= importance && t._size >= size
+            return t.importance >= importance && t.size >= size && (this.selectedList != null ? t.list == this.selectedList.uuid : true)
         }
 
         this.updateSelector()
@@ -159,7 +198,7 @@ export class TaskPlanner {
             const task = tasks[i];
             var element = document.createElement("option")
             element.setAttribute("name", task.id)
-            element.innerHTML = task._name
+            element.innerHTML = task.name
 
             if (this.selectedTask == task) {
                 element.selected = true
@@ -194,7 +233,7 @@ export class TaskPlanner {
         var task = new Task(
             title, 
             size, // Size presumed to be tiny
-            this.selectedTask._importance, // Inherit importance
+            this.selectedTask.importance, // Inherit importance
             // this.selectedTask._category, // Inherit category
             date, 
             false
@@ -220,9 +259,9 @@ export class TaskPlanner {
         }
 
         var tpmaintask = document.getElementById("tpmaintaskname")
-        tpmaintask!.innerHTML = task._name
+        tpmaintask!.innerHTML = task.name
         var deadlineDisplay = document.getElementById("tpdeadlinedisplay")
-        deadlineDisplay!.innerHTML = task._due.toDateString()
+        deadlineDisplay!.innerHTML = task.due.toDateString()
 
         this.refresh()
     }
@@ -284,7 +323,7 @@ export class TaskPlanner {
         var subtaskList = document.getElementById("tpsubtasklist")!
         subtaskList.innerHTML = ""
         this.selectedTask!.subtasks.sort((a, b) => {
-            return a._due.valueOf() - b._due.valueOf()
+            return a.due.valueOf() - b.due.valueOf()
         }).forEach(st => {
             if (st.deleted) return
             subtaskList.appendChild(st.shortenedTaskListElement)
@@ -411,11 +450,11 @@ class TaskPlannerDate {
             var childIds = this._selectedTask.children.filter(
                 t => {
                     const task = this.taskMgr.getTask(t)
-                    return task != null && isSameDay(this.date, task._due) && !task.deleted
+                    return task != null && isSameDay(this.date, task.due) && !task.deleted
                 }
             )
 
-            if (isSameDay(this._date, this._selectedTask._due)) childIds.push(this._selectedTask.id)
+            if (isSameDay(this._date, this._selectedTask.due)) childIds.push(this._selectedTask.id)
 
             var children = childIds.map(
                 t => {
@@ -437,7 +476,7 @@ class TaskPlannerDate {
         if (!this.taskPlan.fullCal) return []
         var exclude = this.selectedTask != null ? [this.selectedTask, ...this.selectedTask!.subtasks]: []
         var tasks = this.taskMgr.getTasks().filter(t => {
-            return isSameDay(t._due, this.date) && !exclude.includes(t)
+            return isSameDay(t.due, this.date) && !exclude.includes(t)
         })
         return tasks
     }

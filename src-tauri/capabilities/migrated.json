@@ -46,7 +46,8 @@
     {
       "identifier": "http:default",
       "allow": [
-        "https://api.forkbomb2491.dev/*"
+        "https://api.forkbomb2491.dev/*",
+        "http://localhost:5000/*"
       ]
     },
     "shell:allow-open",

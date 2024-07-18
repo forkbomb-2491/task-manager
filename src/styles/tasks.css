@@ -254,6 +254,7 @@ button.complete:hover {
     padding-left: 1.5rem; 
     padding-right: 1.5rem;
     margin-left: 1rem;
+    margin-bottom: 0;
 }
 
 .container.tasklist:not(.horizontal) {

@@ -1,7 +1,8 @@
 import { fetch } from "@tauri-apps/plugin-http";
 import { Task, TaskRecord } from "./task";
 
-const API_URL = "https://api.forkbomb2491.dev"
+// const API_URL = "https://api.forkbomb2491.dev"
+const API_URL = "http://localhost:5000/"
 var isAuthed: boolean | undefined
 
 class HTTPError extends Error {
@@ -73,3 +74,7 @@ export async function sendTasks(tasks: Task[]) {
         }
     })
 }
+
+// type ServerList = {
+
+// }

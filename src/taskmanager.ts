@@ -5,7 +5,8 @@ import { Planner } from "./planner";
 import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
 import { saveTasks, loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, onTaskEvent, List, colorStrToEnum, TaskColor, onListEdit } from "./task";
+import { Task, onTaskEvent, List, colorStrToEnum, TaskColor, onListEdit, onTaskAdopt } from "./task";
+import { getSuggestedDueDateOffset } from "./algorithm";
 // import { ask, message } from "@tauri-apps/plugin-dialog";
 // import { fetchTasks, sendTasks } from "./http";
 // import { TheAlgorithm } from "./algorithm";
@@ -63,6 +64,11 @@ export class TaskManager {
         // document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
 
         onSettingsLoad(() => this.settingsLoaded = true);
+        onTaskAdopt(e => {
+            const task = this.getTask(e.task.id)
+            const list = this.getList(e.listUUID!)
+            this.smartDueDate(task!, list!)
+        })
         // onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
     }
 
@@ -71,39 +77,11 @@ export class TaskManager {
         this.render();
     }
 
-    // private async fetchTasks() {
-    //     if (!await ask("Are you sure you want to overwrite your local tasks with those on the server?")) {
-    //         return
-    //     }
-
-    //     this._tasks = (await fetchTasks()).map(
-    //         o => new Task(
-    //             o.name,
-    //             o.size,
-    //             o.importance,
-    //             o.category,
-    //             o.due,
-    //             o.completed,
-    //             o.id,
-    //             o.subtasks,
-    //             null
-    //         )
-    //     );
-
-    //     this.render();
-    //     await saveTasks(this._tasks)
-
-    //     message("Done").then()
-    // }
-
-    // private async sendTasks() {
-    //     if (!await ask("Are you sure you want to overwrite the tasks on the server with your local ones?")) {
-    //         return
-    //     }
-
-    //     await sendTasks(this._tasks)
-    //     message("Done").then()
-    // }
+    private doSmartDueDate(): boolean {
+        const checkbox = document.getElementById("smartduedatebox")
+        // @ts-ignore
+        return checkbox.checked
+    }
 
     private async loadTasks() {
         var tasks = await loadTasks()
@@ -153,6 +131,16 @@ export class TaskManager {
 
         return null;
     }
+    
+    getList(list: string): List | null {
+        for (let i = 0; i < this._lists.length; i++) {
+            const lis = this._lists[i];
+            if (lis.uuid == list || lis.name == list) {
+                return lis
+            }
+        }
+        return null
+    }
 
     addTask(task: Task, list: string) {
         var list_: List | undefined
@@ -171,8 +159,26 @@ export class TaskManager {
         if (task.parent == null) {
             list_!.addTask(task);
         }
+
+        this.smartDueDate(task, list_);
         
         saveTasks(this._lists).then();
+    }
+
+    private smartDueDate(task: Task, lis: List) {
+        if (this.doSmartDueDate()) {
+            getSuggestedDueDateOffset(
+                task.size,
+                task.importance,
+                lis.uuid
+            ).then(v => {
+                if (v < 0) return;
+                const date = new Date(task.due.valueOf() - v);
+                const now = new Date();
+                task.due = date.valueOf() > now.valueOf() ? date : now;
+                task.smarted = true;
+            }).catch(r => console.log(r))
+        }
     }
 
     newList(name: string, color: TaskColor) {

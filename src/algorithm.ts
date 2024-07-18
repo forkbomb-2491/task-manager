@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Task, TaskRecord, onTaskAdd, onTaskComplete, onTaskDelete, onTaskUncomplete } from "./task";
+import { Task, TaskRecord, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskUncomplete } from "./task";
 
 export async function clearDueEvents() {
     await invoke("clear_due_events")
@@ -42,6 +42,13 @@ async function removeDueEvent(taskId: string, create: boolean, complete: boolean
 }
 
 onTaskAdd(e => {
+    if (e.listUUID == null) {
+        console.error("Tried to save task event to DB, but no list UUID was provided.")
+    }
+    recordCreateEvent(e.task, e.listUUID!).then()
+})
+
+onTaskAdopt(e => {
     if (e.listUUID == null) {
         console.error("Tried to save task event to DB, but no list UUID was provided.")
     }
