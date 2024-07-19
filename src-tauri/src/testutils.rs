@@ -17,6 +17,6 @@ pub fn get_due_event() -> DueEvent {
         due: SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Timestamp issue in Rust (TS is before epoch)")
-            .as_millis() as i64
+            .as_millis() as i64,
     }
 }

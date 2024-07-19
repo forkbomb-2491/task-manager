@@ -1,4 +1,7 @@
-use std::{collections::HashMap, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    collections::HashMap,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 use tauri::{Manager, Runtime};
 
@@ -15,17 +18,17 @@ unsafe fn init_history() {
 #[derive(PartialEq)]
 pub enum DueEventType {
     Create,
-    Complete
+    Complete,
 }
 
 impl TryFrom<i32> for DueEventType {
     type Error = String;
-    
+
     fn try_from(value: i32) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(Self::Complete),
             1 => Ok(Self::Create),
-            _ => Err(format!("Invalid value '{value}' for DueEventType."))
+            _ => Err(format!("Invalid value '{value}' for DueEventType.")),
         }
     }
 }
@@ -41,7 +44,7 @@ pub struct DueEvent {
     pub list: String, // Until lists are implemented, this is category/color
     pub importance: i32,
     pub size: i32,
-    pub due: i64
+    pub due: i64,
 }
 
 async fn record_due_event(
@@ -50,7 +53,7 @@ async fn record_due_event(
     color: String,
     importance: i32,
     size: i32,
-    due: i64
+    due: i64,
 ) -> Result<(), String> {
     let event = DueEvent {
         event_type: event_type,
@@ -62,15 +65,9 @@ async fn record_due_event(
         list: color,
         importance: importance,
         size: size,
-        due: due
+        due: due,
     };
-    unsafe { 
-        HISTORY
-            .as_mut()
-            .unwrap()
-            .insert_due_event(event)
-            .await
-    }
+    unsafe { HISTORY.as_mut().unwrap().insert_due_event(event).await }
 }
 
 #[tauri::command]
@@ -79,7 +76,7 @@ pub async fn record_create_event(
     color: String,
     importance: i32,
     size: i32,
-    due: i64
+    due: i64,
 ) -> Result<(), String> {
     record_due_event(DueEventType::Create, id, color, importance, size, due).await
 }
@@ -90,33 +87,42 @@ pub async fn record_complete_event(
     color: String,
     importance: i32,
     size: i32,
-    due: i64
+    due: i64,
 ) -> Result<(), String> {
     record_due_event(DueEventType::Complete, id, color, importance, size, due).await
 }
 
 #[tauri::command]
 pub async fn init_algo<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
-    let path = app.path().app_data_dir().unwrap().to_str().expect("AppData failed to resolve").to_owned() + "/history.db";
+    let path = app
+        .path()
+        .app_data_dir()
+        .unwrap()
+        .to_str()
+        .expect("AppData failed to resolve")
+        .to_owned()
+        + "/history.db";
     unsafe {
         init_history();
         let hist = HISTORY.as_mut().unwrap();
-        hist.load(&path).await.expect("Issue loading history database.");
+        hist.load(&path)
+            .await
+            .expect("Issue loading history database.");
     }
     Ok(())
 }
 
 struct CreateCompletePair {
     pub created: Option<i64>,
-    pub completed: Option<i64>
+    pub completed: Option<i64>,
 }
 
 impl CreateCompletePair {
     pub fn new() -> CreateCompletePair {
         return CreateCompletePair {
             created: None,
-            completed: None
-        }
+            completed: None,
+        };
     }
 }
 
@@ -126,18 +132,21 @@ const MAX_STDEV_FOR_DUE_OFFSET: i32 = 86_400_000 * 3;
 pub async fn get_suggested_due_offset(
     size: i32,
     importance: i32,
-    list: String
+    list: String,
 ) -> Result<i32, String> {
     // Get due events from db
     let values: Vec<DueEvent>;
     unsafe {
-        let filtered = HISTORY.as_mut().unwrap().filter_due_events(
-            Vec::from([
+        let filtered = HISTORY
+            .as_mut()
+            .unwrap()
+            .filter_due_events(Vec::from([
                 format!("size={size}"),
                 format!("importance={importance}"),
                 format!("list='{list}'"),
-            ])
-        ).await.expect("Error filtering events.");
+            ]))
+            .await
+            .expect("Error filtering events.");
         if filtered.is_none() {
             return Err("No due date event records found.".to_string());
         } else if filtered.as_ref().unwrap().len() == 0 {
@@ -172,8 +181,10 @@ pub async fn get_suggested_due_offset(
 
     let sum: i64 = deltas.iter().sum();
     let count = deltas.len();
-    if count == 0 { return Err("No due date event create/complete pairs found.".to_string()); }
-    let mean: i64 = sum/count as i64;
+    if count == 0 {
+        return Err("No due date event create/complete pairs found.".to_string());
+    }
+    let mean: i64 = sum / count as i64;
     let mut stdev: i64 = 0;
     for d in &deltas {
         stdev += (d - mean).pow(2);
@@ -190,7 +201,11 @@ pub async fn get_suggested_due_offset(
 #[tauri::command]
 pub async fn clear_due_events() -> Result<(), String> {
     unsafe {
-        Ok(HISTORY.as_mut().unwrap().clear_due_events(Vec::new()).await?)
+        Ok(HISTORY
+            .as_mut()
+            .unwrap()
+            .clear_due_events(Vec::new())
+            .await?)
     }
 }
 
@@ -198,14 +213,18 @@ pub async fn clear_due_events() -> Result<(), String> {
 pub async fn remove_due_event(id: String, create: bool, complete: bool) -> Result<(), String> {
     let mut conditions: Vec<String> = Vec::new();
     conditions.push(format!("id='{}'", id));
-    if !create && !complete { 
-        return Err("Choose either create or complete to delete".to_string()); 
+    if !create && !complete {
+        return Err("Choose either create or complete to delete".to_string());
     } else if create && !complete {
         conditions.push(format!("type=0"));
     } else if !create && complete {
         conditions.push(format!("type=1"));
     }
     unsafe {
-        Ok(HISTORY.as_mut().unwrap().clear_due_events(conditions).await?)
+        Ok(HISTORY
+            .as_mut()
+            .unwrap()
+            .clear_due_events(conditions)
+            .await?)
     }
 }
