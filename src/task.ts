@@ -307,9 +307,6 @@ export class Task {
 
     deleted: boolean = false
 
-    // completeCallback: (() => void) | null = null
-    // deleteCallback: (() => void) | null = null
-
     private elements: HTMLElement[] = []
 
     get plannerElement(): HTMLParagraphElement {
@@ -590,7 +587,7 @@ export class Task {
                 <div style="flex-grow: 1;">
                     ${this._name}
                 </div>
-                <div style="min-width: 15ch; max-width: 15ch;">
+                <div style="min-width: 17ch; max-width: 17ch;">
                     <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>

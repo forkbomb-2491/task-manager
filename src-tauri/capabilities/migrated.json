@@ -66,6 +66,7 @@
     "sql:allow-close",
     "sql:allow-execute",
     "sql:allow-load",
-    "sql:allow-select"
+    "sql:allow-select",
+    "os:default"
   ]
 }

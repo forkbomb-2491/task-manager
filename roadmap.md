@@ -5,6 +5,7 @@
 - [x] Check-Ins & Notifications
 
 ### Bug Fixes
+- [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [x] Project Planner subtask list doesn't sort on task selection
 
 ## Future
@@ -13,7 +14,9 @@
 - [ ] Calendar View
 - [ ] Sorting Applies to Subtasks too
 - [ ] Drop down notification
+- [ ] Built-in Feedback Form
 - [ ] ~Custom Category Names~
+- [x] Bug Report Form
 - [x] Project Planner has filter for different lists
 - [x] ✨ Due date offset ~recommendations~ __adjustments__ based on past tasks
 - [x] Separate Task Lists (with colors assignable)
@@ -26,6 +29,11 @@
 #### Bugs
 - [ ] Changing task due date does not move planner element.
 - [ ] Tasks do not appear in project planner after being made in Tasks tab without refresh.
+- [ ] Task list previews add wrong task elements when task is edited/refreshed.
+- [ ] Color still doesn't change when task is added from taskplan.
+- [ ] Task edit pencil shifts over task contents.
+- [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
+- [ ] Tasks remain on list previews after completion.
 - [x] Tasks do not adopt color of parent list without refresh.
 - [x] Certain private properties of the Task class were public, potentially preventing task modifications from being registered by event listeners.
 

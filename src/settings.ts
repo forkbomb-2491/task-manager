@@ -5,6 +5,7 @@ import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
 import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
+import { loadBugReport } from "./feedback";
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -175,6 +176,8 @@ export class SettingsView {
                 this.settings.helpTabName = e.currentTarget!.value
             }
         )
+
+        document.getElementById("bugbutton")!.addEventListener("click", _ => loadBugReport())
 
         this.changeTheme(this.settings.lastTheme)
 

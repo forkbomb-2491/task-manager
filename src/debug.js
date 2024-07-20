@@ -6,6 +6,7 @@ import { Schedule, sendNotification } from '@tauri-apps/plugin-notification'
 import { invoke } from '@tauri-apps/api/core'
 import { getSuggestedDueDateOffset, recordCompleteEvent, recordCreateEvent } from './algorithm'
 import { showSheet } from './utils'
+import { loadBugReport } from './feedback'
 
 function theDump() { return document.getElementById("debugDump"); }
 function dumpIn(msg) { theDump().innerHTML += msg; }
@@ -115,4 +116,5 @@ export function addDebugFuncs() {
 
     window.getOffset = (s, i, l) => getSuggestedDueDateOffset(s, i, l).then()
     window.showSheet = showSheet
+    window.bugReport = loadBugReport
 }
