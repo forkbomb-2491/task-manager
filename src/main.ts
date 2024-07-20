@@ -12,7 +12,7 @@ import { TaskManager } from "./taskmanager";
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 
-const DEBUG_TAB = true
+const DEBUG_TAB = false
 if (DEBUG_TAB) {
     addDebugFuncs()
     // @ts-ignore
