@@ -39,10 +39,10 @@
         "windows": [
             {
                 "title": "Task Manager (DEV)",
-                "width": 1080,
-                "height": 700,
-                "minWidth": 1080,
-                "minHeight": 700
+                "width": 393,
+                "height": 759,
+                "minWidth": 393,
+                "minHeight": 759
             }
         ],
         "security": {

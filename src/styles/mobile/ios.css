@@ -1,0 +1,243 @@
+html {
+    overflow-x: hidden;
+    scrollbar-width: none;
+    font-family: var(--primary-font-family);
+    background-color: var(--primary-color);
+    padding: 0;
+    margin: 0;
+
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    overscroll-behavior: none;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    color: var(--primary-text-color);
+}
+
+.tab {
+    display: none;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.tab.visible {
+    display: block;
+}
+
+header {
+    background-color: var(--container-background);
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+header button {
+    font-family: var(--primary-font-family);
+    background-color: var(--unselected-tab-and-shadow);
+    color: var(--primary-text-color);
+    min-height: 2.5rem;
+    aspect-ratio: 1/1;
+    border: 0;
+    margin-bottom: 0.5rem;
+    padding-left: 1ch;
+    padding-right: 1ch;
+    margin-right: 1ch;
+    margin-left: 1ch;
+    min-width: fit-content;
+
+
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+
+    text-shadow: 0px 0px 1px var(--secondary-color);
+    box-shadow: 0px 0px 2px 1px var(--unselected-tab-and-shadow);
+}
+.tabbutton.active {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+
+    text-shadow: 0px 0px 1.5px var(--primary-text-color);
+    box-shadow: 0px 2px 4px 2px var(--unselected-tab-and-shadow);
+}
+.tabcontainer {
+    display: flex;
+    break-after: always;
+
+    max-height: 1rem;
+
+    overscroll-behavior: auto;
+}
+
+.container {
+    background-color: var(--secondary-color);
+    display: flex;
+    flex-flow: column;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+    max-width: calc(100vw - 4rem);
+
+    padding: 1rem;
+    margin-bottom: 1rem;
+    /* margin-top: 1rem; */
+}
+
+.container h2 {
+    margin-top: 0.01rem;
+    margin-bottom: 0.15rem;
+    /* font-style: italic; */
+}
+
+.container h3 {
+    font-size: medium;
+    /* margin-top: 0; */
+    margin-bottom: 1rem;
+    font-style: italic;
+    /* color: var(--secondary-text-color); */
+}
+
+button.blank {
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+}
+
+h1 {
+    text-align: center;
+    width: 100%;
+}
+
+/* TASKS.CSS */
+
+.task {
+    display: flex;
+    background-color: var(--secondary-color);
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+
+    overflow-wrap: break-word;
+}
+
+
+.taskcontainer {
+    transition: ease-in-out 200ms;
+}
+
+.task input {
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 5px;
+
+    width: calc(100% - 1ch);
+}
+
+.subtaskcontainer {
+    padding-left: 1.35rem;
+}
+
+.overduewarning {
+    display: inline;
+}
+
+.completed .overduewarning {
+    display: none;
+}
+
+.task form {
+    display: flex;
+    font-family: var(--primary-font-family);
+    color: var(--primary-text-color);
+    
+    flex-grow: 1;
+}
+
+.deletetask {
+    width: 2rem;
+    padding: 0;
+}
+
+.edittask {
+    display: none;
+    width: 2rem;
+    padding: 0;
+}
+
+
+.completed div {
+    text-decoration: line-through;
+    color: var(--secondary-shadow-color);
+}
+
+p.completed {
+    text-decoration: line-through;
+    color: var(--secondary-shadow-color);
+}
+
+.task.completed button.complete {
+    background-color: var(--primary-color);
+}
+
+button.complete {
+    background-color: rgba(0, 0, 0, 0);
+
+    border-color: var(--primary-text-color);
+    box-shadow: 0 0 0.125rem 0.125rem var(--primary-shadow-color);
+
+    border-style: solid;
+
+    border-radius: 1rem;
+    min-width: 1.35rem;
+    max-width: 1.35rem;
+    min-height: 1.35rem;
+    max-height: 1.35rem;
+
+    margin-right: 0.5rem;
+}
+
+
+.sortbutton {
+    display: flex;
+    background-color: transparent;
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+    border: none;
+
+    display: flex;
+    padding: 0.25rem;
+    margin-bottom: 0.5rem;
+
+    min-width: 98%;
+    transition: ease-in-out 200ms;
+
+    color: var(--primary-text-color);
+    font-size: smaller;
+    overflow-wrap: break-word;
+}
+
+.sortbutton.active {
+    background-color: var(--primary-color);
+    font-style: bold;
+}
