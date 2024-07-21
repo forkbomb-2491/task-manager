@@ -12,7 +12,7 @@ import { TaskManager } from "./taskmanager";
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 
-const DEBUG_TAB = false
+const DEBUG_TAB = true
 if (DEBUG_TAB) {
     addDebugFuncs()
     // @ts-ignore
@@ -145,6 +145,8 @@ class App {
             // @ts-ignore
             window.taskMgr = this.taskMgr
         }
+
+        this.changeTab("settings")
     }
 
     private switchPlannerCallback() {

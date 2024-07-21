@@ -1,5 +1,6 @@
 html {
-    /* overflow-x: hidden; */
+    overflow-x: hidden;
+    /* overflow-y: hidden; */
     scrollbar-width: none;
     font-family: var(--primary-font-family);
     background-color: var(--primary-color);
@@ -8,8 +9,12 @@ html {
 
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
-    overscroll-behavior: none;
+    /* overscroll-behavior: none; */
     user-select: none;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -29,11 +34,12 @@ body {
 
 header {
     background-color: var(--container-background);
+    overflow-x: scroll;
     position: fixed;
     bottom: 0;
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 97vw;
 
     padding-bottom: 1rem;
     padding-left: 1rem;
@@ -72,8 +78,7 @@ header button {
     display: flex;
     break-after: always;
 
-    max-height: 1rem;
-
+    overflow-y: scroll !important;
     overscroll-behavior: auto;
 }
 

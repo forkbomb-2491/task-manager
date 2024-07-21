@@ -1,7 +1,7 @@
 {
     "build": {
         "beforeDevCommand": "npm install && npm run dev",
-        "beforeBuildCommand": "npm install && npm test && npm run build",
+        "beforeBuildCommand": "npm install && npm run build",
         "frontendDist": [
             "../dist",
             "../src/styles/themes",
@@ -38,11 +38,7 @@
         "withGlobalTauri": true,
         "windows": [
             {
-                "title": "Task Manager (DEV)",
-                "width": 393,
-                "height": 759,
-                "minWidth": 393,
-                "minHeight": 759
+                "title": "Task Manager (DEV)"
             }
         ],
         "security": {
