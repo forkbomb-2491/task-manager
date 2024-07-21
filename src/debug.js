@@ -2,7 +2,7 @@ import { message, confirm } from '@tauri-apps/plugin-dialog'
 import { loadFile, saveFile } from './storage'
 import { Task } from './task'
 import { fetch } from '@tauri-apps/plugin-http'
-import { Schedule, sendNotification } from '@tauri-apps/plugin-notification'
+import { requestPermission, Schedule, sendNotification } from '@tauri-apps/plugin-notification'
 import { invoke } from '@tauri-apps/api/core'
 import { getSuggestedDueDateOffset, recordCompleteEvent, recordCreateEvent } from './algorithm'
 import { showSheet } from './utils'
@@ -90,15 +90,11 @@ async function pushTasksAsCompletes() {
 }
 
 function testNotif() {
-    const testDate = new Date(new Date().valueOf() + 5000)
-    console.log(testDate)
+    // const testDate = new Date(new Date().valueOf() + 5000)
+    // console.log(testDate)
     sendNotification({
         title: "urmom",
-        inboxLines: [
-            "hello from the other side",
-            "at least I can say that I tried",
-            "to tell you"
-        ]
+        body: "lolololololololol gottem"
     })
 }
 
@@ -117,4 +113,6 @@ export function addDebugFuncs() {
     window.getOffset = (s, i, l) => getSuggestedDueDateOffset(s, i, l).then()
     window.showSheet = showSheet
     window.bugReport = loadBugReport
+
+    window.notifPerm = () => { requestPermission().then() }
 }

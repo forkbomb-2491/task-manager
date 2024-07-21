@@ -25,6 +25,22 @@ var app: App
 
 await loadTabs()
 
+document.addEventListener("gesturestart", function (e) {
+	e.preventDefault();
+    // @ts-ignore
+    document.body.style.zoom = "1";
+});
+
+document.addEventListener("gesturechange", function (e) {
+	e.preventDefault();
+    // @ts-ignore
+    document.body.style.zoom = "1";
+});
+document.addEventListener("gestureend", function (e) {
+	e.preventDefault();
+    // @ts-ignore
+    document.body.style.zoom = "1";
+});
 // async function doUpdate() {
 //     var update = await check()
 //     if (update != null) {
