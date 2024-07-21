@@ -1,6 +1,6 @@
 html {
-    overflow-x: hidden;
-    /* overflow-y: hidden; */
+    overflow-y: auto;
+    scroll-behavior: none;
     scrollbar-width: none;
     font-family: var(--primary-font-family);
     background-color: var(--primary-color);
@@ -30,6 +30,7 @@ body {
 
 .tab.visible {
     display: block;
+    /* padding-bottom: 1rem; */
 }
 
 header {
@@ -39,7 +40,7 @@ header {
     bottom: 0;
     display: flex;
     justify-content: space-between;
-    width: 97vw;
+    width: calc(100vw - 2rem);
 
     padding-bottom: 1rem;
     padding-left: 1rem;
@@ -77,8 +78,13 @@ header button {
 .tabcontainer {
     display: flex;
     break-after: always;
+    overflow-y: scroll;
 
     overflow-y: scroll !important;
+    max-height: calc(100vh - 4rem);
+    min-height: calc(100vh - 4rem);
+    scrollbar-width: none;
+
     overscroll-behavior: auto;
 }
 
@@ -121,6 +127,78 @@ button.blank {
 h1 {
     text-align: center;
     width: 100%;
+}
+
+button {
+    transition: ease-in-out 200ms;
+}
+
+button.small {
+    background-color: var(--secondary-color);
+
+    color: var(--primary-text-color);
+
+    font-size: small;
+
+    border: none;
+    border-radius: 0.5rem;
+
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
+}
+
+.tab::-webkit-scrollbar {
+    display: none;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: var(--unselected-tab-and-shadow);
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid var(--secondary-color);
+    border-radius: 1rem;
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
+}
+
+.showhidebutton {
+    font-family: var(--primary-font-family);
+    color: var(--primary-text-color);
+
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    margin-top: auto; 
+    margin-bottom: auto;
+    margin-left: -0.9ch;
+    border: 0; 
+    background: none;
+}
+
+.showhidebutton.folded {
+    transform: rotate(-90deg);
 }
 
 /* TASKS.CSS */
@@ -245,4 +323,223 @@ button.complete {
 .sortbutton.active {
     background-color: var(--primary-color);
     font-style: bold;
+}
+
+/* SETTINGS.CSS */
+input {
+    background-color: rgba(0, 0, 0, 0);
+    border: var(--primary-text-color) dotted 1px;
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 5px;
+}
+
+.settingsbutton {
+    display: flex;
+    background-color: var(--container-background);
+
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    vertical-align: middle;
+
+    /* width: 30%; */
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.settingsbutton:active {
+    background-color: var(--primary-color);
+}
+
+.settingsslider {
+    -webkit-appearance: none;
+    appearance: none;
+    /* width: 50%; */
+    height: 10px;
+    background: var(--unselected-tab-and-shadow);
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 0.5rem;
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.settingsslider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid var(--secondary-color);
+    border-radius: 1rem;
+    box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color);
+}
+
+select {
+    border: 0;
+    border-bottom: black dotted 1px;
+    color: var(--primary-text-color);
+    appearance: none;
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 5px;
+}
+
+select:focus-within {
+    background-color: var(--secondary-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    /* background-color: rgba(0, 0, 0, 0); */
+}
+
+/* PLANNER.CSS */
+.daycolumn {
+    width: calc(100vw - 4rem);
+    flex-grow: 1;
+    background-color: var(--secondary-color);
+    min-height: calc(100% - 5rem);
+    overflow-wrap: break-word;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+}
+
+.daycolumn button.complete {
+    min-width: 1rem;
+    max-width: 1rem;
+    min-height: 1rem;
+    max-height: 1rem;
+    border-radius: 0.125em;
+}
+
+.daycolumn .completed button.complete {
+    background-color: var(--primary-color);
+}
+
+.daycolumn.today {
+    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
+    color: var(--secondary-text-color);
+}
+
+.daycolumn h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.daycolumn h5 {
+    text-align: center;
+    margin-top: 0;
+}
+
+button.plannershift {
+    background: none;
+    font-size: xx-large;
+
+    color: var(--primary-text-color);
+
+    border: none;
+
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+}
+
+/* HELP.CSS */
+
+.helpcontainer {
+    width: calc(100vw - 4rem);
+    background-color: var(--secondary-color);
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.helpbutton.top {
+    display: flex;
+    background-color: var(--container-background);
+
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.helplabel {
+    display: inline;
+}
+
+.helpbutton.bottom {
+    display: flex;
+    background-color: var(--help-button);
+
+    color: var(--help-button-text);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 0;
+
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--secondary-shadow-color);
+    border-radius: 0.5rem;
+
+    transition: ease-in-out 200ms;
+
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.helpcontent {
+    display: none;
+}
+
+.helpcontent.visible {
+    display: block;
 }

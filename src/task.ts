@@ -1,5 +1,5 @@
 import { v4 as uuid4 } from 'uuid'
-import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
+import { isMobile, padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
 
 export type TaskRecord = {
     "name": string,
@@ -538,14 +538,17 @@ export class Task {
     }
 
     private getTaskListElementHTML() {
-        return `
+        var ret = `
             <button class="complete"></button>
             <button class="edittask" style="background: none; border: 0; text-decoration: none;">✏️</button>
             <div style="display: flex; flex-grow: 1">
                 <div style="flex-grow: 1">
                     ${this._name}
-                </div>
-                <div style="min-width: 10ch; max-width: 10ch;">
+                </div>`
+        if (isMobile()) {
+            ret += "</div>"
+        } else {
+            ret += `    <div style="min-width: 10ch; max-width: 10ch;">
                     ${TaskSizes[this._size]}
                 </div>
                 <div style="min-width: 13ch; min-width: 13ch;">
@@ -557,17 +560,22 @@ export class Task {
             </div>
             <button style="background: none; border: 0; text-decoration: none;" class="deletetask">
                 🗑️
-            </button>
-        `
+            </button>`
+        }
+        return ret
     }
 
     private getTaskPlanListElementHTML() {
-        return `
+        var ret = `
             <button class="complete"></button>
             <div style="display: flex; flex-grow: 1;">
                 <div style="flex-grow: 1">
                     ${this._name}
-                </div>
+                </div>`
+        if (isMobile()) {
+            ret += "</div>"
+        } else {
+            ret += `
                 <div style="min-width: 9ch; max-width: 9ch;">
                     ${TaskSizes[this._size]}
                 </div>
@@ -579,6 +587,8 @@ export class Task {
                 🗑️
             </button>
             `
+        }
+        return ret
     }
 
     private getMiniTaskListElementHTML() {
@@ -633,7 +643,7 @@ export class Task {
     }
 
     private addButtonListeners(newElement: HTMLDivElement, includeEdit: boolean = false) {
-        if (includeEdit) {
+        if (includeEdit && !isMobile()) {
             var editTaskCallback = (_: Event) => { this.editTask(newElement) }
 
             newElement.getElementsByClassName("edittask")[0].addEventListener(
@@ -649,6 +659,8 @@ export class Task {
             "click",
             completeTaskCallback
         )
+
+        if (isMobile()) return
 
         newElement.getElementsByClassName("deletetask")[0].addEventListener(
             "click",
