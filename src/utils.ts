@@ -159,27 +159,9 @@ export function showSheet(heading: string, contentHTML: string) {
     }, 140)
 }
 
-// export enum DateFormat {
-//     "american",
-//     "everyoneElse"
-// }
-
-// export enum TimeFormat {
-//     "_12hr",
-//     "_24hr"
-// }
-
-// export function getTaskDateString(date: Date, dateFormat: DateFormat = 0, timeFormat: TimeFormat = 0) {
-//     var ret = ""
-//     switch (dateFormat) {
-//         case DateFormat.american:
-            
-//             break;
-    
-//         default:
-//             break;
-//     }
-// }
+export function isMobile(): boolean {
+    return true
+}
 
 export function getElement(id: string) {
     return document.getElementById(id)!

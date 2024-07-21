@@ -1,6 +1,6 @@
 <h1 style="margin-top: 0;">Settings</h1>
-<div style="display: flex; justify-content: space-between;">
-    <div style="min-width: 60%;">
+<div>
+    <div>
         <h2>
             <button class="showhidebutton" id="notifsettingsshowhide">▼</button>
             Notification Settings
@@ -23,7 +23,7 @@
     
             <h3>Schedule Check-In Notifications</h3>
             <!-- <div> -->
-            <div class="checkinblock">
+            <div class="container checkinblock">
                 <form name="remindersettings" id="remindersettings">
                     You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
                     
@@ -185,7 +185,7 @@
     
     </div>
 
-    <div style="min-width: 30%; margin: 1rem">
+    <div>
         <div class="container" id="updatecontainer" style="display: none; margin-bottom: 1rem;">
             <h2 style="margin-top: 0;">🔄️ Update Available!</h2>
             <h3>Version v<element id="updateversionlabel">0.0.0</element></h3>

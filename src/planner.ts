@@ -35,7 +35,7 @@ export class Planner {
         var today = new Date()
         this.startDate = findFirstPrecedingDay(today, startDay)
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 1; i++) {
             this.dayColumns.push(new DayColumn(this.taskMgr, today))
         }
 
