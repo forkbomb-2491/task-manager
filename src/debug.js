@@ -94,7 +94,8 @@ function testNotif() {
     // console.log(testDate)
     sendNotification({
         title: "urmom",
-        body: "lolololololololol gottem"
+        body: "lolololololololol gottem",
+        schedule: Schedule.at(new Date())
     })
 }
 
