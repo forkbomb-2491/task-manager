@@ -26,13 +26,15 @@
 - [x] Sheets/info boxes
 
 #### Bugs
-- [ ] Changing task due date does not move planner element.
-- [ ] Tasks do not appear in project planner after being made in Tasks tab without refresh.
-- [ ] Task list previews add wrong task elements when task is edited/refreshed.
-- [ ] Color still doesn't change when task is added from taskplan.
 - [ ] Task edit pencil shifts over task contents.
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
+- [ ] (macOS) Checkboxes on TaskPlan display checkmark 0.2rem too high.
+- [x] Task list previews add wrong task elements when task is edited/refreshed.
+- [x] Color still doesn't change when task is added from taskplan.
+- [x] Changing task due date does not move planner element.
+    - Current solution is messy--make it so TaskEvents have before and after versions.
+- [x] Tasks do not appear in project planner after being made in Tasks tab without refresh.
 - [x] Tasks do not adopt color of parent list without refresh.
 - [x] Certain private properties of the Task class were public, potentially preventing task modifications from being registered by event listeners.
 

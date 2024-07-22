@@ -133,6 +133,9 @@ export type ListRecord = {
     tasks: TaskRecord[]
 }
 
+/**
+ * When list attributes (not including tasks within the list) are edited
+ */
 export function onListEdit(cb: () => void) {
     window.addEventListener(
         "listedited",
@@ -354,6 +357,7 @@ export class Task {
         this.cleanUpElements() // TODO: This will be called over and over again during refresh
         // Create new
         var newElement = document.createElement("p")
+        newElement.setAttribute("name", this.id)
         if (this.completed) {
             newElement.className = " completed"
         }
@@ -557,6 +561,8 @@ export class Task {
             }
         })
 
+        task.color = this._color
+
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._list))
         window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list))
     }
@@ -733,7 +739,7 @@ export class Task {
     private getMiniTaskListElement() {
         this.cleanUpElements()
         var newElement = document.createElement("div")
-        newElement.className = this.completed ? "task completed": "task"
+        newElement.className = this.completed ? "task mini completed": "task mini"
         newElement.innerHTML = this.getMiniTaskListElementHTML()
         // this.addButtonListeners(newElement)
         if (this._color != "Default") {
@@ -782,11 +788,14 @@ export class Task {
         this.cleanUpElements()
         var newElements = this.elements.map(e => {
             var newElement: HTMLElement
-            if (e.className == "taskcontainer") { // This method of differentiating is a bit janky
+            if (e.className.startsWith("taskcontainer")) { // This method of differentiating is a bit janky
                 // Replace taskcontainers
                 newElement = this.taskListElement
                 e.replaceWith(newElement)
-            } else if (e.className == "task") {
+            } else if (e.className.startsWith("task mini")) {
+                newElement = this.miniTaskListElement
+                e.replaceWith(newElement)
+            } else if (e.className.startsWith("task")) {
                 // Replace shorty task elements
                 newElement = this.shortenedTaskListElement
                 e.replaceWith(newElement)

@@ -1,6 +1,6 @@
 [package]
 name = "task-manager"
-version = "0.3.0-beta.1"
+version = "0.3.0-beta.2"
 description = "Task Manager"
 authors = ["Phil Reitz-Jones", "Stephanie Miles", "Kaliana Andriamananjara"]
 edition = "2021"
