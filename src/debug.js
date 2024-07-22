@@ -7,6 +7,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { getSuggestedDueDateOffset, recordCompleteEvent, recordCreateEvent } from './algorithm'
 import { showSheet } from './utils'
 import { loadBugReport } from './feedback'
+import { sendNotif } from './utils'
 
 function theDump() { return document.getElementById("debugDump"); }
 function dumpIn(msg) { theDump().innerHTML += msg; }
@@ -90,16 +91,10 @@ async function pushTasksAsCompletes() {
 }
 
 function testNotif() {
-    const testDate = new Date(new Date().valueOf() + 5000)
-    console.log(testDate)
-    sendNotification({
-        title: "urmom",
-        inboxLines: [
-            "hello from the other side",
-            "at least I can say that I tried",
-            "to tell you"
-        ]
-    })
+    sendNotif(
+        "urmom",
+        "lolololol gottem",
+    )
 }
 
 export function addDebugFuncs() {

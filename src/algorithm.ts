@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Task, TaskRecord, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskUncomplete } from "./task";
+import { List, Task, TaskRecord, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskUncomplete } from "./task";
 
 export async function clearDueEvents() {
     await invoke("clear_due_events")
@@ -39,6 +39,31 @@ async function removeDueEvent(taskId: string, create: boolean, complete: boolean
         create: create,
         complete: complete
     })
+}
+
+function doSmartDueDate(): boolean {
+    const checkbox = document.getElementById("smartduedatebox")
+    // @ts-ignore
+    return checkbox.checked
+}
+
+export async function smartDueDate(task: Task, lis: List | string) {
+    if (doSmartDueDate()) {
+        try {
+            const offset = await getSuggestedDueDateOffset(
+                task.size,
+                task.importance,
+                typeof(lis) == "string" ? lis : lis.uuid
+            )
+            if (offset < 0) return;
+            const date = new Date(task.due.valueOf() - offset);
+            const now = new Date();
+            task.due = date.valueOf() > now.valueOf() ? date : now;
+            task.smarted = true;
+        } catch (error) {
+            console.error(error)
+        }
+    }
 }
 
 onTaskAdd(e => {

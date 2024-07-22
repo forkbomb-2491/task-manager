@@ -11,11 +11,10 @@
 ## Future
 
 ### v0.3 (Next Release)
-- [ ] Calendar View
-- [ ] Sorting Applies to Subtasks too
-- [ ] Drop down notification
 - [ ] Built-in Feedback Form
-- [ ] ~Custom Category Names~
+- [ ] ~Custom Category Names~ <!-- Strikethrough: we're not doing it anymoreeee -->
+- [x] Sorting Applies to Subtasks too
+- [x] Drop down notification
 - [x] Bug Report Form
 - [x] Project Planner has filter for different lists
 - [x] ✨ Due date offset ~recommendations~ __adjustments__ based on past tasks
@@ -40,6 +39,7 @@
 ### v0.4
 - [ ] Even more and more comprehensive recommendations
 - [ ] Can move tasks between lists
+- [ ] Calendar View
 
 ### v0.5
 TBD

@@ -20,6 +20,9 @@ export class TaskList {
         }
         this._sortBasis = basis;
         this.sort();
+        this.taskMgr.getTasks().forEach(
+            t => t.sortBasis = this.sortBasis
+        )
 
         document.getElementById("alphasort")!.innerHTML = `${this.sortBasis == SortBasis.name ? (this.sortReverse ? "↑": "↓") + " ":""}Name`
         // document.getElementById("categorysort")!.innerHTML = `${this.sortBasis == SortBasis.category ? (this.sortReverse ? "↑": "↓") + " ":""}Color`

@@ -1,3 +1,6 @@
+import { getCurrent } from "@tauri-apps/api/window"
+import { sendNotification } from "@tauri-apps/plugin-notification"
+
 /**
  * Registers the given closure/function as an event listener for 
  * "DOMContentLoaded", thus running it only once all content has loaded.
@@ -12,6 +15,21 @@ export function onLoad(closure: () => void) {
 export function onTasksChanged(closure: () => void) {
     window.addEventListener(
         "taskchanged", closure
+    )
+}
+
+export function sendNotif(title: string, body: string) {
+    getCurrent().isFocused().then(
+        isFocused => {
+            if (isFocused) {
+                inAppNotif(title, body)
+            } else {
+                sendNotification({
+                    title: title,
+                    body: body
+                })
+            }
+        }
     )
 }
 
@@ -159,27 +177,21 @@ export function showSheet(heading: string, contentHTML: string) {
     }, 140)
 }
 
-// export enum DateFormat {
-//     "american",
-//     "everyoneElse"
-// }
-
-// export enum TimeFormat {
-//     "_12hr",
-//     "_24hr"
-// }
-
-// export function getTaskDateString(date: Date, dateFormat: DateFormat = 0, timeFormat: TimeFormat = 0) {
-//     var ret = ""
-//     switch (dateFormat) {
-//         case DateFormat.american:
-            
-//             break;
-    
-//         default:
-//             break;
-//     }
-// }
+export function inAppNotif(title: string, body: string, timeout: number = 3000) {
+    var html = `
+    <div class="container">
+        <b style="width: 100%; text-align: center">${title}</b>
+        ${body}
+    </div>`
+    const notif = document.createElement("div")
+    notif.className = "notif falling"
+    notif.innerHTML = html
+    document.body.appendChild(notif)
+    setTimeout(() => {
+        notif.className = "notif retracting"
+        setTimeout(() => notif.remove(), 900)
+    }, timeout)
+}
 
 export function getElement(id: string) {
     return document.getElementById(id)!

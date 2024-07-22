@@ -1,6 +1,7 @@
-import { sendNotification } from "@tauri-apps/plugin-notification";
+// import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getTimeString } from "./utils";
 import { getCurrent, ProgressBarStatus } from "@tauri-apps/api/window";
+import { sendNotif } from "./utils.ts";
 
 export class TimerHandler {
     private counter: number // times we swap isBreak. (# of work blocks * 2) -1
@@ -116,23 +117,23 @@ export class TimerHandler {
     }
 
     private sendBreakNotif() {
-        sendNotification({
-            title: "Work time over! Break time begins!",
-            body: "Good work! Do something nice during your break! Stretch or get a snack."
-        })
+        sendNotif(
+            "Work time over! Break time begins!",
+            "Good work! Do something nice during your break! Stretch or get a snack."
+        )
     }
     
     private sendWorkNotif() {
-        sendNotification({
-            title: "Break time over! Work time begins!",
-            body: "Let's get to work!"
-        })
+        sendNotif(
+            "Break time over! Work time begins!",
+            "Let's get to work!"
+        )
     }
 
     private sendCompleteNotif() {
-        sendNotification({
-            title: "Congratulations",
-            body: "You completed this Pomodoro work session! Reward yourself!"
-        })
+        sendNotif(
+            "Congratulations",
+            "You completed this Pomodoro work session! Reward yourself!"
+        )
     }
 }

@@ -1,5 +1,6 @@
 import { v4 as uuid4 } from 'uuid'
-import { padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
+import { SortBasis, padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
+import { smartDueDate } from './algorithm'
 
 export type TaskRecord = {
     "name": string,
@@ -191,7 +192,7 @@ export class List {
         this._tasks.push(task)
         task.category = String(TaskColor[this.color])
         task.list = this.uuid
-        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid));
+        smartDueDate(task, this).then(_ => window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid)))
     }
 }
 
@@ -202,6 +203,7 @@ export class Task {
     id: string
     
     private _name: string
+    /** The name of the task */
     get name(): string { return this._name }
     set name(val: string) { 
         this._name = val
@@ -210,6 +212,7 @@ export class Task {
     }
 
     private _size: number
+    /** The size of the task */
     get size(): number { return this._size }
     set size(val: number) { 
         this._size = val
@@ -218,6 +221,7 @@ export class Task {
     }
 
     private _importance: number
+    /** The task's importance */
     get importance(): number { return this._importance }
     set importance(val: number) { 
         this._importance = val
@@ -233,7 +237,6 @@ export class Task {
             st.category = val
         });
         this.refreshElements()
-        // window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
 
     private _list: string = ""
@@ -340,13 +343,37 @@ export class Task {
         var ownTaskElement = this.getTaskListLikeElement(true)
         var newContainer = document.createElement("div")
         newContainer.className = "taskcontainer"
-        // ✏️🖉 
         newContainer.setAttribute("name", this.id)
         var subtaskContainer = document.createElement("div")
         subtaskContainer.className = "subtaskcontainer"
-        this._subtasks.forEach(st => {
+
+        this._subtasks.sort((a, b) => {
+            var ret: number = 0;
+            switch (this.sortBasis) {
+                case SortBasis.name:
+                    ret = a.name > b.name ? 1 : -1;
+                    break;
+                case SortBasis.category:
+                    ret = a.category > b.category ? 1 : -1;
+                    break;
+                case SortBasis.size:
+                    ret = a.size - b.size;
+                    break;
+                case SortBasis.importance:
+                    ret = a.importance - b.importance;
+                    break;
+                case SortBasis.duedate:
+                    ret = a.due.valueOf() - b.due.valueOf();
+                    break;
+                default:
+                    break;
+            }
+            if (this.sortReverse) { ret *= -1; }
+            return ret;
+        }).forEach(st => {
             subtaskContainer.appendChild(st.taskListElement)
         })
+
         newContainer.appendChild(ownTaskElement)
         newContainer.appendChild(subtaskContainer)
         this.elements.push(newContainer)
@@ -364,6 +391,19 @@ export class Task {
         this.elements.push(newElement)
         return newElement
     }
+
+    private _sortBasis: SortBasis = SortBasis.duedate;
+    get sortBasis(): SortBasis { return this._sortBasis }
+    set sortBasis(basis: SortBasis) {
+        if (this.sortBasis == basis) {
+            this.sortReverse = !this.sortReverse
+        } else {
+            this.sortReverse = false
+        }
+        this._sortBasis = basis;
+        this.refreshElements();
+    }
+    private sortReverse: boolean = false;
 
     /**
      * The Task's default constructor. Should be called mainly by UI callbacks
@@ -460,7 +500,7 @@ export class Task {
         })
 
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._list))
-        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list))
+        smartDueDate(task, this._list).then(_ => window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list)))
     }
 
     /**

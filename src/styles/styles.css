@@ -302,6 +302,59 @@ header button {
     margin-right: auto;
 }
 
+@keyframes notiffalldown {
+    from {
+        top: -11rem;
+    }
+    to {
+        top: 1rem;
+    }
+}
+
+@keyframes notifslideup {
+    from {
+        top: 1rem;
+    }
+    to {
+        top: -11rem;
+    }
+}
+
+.notif {
+    position: fixed;
+    top: 1rem;
+    display: flex;
+    z-index: 1000;
+    margin-inline: auto;
+    width: 100%;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+.notif .container {
+    max-width: 60%;
+    min-width: 20%;
+    width: fit-content;
+    height: fit-content;
+    max-height: 10rem;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notif.falling {
+    animation-name: notiffalldown;
+    animation-duration: 1000ms;
+}
+
+.notif.retracting {
+    animation-name: notifslideup;
+    animation-duration: 1000ms;
+}
+
 .sheet .settingsbutton {
     width: fit-content;
 }
