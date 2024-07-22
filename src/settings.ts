@@ -1,11 +1,12 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { Weekdays, getElement, onWindowFocused, registerShowHideButton } from "./utils";
+import { Weekdays, getElement, isMobile, onWindowFocused, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
 import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
+import { window as tauriWindow } from '@tauri-apps/api';
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -214,6 +215,14 @@ export class SettingsView {
         )
 
         this.setSettingsFieldsToSavedValues()
+
+        if (isMobile()) {
+            const autoTheme = async () => {
+                this.changeTheme(String(await tauriWindow.getCurrent().theme()))
+            }
+            autoTheme().then()
+            tauriWindow.getCurrent().onThemeChanged(_ => autoTheme().then())
+        }
     }
 
     private recListSliderCallback() {

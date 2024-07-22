@@ -7,6 +7,8 @@ import { invoke } from '@tauri-apps/api/core'
 import { getSuggestedDueDateOffset, recordCompleteEvent, recordCreateEvent } from './algorithm'
 import { showSheet } from './utils'
 import { loadBugReport } from './feedback'
+import { window as tauriWindow } from '@tauri-apps/api';
+
 
 function theDump() { return document.getElementById("debugDump"); }
 function dumpIn(msg) { theDump().innerHTML += msg; }
@@ -115,5 +117,7 @@ export function addDebugFuncs() {
     window.showSheet = showSheet
     window.bugReport = loadBugReport
 
-    window.notifPerm = () => { requestPermission().then() }
+    window.notifPerm = async () => {
+        dumpIn(await tauriWindow.getCurrent().theme())
+    }//requestPermission().then() }
 }

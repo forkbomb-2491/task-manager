@@ -9,7 +9,7 @@ import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
 // import { check } from '@tauri-apps/plugin-updater';
 // import { ask } from '@tauri-apps/plugin-dialog';
-import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
+import { toHTMLDateTimeString, showTooltipOnHover, isMobile } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 
 const DEBUG_TAB = true
@@ -162,7 +162,6 @@ class App {
             window.taskMgr = this.taskMgr
         }
 
-        this.changeTab("settings")
     }
 
     private switchPlannerCallback() {
