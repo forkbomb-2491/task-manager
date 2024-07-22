@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import { readdirSync } from "node:fs"
 import path from "node:path";
 
+const mobile = ["android", "ios"].indexOf(process.env.TAURI_ENV_PLATFORM!) != -1;
+
 function getRollupInputs(): string[] {
     // Always include index
     var inputs = ["index.html"]
@@ -47,6 +49,7 @@ export default defineConfig(async () => ({
     clearScreen: false,
     // 2. tauri expects a fixed port, fail if that port is not available
     server: {
+        host: mobile ? true : false, 
         port: 1420,
         strictPort: true,
         watch: {
