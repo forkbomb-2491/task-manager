@@ -1,7 +1,7 @@
 import { v4 as uuid4 } from 'uuid'
 import { SortBasis, padWithLeftZeroes, toHTMLDateTimeString } from "./utils"
-import { smartDueDate } from './algorithm'
 
+/** JSON-serializable representation of the Task's most important properties. */
 export type TaskRecord = {
     "name": string,
     "size": number,
@@ -21,6 +21,11 @@ export enum TaskEventType {
     "adopt"
 }
 
+/** 
+ * An Event documenting a change to, completion of, creation of, or deletion 
+ * of a Task. For proper encapsulation of Tasks and TaskManager, this Event
+ * should only be dispatched with a Task record.
+ */
 export class TaskEvent extends Event {
     private _task: TaskRecord
     get task(): TaskRecord { return this._task }
@@ -135,23 +140,34 @@ export function onListEdit(cb: () => void) {
     )
 }
 
+/**
+ * Class representing a list of Tasks, e.g., Shopping, COMP 240, etc.
+ */
 export class List {
+    /** 
+     * UUID used to identify List instead of name. Also relevant for
+     * server implementations.
+     */
     readonly uuid: string
 
     private _name: string
+    /** The name of the List. */
     get name(): string { return this._name }
     set name(val: string) {
         this._name = val
         window.dispatchEvent(new Event("listedited"))
     }
 
+    /** The List's color. */
     readonly color: TaskColor
 
     private _tasks: Task[] = []
+    /** The Tasks belonging to this List. */
     get tasks(): Task[] {
         return [...this._tasks]
     }
 
+    /** Returns a ListRecord for this List. */
     get record(): ListRecord {
         return {
             name: this._name,
@@ -161,6 +177,13 @@ export class List {
         }
     }
 
+    /**
+     * Makes a new List.
+     * @param name List name
+     * @param color List color
+     * @param tasks Tasks to load into the List
+     * @param uuid The List's UUID
+     */
     constructor(name: string, color: TaskColor, tasks: Task[] = [], uuid: string | null = null) {
         if (uuid == null) {
             this.uuid = uuid4()
@@ -173,12 +196,13 @@ export class List {
         this._tasks = tasks
         this._tasks.forEach(
             t => {
-                t.category = String(TaskColor[color])
+                t.color = String(TaskColor[color])
                 t.list = this.uuid
             }
         )
     }
 
+    /** Loads a List from a ListRecord. */
     static fromRecord(record: ListRecord): List {
         return new List(
             record.name,
@@ -188,11 +212,12 @@ export class List {
         )
     }
 
+    /** Adds a Task to this List. */
     public addTask(task: Task) {
         this._tasks.push(task)
-        task.category = String(TaskColor[this.color])
+        task.color = String(TaskColor[this.color])
         task.list = this.uuid
-        smartDueDate(task, this).then(_ => window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid)))
+        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid))
     }
 }
 
@@ -203,7 +228,7 @@ export class Task {
     id: string
     
     private _name: string
-    /** The name of the task */
+    /** The name of the Task. */
     get name(): string { return this._name }
     set name(val: string) { 
         this._name = val
@@ -212,7 +237,7 @@ export class Task {
     }
 
     private _size: number
-    /** The size of the task */
+    /** The size of the Task. */
     get size(): number { return this._size }
     set size(val: number) { 
         this._size = val
@@ -221,7 +246,7 @@ export class Task {
     }
 
     private _importance: number
-    /** The task's importance */
+    /** The Task's importance. */
     get importance(): number { return this._importance }
     set importance(val: number) { 
         this._importance = val
@@ -229,17 +254,19 @@ export class Task {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
     }
     
-    private _category: string = "Default"
-    get category(): string { return this._category }
-    set category(val: string) { 
-        this._category = val
+    private _color: string = "Default"
+    /** The Task's color. Set by its parent Task or List. */
+    get color(): string { return this._color }
+    set color(val: string) { 
+        this._color = val
         this._subtasks.forEach(st => {
-            st.category = val
+            st.color = val
         });
         this.refreshElements()
     }
 
     private _list: string = ""
+    /** The UUID of the List to which this Task belongs. */
     get list(): string {
         return this._list
     }
@@ -249,6 +276,7 @@ export class Task {
     }
     
     private _due: Date
+    /** When the Task is due. */
     get due(): Date { return this._due }
     set due(val: Date) { 
         this._due = val
@@ -257,19 +285,26 @@ export class Task {
     }
 
     private _smarted: boolean = false
+    /** 
+     * If the Task's due date was updated by The Algorithm after its creation.
+     * Does not save to persistent storage.
+     */
     get smarted(): boolean { return this._smarted }
     set smarted(val: boolean) {
         this._smarted = val
         this.refreshElements()
     }
     
+    /** If the Task is completed. */
     completed: boolean
 
     private _subtasks: Task[] = []
     private _parent: Task | null = null
 
+    /** The Task's subtasks, if any. */
     get subtasks(): Task[] { return [...this._subtasks] }
 
+    /** The Task's parent Task, if any. */
     get parent(): Task | null { return this._parent }
     set parent(task: Task) {
         if (this._parent == null) {
@@ -277,6 +312,7 @@ export class Task {
         }
     }
 
+    /** Returns the TaskRecord for this Task. */
     get record(): TaskRecord {
         return {
             "name": this._name,
@@ -288,11 +324,6 @@ export class Task {
             "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
         }
     }
-
-    // Deprecated
-    get children(): string[] { return this._subtasks.map(t => t.id) }
-    get parentId(): string | null { return this._parent != null ? this._parent.id : null }
-    // End Dep.
 
     get hasSubtasks() : boolean { return this._subtasks.length > 0 }
 
@@ -308,13 +339,20 @@ export class Task {
         return Math.floor((due.valueOf() - today.valueOf()) / 84_600_000)
     }
 
+    /** 
+     * Marks the Task for deletion. It will not be removed from persistent
+     * storage immediately.
+     */
     deleted: boolean = false
 
+    /** Task's various HTML Elements. */
     private elements: HTMLElement[] = []
 
+    /** Returns an element to be placed on the Planner and similar tabs. */
     get plannerElement(): HTMLParagraphElement {
-        this.cleanUpElements()
-
+        // Remove old elements
+        this.cleanUpElements() // TODO: This will be called over and over again during refresh
+        // Create new
         var newElement = document.createElement("p")
         if (this.completed) {
             newElement.className = " completed"
@@ -323,30 +361,34 @@ export class Task {
         <button class="complete"></button>
         ${this._name}
         `
-
+        // Add callback for the complete button
         var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
         newElement.getElementsByClassName("complete")[0].addEventListener(
             "click",
             completeTaskCallback
         )
-
-        if (this._category != "Default") {
-            newElement.style.color = getColor(this._category)
+        // Add color
+        if (this._color != "Default") {
+            newElement.style.color = getColor(this._color)
         }
 
         this.elements.push(newElement)
         return newElement
     }
 
+    /** Gets the Element to be placed on the Tasks tab. */
     get taskListElement(): HTMLDivElement {
+        // Gets own task element
         var ownTaskElement = this.getTaskListLikeElement(true)
+        // Creates container, which holds task element and the subtask container
         var newContainer = document.createElement("div")
         newContainer.className = "taskcontainer"
         newContainer.setAttribute("name", this.id)
+        // Creates subtask container
         var subtaskContainer = document.createElement("div")
         subtaskContainer.className = "subtaskcontainer"
-
+        // Sorts subtasks in place, based on default passed by TaskList
         this._subtasks.sort((a, b) => {
             var ret: number = 0;
             switch (this.sortBasis) {
@@ -354,7 +396,7 @@ export class Task {
                     ret = a.name > b.name ? 1 : -1;
                     break;
                 case SortBasis.category:
-                    ret = a.category > b.category ? 1 : -1;
+                    ret = a.color > b.color ? 1 : -1;
                     break;
                 case SortBasis.size:
                     ret = a.size - b.size;
@@ -373,19 +415,28 @@ export class Task {
         }).forEach(st => {
             subtaskContainer.appendChild(st.taskListElement)
         })
-
+        // Add self
         newContainer.appendChild(ownTaskElement)
+        // Add subtasks container
         newContainer.appendChild(subtaskContainer)
         this.elements.push(newContainer)
         return newContainer
     }
 
+    /**
+     * A shorter version of the task element meant for TaskPlan. It does not
+     * list its importance.
+     */
     get shortenedTaskListElement(): HTMLDivElement {
         const newElement = this.getTaskListLikeElement(false)
         this.elements.push(newElement)
         return newElement
     }
 
+    /**
+     * The shortest version of the task element, used in the list previews. It
+     * has no completion or deletion buttons.
+     */
     get miniTaskListElement(): HTMLDivElement{
         const newElement = this.getMiniTaskListElement()
         this.elements.push(newElement)
@@ -393,6 +444,11 @@ export class Task {
     }
 
     private _sortBasis: SortBasis = SortBasis.duedate;
+    /**
+     * The basis by which to sort TaskList subtask elements. This is set
+     * by TaskList in response to user input and defaults to due date in
+     * chronological order. 
+     */
     get sortBasis(): SortBasis { return this._sortBasis }
     set sortBasis(basis: SortBasis) {
         if (this.sortBasis == basis) {
@@ -456,10 +512,12 @@ export class Task {
         this._parent = parent
     }
 
+    /** Generates a new, random, 6-digit ID for a task. */
     static generateId() {
         return padWithLeftZeroes(`${Math.round(999999 * Math.random())}`, 6)
     }
 
+    /** Initializes a Task from a TaskRecord. */
     static fromRecord(record: TaskRecord): Task {
         return new Task(
             record.name,
@@ -500,7 +558,7 @@ export class Task {
         })
 
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._list))
-        smartDueDate(task, this._list).then(_ => window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list)))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list))
     }
 
     /**
@@ -510,11 +568,8 @@ export class Task {
     delete() {
         while (this.elements.length > 0) {
             var element = this.elements.pop()!
-            // element.style.scale = "0.5"
-            // window.setTimeout(() => {
-                element.style.display = "none"
-                element.remove()
-            // }, 6000)
+            element.style.display = "none"
+            element.remove()
         }
 
         this.deleted = true
@@ -529,6 +584,7 @@ export class Task {
      * Sets the Task as completed. Updates all HTML elements.
      */
     toggleCompleted() {
+        // Applies styling to all task elements.
         if (!this.completed) {
             this.elements.forEach(element => {
                 if (element.className == "taskcontainer") {
@@ -551,6 +607,7 @@ export class Task {
             })      
         }
         
+        // Marks Task as completed or not; dispatch Events to which other classes may listen.
         this.completed = !this.completed
         if (this.completed) {
             window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._list))
@@ -577,6 +634,10 @@ export class Task {
         this.elements = newElements
     }
 
+    /**
+     * Returns the HTML for a Task List task element.
+     * @returns string
+     */
     private getTaskListElementHTML() {
         return `
             <button class="complete"></button>
@@ -601,6 +662,10 @@ export class Task {
         `
     }
 
+    /** 
+     * Returns the HTML for the "shortened"/intermediate-sized task element,
+     * used in the subtask list in TaskPlan and the Help menu.
+     */
     private getTaskPlanListElementHTML() {
         return `
             <button class="complete"></button>
@@ -621,6 +686,7 @@ export class Task {
             `
     }
 
+    /** Gets the shortest task element's HTML, meant for use in list previews.*/
     private getMiniTaskListElementHTML() {
         return `
             <div style="display: flex; flex-grow: 1;">
@@ -647,33 +713,44 @@ export class Task {
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
         if (full) {
+            // Full length, Task List
             newElement.innerHTML = this.getTaskListElementHTML()
+            // true here indicates there should be editing capability.
             this.addButtonListeners(newElement, true)
         } else {
+            // Shortened (NOT MINI) for TaskPlan & Help
             newElement.innerHTML = this.getTaskPlanListElementHTML()
             this.addButtonListeners(newElement)
         }
 
-        if (this._category != "Default") {
-            newElement.style.color = getColor(this._category)
+        if (this._color != "Default") {
+            newElement.style.color = getColor(this._color)
         }
         return newElement
     }
 
+    /** Gets the shortest (mini) Task List element, for use in list previews. */
     private getMiniTaskListElement() {
         this.cleanUpElements()
         var newElement = document.createElement("div")
         newElement.className = this.completed ? "task completed": "task"
         newElement.innerHTML = this.getMiniTaskListElementHTML()
         // this.addButtonListeners(newElement)
-        if (this._category != "Default") {
-            newElement.style.color = getColor(this._category)
+        if (this._color != "Default") {
+            newElement.style.color = getColor(this._color)
         }
         return newElement
     }
 
+    /**
+     * Applies callbacks to an element's complete, delete, and edit buttons.
+     * @param newElement The parent task element which contains complete, 
+     * delete, &/ edit buttons.
+     * @param includeEdit Whether the task element has an edit button.
+     */
     private addButtonListeners(newElement: HTMLDivElement, includeEdit: boolean = false) {
         if (includeEdit) {
+            // Assign edit callback, if specified
             var editTaskCallback = (_: Event) => { this.editTask(newElement) }
 
             newElement.getElementsByClassName("edittask")[0].addEventListener(
@@ -682,6 +759,7 @@ export class Task {
             )
         }
 
+        // These closures are necessary bc "this" will be undefined if you pass the method itself.
         var deleteTaskCallback = (_: Event) => { this.delete() }
         var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
@@ -696,47 +774,62 @@ export class Task {
         )
     }
 
+    /**
+     * Cleans up and then updates (actually replaces) all elements with
+     * up to date information about the Task.
+     */
     private refreshElements() {
         this.cleanUpElements()
         var newElements = this.elements.map(e => {
             var newElement: HTMLElement
-            if (e.className == "taskcontainer") {
+            if (e.className == "taskcontainer") { // This method of differentiating is a bit janky
+                // Replace taskcontainers
                 newElement = this.taskListElement
-                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else if (e.className == "task") {
+                // Replace shorty task elements
                 newElement = this.shortenedTaskListElement
-                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else if (e.tagName == "P") {
+                // Replace planner elements
                 newElement = this.plannerElement
-                newElement.style.color = getColor(this._category)
                 e.replaceWith(newElement)
             } else {
+                // If it's a different type, update color but do nothing else.
                 newElement = e
-                newElement.style.color = getColor(this._category)
             }
+            newElement.style.color = getColor(this._color)
             return newElement
         })
         this.elements = newElements
     }
 
+    /**
+     * Puts the provided task element into or takes the provided task element
+     * out of edit mode, either allowing the user to make changes or updating
+     * the Task to reflect the user's edits. 
+     * @param element The Task List element.
+     */
     private editTask(element: HTMLDivElement) {
-        if (element.className.includes(" editing")) {       
+        if (element.className.includes(" editing")) {    
+            // Gets edit form   
             var form: HTMLFormElement = element.getElementsByTagName("form")[0]
+            // Updates values
             this._name = form.titleinput.value
             this._due = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
             this._size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
             this._importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
-
-            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.category))
-
+            // Dispatches Edit event
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.color))
+            // Reverts element's HTML to normal Task List element.
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()
             this.addButtonListeners(element, true)
+            // Refreshes all elements to reflect changes.
             this.refreshElements()
         } else {
             element.className += " editing"
+            // HTML for the editor (basically just a new task maker)
             element.innerHTML = `
             <form class="taskeditform" name="taskcreate" autocomplete="off">
                 <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
@@ -768,6 +861,7 @@ export class Task {
                 </div>
             </form>
             `
+            // Assign callback to edit button (i.e., call this method again when the user is done.)
             var editTaskCallback = (_: Event) => { this.editTask(element) }
             element.getElementsByClassName("taskeditform")[0].addEventListener(
                 "submit",

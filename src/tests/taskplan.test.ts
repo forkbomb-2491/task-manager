@@ -13,6 +13,8 @@ beforeEach(() => {
     taskMgr = new TaskManager()
     // @ts-ignore
     taskplan = taskMgr.taskPlanner
+    // @ts-ignore
+    taskMgr.render()
 })
 
 describe("TaskPlan Task Changes", () => {

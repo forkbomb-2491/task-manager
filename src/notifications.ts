@@ -17,6 +17,7 @@ export class CheckInHandler {
 
     private interval: number // milliseconds
 
+    // List of notifcontent
     private notifcontent: Object = {
         "Just checking in!": "Are you finding it hard to be productive? Open Task Manager for some help!",
         "You're doing great!": "Need any suggestions for what to do?  Open Task Manager for some help!",
@@ -65,6 +66,10 @@ export class CheckInHandler {
         return Date.parse(dateString) // Local
     }
 
+    /**
+     * return if the current time is between start and end
+     * @returns boolean
+     */
     private checkIsInTimeRange(interval: number) {
         var now = Date.now() // Local
         if (!this.daysEnabled[new Date().getDay()]) {
@@ -90,6 +95,9 @@ export class CheckInHandler {
         this.scheduledReminder = setTimeout(() => { this.sendReminder() }, interval)
     }
 
+    /**
+     * Send check-in reminder
+     */
     private sendReminder() {
         this.scheduledReminder = null
         this.notifnum = Math.floor(Math.random()*Object.keys(this.notifcontent).length)
@@ -195,13 +203,18 @@ export class TaskNotifier {
         })
     }
 
+    /**
+     * Gets tasks that have been notified to the user
+     * Used for display in Reminders tab
+     * @returns Task[]
+     */
     getNotifTasks(){
         return [...this.notifList]
     }
 
-    /*
-    If a specific task has not already been notified, send notification for this task
-    */
+    /**
+     * If a specific task has not already been notified, send notification for this task
+     */
     private sendTaskReminder(task: Task) {
         // var task = this.tasks[0]
         var thistitle: string
@@ -209,14 +222,18 @@ export class TaskNotifier {
 
         // If you haven't already gotten a notif about this task, send notif
         if (!this.notifList.includes(task) && this.enabledInSettings){
+
             if (task.dueIn < 0) {
+            // overdue tasks reminder style
                 thistitle = "Checking on " + task.name + "!",
                 thisbody = "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
             } else if (task.dueIn == 0) {
+            // today tasks reminder style
                 thistitle = "Checking on " + task.name + "!",
                 thisbody = "Have you made any progress on " + task.name + "? It's due today!"
             }
             else {
+            // future tasks reminder style
                 thistitle = "Checking on " + task.name + "!",
                 thisbody = "Have you made any progress on " + task.name + "? You have " + task.dueIn + " day(s) until it's due!"
             }
@@ -230,6 +247,9 @@ export class TaskNotifier {
         // this.scheduleReminder()
     }
 
+    /**
+     * Schedules all relevant tasks: overdue, due today, and up next tasks
+     */
     private scheduleReminder() {
         if (this.overdue.length > 0) {
             this.overdue.forEach(task => {
@@ -250,6 +270,10 @@ export class TaskNotifier {
         }
     }
 
+    /**
+     * Refresh notifications:
+     * clear scheduled notifications, pull and sort tasklist, and schedule new task notifications
+     */
     public refresh() {
         //  cancel schedueled notification
         if (this.scheduledReminder != null) {

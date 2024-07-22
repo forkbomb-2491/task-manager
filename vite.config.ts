@@ -41,6 +41,7 @@ export default defineConfig(async () => ({
             "./storage": path.resolve(__dirname, "./src/tests/mocks"),
             // "./settings": path.resolve(__dirname, "./src/tests/mocks"),
             "./notifications": path.resolve(__dirname, "./src/tests/mocks"),
+            "./algorithm": path.resolve(__dirname, "./src/tests/mocks"),
         }
     },
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

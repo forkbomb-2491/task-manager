@@ -134,6 +134,8 @@ describe("Task Tab Tests", () => {
         currentList = document.getElementById("currenttasklist")!
         completedList = document.getElementById("completedtasklist")!
         taskMgr = new TaskManager()
+        // @ts-ignore
+        taskMgr.render()
     })
 
     var currentList = document.getElementById("currenttasklist")!
@@ -165,56 +167,56 @@ describe("Task Time Tests", () => {
     it("Date Correct from Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var task = new Task("test", 1, 1, testDate)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
     })
 
     it("Date Correct from 23:59", () => {
         var testDate = new Date(2024, 0, 1, 23, 59)
         var task = new Task("test", 1, 1, testDate)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
     })
     
     it("Timestamp to Date Works Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var tsDate = new Date(testDate.valueOf())
         var task = new Task("test", 1, 1, tsDate)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
     })
     
     it("Timestamp to Date Works 23:59", () => {
         var testDate = new Date(2024, 0, 1, 23, 59)
         var tsDate = new Date(testDate.valueOf())
         var task = new Task("test", 1, 1, tsDate)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
     })
     
     it("Date and Time Midnight", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var task = new Task("test", 1, 1, testDate)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
-        assert.strictEqual(task._due.getHours(), testDate.getHours())
-        assert.strictEqual(task._due.getMinutes(), testDate.getMinutes())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getHours(), testDate.getHours())
+        assert.strictEqual(task.due.getMinutes(), testDate.getMinutes())
     })
     
     it("Date and Time Midnight from Record", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var taskRecord = new Task("test", 1, 1, testDate).record
         var task = new Task(taskRecord.name, taskRecord.size, taskRecord.importance, taskRecord.due)
-        assert.strictEqual(task._due.getFullYear(), testDate.getFullYear())
-        assert.strictEqual(task._due.getMonth(), testDate.getMonth())
-        assert.strictEqual(task._due.getDate(), testDate.getDate())
-        assert.strictEqual(task._due.getHours(), testDate.getHours())
-        assert.strictEqual(task._due.getMinutes(), testDate.getMinutes())
+        assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
+        assert.strictEqual(task.due.getMonth(), testDate.getMonth())
+        assert.strictEqual(task.due.getDate(), testDate.getDate())
+        assert.strictEqual(task.due.getHours(), testDate.getHours())
+        assert.strictEqual(task.due.getMinutes(), testDate.getMinutes())
     })
 })
 

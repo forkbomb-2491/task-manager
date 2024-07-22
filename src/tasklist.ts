@@ -2,6 +2,7 @@ import { SortBasis, onWindowFocused, registerShowHideButton, showSheet, showTool
 import { onTaskEvent, onTaskAdd, Task, List, TaskColor } from "./task";
 import { TaskManager } from "./taskmanager";
 import { ask } from "@tauri-apps/plugin-dialog";
+import { smartDueDate } from "./algorithm";
 
 /**
  * A Task View that represents and handles the Tasks tab.
@@ -162,7 +163,7 @@ export class TaskList {
                     ret = taskA.name > taskB.name ? 1 : -1;
                     break;
                 case SortBasis.category:
-                    ret = taskA.category > taskB.category ? 1 : -1;
+                    ret = taskA.color > taskB.color ? 1 : -1;
                     break;
                 case SortBasis.size:
                     ret = taskA.size - taskB.size;
@@ -203,8 +204,8 @@ export class TaskList {
         form.deadlineinput.value = toHTMLDateTimeString(new Date())
         
         var task = new Task(title, size, importance, date, false)
-        task.category = TaskColor[this.selectedList!.color]
-        this.taskMgr.addTask(task, this.selectedList!.name)
+        task.color = TaskColor[this.selectedList!.color]
+        smartDueDate(task, this.selectedList!).then(_ => this.taskMgr.addTask(task, this.selectedList!.name))
     }
 
     private createListCallback(event: SubmitEvent) {

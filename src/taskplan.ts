@@ -2,6 +2,7 @@ import { List, onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused, toHTMLDateTimeString } from "./utils";
+import { smartDueDate } from './algorithm';
 
 export class TaskPlanner {
     private calStartDate: Date = new Date()
@@ -236,7 +237,7 @@ export class TaskPlanner {
             date, 
             false
         )
-        this.selectedTask.adoptChild(task)
+        smartDueDate(task, this.selectedTask!.list).then(_ => this.selectedTask!.adoptChild(task))
     }
 
     private selectTask(task: Task) {
@@ -248,13 +249,10 @@ export class TaskPlanner {
 
         var subtaskList = document.getElementById("tpsubtasklist")!
         subtaskList.innerHTML = ""
-        for (let i = 0; i < task.children.length; i++) {
-            const childId = task.children[i];
-            const subtask = this.taskMgr.getTask(childId)
-            if (subtask != null) {
-                subtaskList.appendChild(subtask.getTaskPlannerListElement())
-            }
-        }
+
+        task.subtasks.forEach(task => {
+            subtaskList.appendChild(task.getTaskPlannerListElement())
+        })
 
         var tpmaintask = document.getElementById("tpmaintaskname")
         tpmaintask!.innerHTML = task.name
@@ -445,25 +443,17 @@ class TaskPlannerDate {
         this.hoverElement.innerHTML = ""
 
         if (this._selectedTask != null) {
-            var childIds = this._selectedTask.children.filter(
-                t => {
-                    const task = this.taskMgr.getTask(t)
+            var displayedTasks = this._selectedTask.subtasks.filter(
+                task => {
                     return task != null && isSameDay(this.date, task.due) && !task.deleted
                 }
             )
 
-            if (isSameDay(this._date, this._selectedTask.due)) childIds.push(this._selectedTask.id)
+            if (isSameDay(this._date, this._selectedTask.due)) displayedTasks.push(this._selectedTask)
 
-            var children = childIds.map(
-                t => {
-                    return this.taskMgr.getTask(t)!
-                }
-            )
-
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
+            displayedTasks.forEach(child => {
                 this.hoverElement.appendChild(child.getPlannerElement())
-            }
+            })
         }
 
         this.refresh()
