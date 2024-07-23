@@ -19,14 +19,14 @@ beforeEach(() => {
 describe("Planner Tests", () => {
     it("Adding Task Adds to Planner", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         var kids = document.getElementById(DayCols[new Date().getDay()])!.children
         assert.equal(kids.length, 4)
     })
 
     it("Completing Task Applied to Element", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         var element = document.getElementById(DayCols[new Date().getDay()])!.children[3]
         task.toggleCompleted()
         assert.isTrue(element.className.includes("completed"))
@@ -34,7 +34,7 @@ describe("Planner Tests", () => {
 
     it("Deleting Task Removes", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         var col = document.getElementById(DayCols[new Date().getDay()])!
         assert.equal(col.children.length, 4)
         task.delete()
@@ -52,7 +52,7 @@ describe("Planner Tests", () => {
 
     it("Subtasks Add to Planner", () => {
         const task = getTask()
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         task.adoptChild(getTask())
         var kids = document.getElementById(DayCols[new Date().getDay()])!.children
         assert.equal(kids.length, 5)

@@ -1,7 +1,7 @@
 {
   "name": "task-manager",
   "private": true,
-  "version": "0.2.3",
+  "version": "0.3.0-beta.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,16 +14,21 @@
     "@tauri-apps/api": "^2.0.0-beta.5",
     "@tauri-apps/plugin-dialog": "^2.0.0-beta.5",
     "@tauri-apps/plugin-fs": "^2.0.0-beta.5",
+    "@tauri-apps/plugin-http": "^2.0.0-beta.7",
     "@tauri-apps/plugin-notification": "^2.0.0-beta.5",
+    "@tauri-apps/plugin-os": "^2.0.0-beta.7",
     "@tauri-apps/plugin-shell": "^2.0.0-beta.6",
+    "@tauri-apps/plugin-sql": "^2.0.0-beta.6",
     "@tauri-apps/plugin-store": "^2.0.0-beta.5",
     "@tauri-apps/plugin-updater": "^2.0.0-beta.5",
     "@types/node": "^20.12.12",
     "jsdom": "^24.1.0",
+    "uuid": "^10.0.0",
     "vitest": "^1.6.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"
   }

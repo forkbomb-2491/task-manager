@@ -1,5 +1,5 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused } from "./utils"
-import { Task, onTaskAdd, onTaskAdopt } from "./task"
+import { Task, onTaskAdd, onTaskAdopt, onTaskEdit } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
@@ -73,6 +73,10 @@ export class Planner {
         onSettingChange("plannerStartDay", e => this.startDay = e.value)
         onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
         onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onTaskEdit(e => {
+            this.addTask(this.taskMgr.getTask(e.task.id)!)
+            this.refresh()
+        })
 
         onWindowFocused(() => this.refresh())
     }
@@ -210,6 +214,20 @@ class DayColumn {
         } else {
             this.element.className = "daycolumn"
         }
+        var tasksInElement: string[] = [];
+        [...this.element.children].forEach(child => {
+            if (child.hasAttribute("name")) {
+                const taskId = child.getAttribute("name")!
+                if (tasksInElement.includes(taskId)) {
+                    child.remove()
+                }
+                tasksInElement.push(taskId)
+                const task = this.taskMgr.getTask(taskId)
+                if (task != null && !isSameDay(this._date, task.due)) {
+                    child.remove()
+                }
+            }
+        });
     }
 }
 

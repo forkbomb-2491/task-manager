@@ -1,214 +1,281 @@
 <h1 style="margin-top: 0;">Settings</h1>
 <div style="display: flex; justify-content: space-between;">
     <div style="min-width: 60%;">
-        <h2>Notification Settings</h2>
-        <h3>General Settings</h3>
-        <div class="checkinblock">
-            <input type="checkbox" name="checkinenabled" id="checkinenabled" checked="true">
-            <label for="checkinenabled">Receive regular Check-In Notifications during Check-In Blocks</label>
-            <br>
-            <input type="checkbox" name="remindersenabled" id="remindersenabled" checked="true">
-            <label for="remindersenabled">Receive Tasks Notifications upon opening Task Manager</label>
-            <br>
-        </div>
-
-
-        <h3>Schedule Check-In Notifications</h3>
-        <!-- <div> -->
-        <div class="checkinblock">
-            <form name="remindersettings" id="remindersettings">
-                You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
-                
-                <input type="checkbox" id="remindermon" name="remindermon" value=1>
-                <label for="remindermon">Mondays</label>
-                <input type="checkbox" id="remindertue" name="remindertue" value=2>
-                <label for="remindertue">Tuesdays</label>
-                <input type="checkbox" id="reminderwed" name="reminderwed" value=3>
-                <label for="reminderwed">Wedesdays</label>
-                <input type="checkbox" id="reminderthu" name="reminderthu" value=4>
-                <label for="reminderthu">Thursdays</label>
-                <input type="checkbox" id="reminderfri" name="reminderfri" value=5>
-                <label for="reminderfri">Fridays</label>
-                <br>
-                <input type="checkbox" id="remindersat" name="remindersat" value=6>
-                <label for="remindersat">Saturdays</label>
-                <input type="checkbox" id="remindersun" name="remindersun" value=0>
-                <label for="remindersun">Sundays</label>
-                <br>
-                with the average time between notifs being
-                <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
-                <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 95%;" oninput="notifinterval.innerText=this.value">
-                <div style="display:flex; justify-content: space-between;">
-                    <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
+        <h2>
+            <button class="showhidebutton" id="notifsettingsshowhide">▼</button>
+            Notification Settings
+        </h2>
+        <div id="notifsettingsdiv">
+            <h3>General Settings</h3>
+            <div class="container">
+                <!-- 🔁🔄️counterclockwise arrows button -->
+                <div>
+                    <input type="checkbox" name="checkinenabled" id="checkinenabled" checked="true">
+                    <label for="checkinenabled">Receive regular Check-In Notifications during Check-In Blocks</label>
                 </div>
-            </form>
-        </div>
-        <!-- <br>
-        ➕ -->
+                <div>
 
+                    <input type="checkbox" name="remindersenabled" id="remindersenabled" checked="true">
+                    <label for="remindersenabled">Receive Tasks Notifications upon opening Task Manager</label>
+                </div>
+            </div>
+    
+    
+            <h3>Schedule Check-In Notifications</h3>
+            <!-- <div> -->
+            <div class="checkinblock">
+                <form name="remindersettings" id="remindersettings">
+                    You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
+                    
+                    <input type="checkbox" id="remindermon" name="remindermon" value=1>
+                    <label for="remindermon">Mondays</label>
+                    <input type="checkbox" id="remindertue" name="remindertue" value=2>
+                    <label for="remindertue">Tuesdays</label>
+                    <input type="checkbox" id="reminderwed" name="reminderwed" value=3>
+                    <label for="reminderwed">Wedesdays</label>
+                    <input type="checkbox" id="reminderthu" name="reminderthu" value=4>
+                    <label for="reminderthu">Thursdays</label>
+                    <input type="checkbox" id="reminderfri" name="reminderfri" value=5>
+                    <label for="reminderfri">Fridays</label>
+                    <br>
+                    <input type="checkbox" id="remindersat" name="remindersat" value=6>
+                    <label for="remindersat">Saturdays</label>
+                    <input type="checkbox" id="remindersun" name="remindersun" value=0>
+                    <label for="remindersun">Sundays</label>
+                    <br>
+                    with the average time between notifs being
+                    <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
+                    <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 95%;" oninput="notifinterval.innerText=this.value">
+                    <div style="display:flex; justify-content: space-between;">
+                        <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
+                    </div>
+                </form>
+            </div>
+            <!-- <br>
+            ➕ -->
+    
+            <h3>Task Reminder Notifications</h3>
+            <div class="container">
+                <div>You will receive reminders for tasks as early as <b><label for="taskreminderbuffer" id="taskreminderbufferlabel">2</label></b> days before they are due!</div>
+                <input type="range" class="settingsslider" id="taskreminderbuffer" name = "taskreminderbuffer" min="1" max="14" value="2" step="1" style="width: 95%;" oninput="taskreminderbufferlabel.innerText=this.value">
+            </div>
+        </div>
 
 
         <!-- <h3>Time Block</h3>
         <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 90%;" oninput="timervolume.innerText = this.value">            
         <label for="timervolumeslider" id="timervolume">25</label> -->
 
-        <h2>Planner</h2>
-        <h3>First Day of the Week</h3>
-        <div class="checkinblock">
-            <p><i>This will be the first day of the week displayed by the planner by default.</i></p>
-            <form id="weekstartform">
-                <input type="radio" name="weekstart" value="0">
-                <label for="0">Sunday</label>
-                <input type="radio" name="weekstart" value="1">
-                <label for="1">Monday</label>
-                <input type="radio" name="weekstart" value="2">
-                <label for="2">Tuesday</label>
-                <input type="radio" name="weekstart" value="3">
-                <label for="3">Wednesday</label>
-                <input type="radio" name="weekstart" value="4">
-                <label for="4">Thursday</label>
-                <input type="radio" name="weekstart" value="5">
-                <label for="5">Friday</label>
-                <input type="radio" name="weekstart" value="6">
-                <label for="6">Saturday</label>
+        <h2>
+            <button class="showhidebutton" id="plannersettingsshowhide">▼</button>
+            Planner
+        </h2>
+        <div id="plannersettingsdiv">
+            <h3>First Day of the Week</h3>
+            <div class="container">
+                <p><i>This will be the first day of the week displayed by the planner by default.</i></p>
+                <form id="weekstartform">
+                    <input type="radio" name="weekstart" value="1">
+                    <label for="1">Monday</label>
+                    <input type="radio" name="weekstart" value="2">
+                    <label for="2">Tuesday</label>
+                    <input type="radio" name="weekstart" value="3">
+                    <label for="3">Wednesday</label>
+                    <input type="radio" name="weekstart" value="4">
+                    <label for="4">Thursday</label>
+                    <input type="radio" name="weekstart" value="5">
+                    <label for="5">Friday</label>
+                    <br>
+                    <input type="radio" name="weekstart" value="6">
+                    <label for="6">Saturday</label>
+                    <input type="radio" name="weekstart" value="0">
+                    <label for="0">Sunday</label>
+                </form>
+            </div>
+        </div>
+    
+        <h2>
+            <button class="showhidebutton" id="helpsettingsshowhide">▼</button>
+            <div class="helplabel">Help</div> Tab Settings
+        </h2>
+        <div id="helpsettingsdiv">
+            <h3>Algorithm Display Length</h3>
+            <div class="container">
+                <p><i>Length of recommended task list.</i></p>
+                <input type="range" class="settingsslider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
+                <div>
+                    Each <div class="helplabel">Help</div> Tab option will suggest up to <b><label for="reclistslider" id="reclistlabel">6</label></b> tasks to you.
+                </div>
+            </div>
+            <!-- <input> -->
+    
+            <h3><div class="helplabel">💡</div> Tab Custom Label</h3>
+            <div class="container">
+                <div>
+                    <input id="helplabelinput" value="💡" minlength="1" style="width:50%">
+                    <i><label for="=helplabelinput">* must not be empty</label></i>
+                </div>
+            </div>
+        </div>
+
+        <h2>
+            <button class="showhidebutton" id="displaysettingsshowhide">▼</button>
+            Display
+        </h2>
+        <div id="displaysettingsdiv">
+            <h3>Tab Display</h3>
+            <div class="checkinblock">
+                <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
+                <form name="tabsettings" id="tabsettings">
+                    <input type="checkbox" id="planneractive" name="taskplan">
+                    <label for="tpactive">Planner</label>
+                    <input type="checkbox" id="tpactive" name="taskplan">
+                    <label for="tpactive">Project Planner</label>
+                    <input type="checkbox" id="pomodoroactive" name="pomodoro">
+                    <label for="tbactive">Time Block</label>
+                    <input type="checkbox" id="eisenhoweractive" name="eisenhower">
+                    <label for="eisenhoweractive">Eisenhower</label>
+                    <br>
+                    <input type="checkbox" id="dopamenuactive" name="dopamenu">
+                    <label for="dopamenuactive">Dopamenu</label>
+                    <input type="checkbox" id="remindersactive" name="reminders">
+                    <label for="remindersactive">Reminders</label>
+                </form>
+            </div>
+    
+            <h3>Themes</h3>
+            <form id="themeselector" class="checkinblock">
+                <input type="radio" name="theme" value="light">
+                <label for="light">Default (Light)</label>
+                <input type="radio" name="theme" value="dark">
+                <label for="dark">Default (Dark)</label>
+                <input type="radio" name="theme" value="gray">
+                <label for="gray">Grayscale</label>
+                <br>
+                <input type="radio" name="theme" value="vampire">
+                <label for="vampire">Vampire</label>
+                <input type="radio" name="theme" value="danishpastel">
+                <label for="danishpastel">Danish Pastel</label>
+                <input type="radio" name="theme" value="barbie">
+                <label for="barbie">Barbie</label>
+                <input type="radio" name="theme" value="dirt">
+                <label for="dirt">Dirt</label>
+                <br>
+                <input type="radio" name="theme" value="strawberry">
+                <label for="strawberry">Strawberry</label>
+                <input type="radio" name="theme" value="tangerine">
+                <label for="tangerine">Tangerine</label>
+                <input type="radio" name="theme" value="lemon">
+                <label for="lemon">Lemon</label>
+                <input type="radio" name="theme" value="matcha">
+                <label for="matcha">Matcha</label>
+                <input type="radio" name="theme" value="blueberry">
+                <label for="blueberry">Blueberry</label>
+                <input type="radio" name="theme" value="lilac">
+                <label for="lilac">Lilac</label>
+                <br>
+                <input type="radio" name="theme" value="macalester">
+                <label for="macalester">Macalester</label>
+                <input type="radio" name="theme" value="umn">
+                <label for="umn">University of Minnesota</label>
+                <input type="radio" name="theme" value="olaf">
+                <label for="olaf">St. Olaf</label>
             </form>
         </div>
-
-        <h2><div class="helplabel">Help</div> Tab Settings</h2>
-        <h3>Algorithm Display Length</h3>
-        <div class="checkinblock">
-            <p><i>Length of recommended task list.</i></p>
-            <input type="range" class="settingsslider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
-            <br>
-            Each <div class="helplabel">Help</div> Tab option will suggest up to <b><label for="reclistslider" id="reclistlabel">6</label></b> tasks to you.
-        </div>
-        <!-- <input> -->
-
-        <h3><div class="helplabel">💡</div> Tab Custom Label</h3>
-        <div class="checkinblock">
-            <input id="helplabelinput" value="💡" minlength="1">
-            <i><label for="=helplabelinput">* must not be empty</label></i>
-        </div>
-
-        <h2>Display</h2>
-        <h3>Tab Display</h3>
-        <div class="checkinblock">
-            <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
-            <form name="tabsettings" id="tabsettings">
-                <input type="checkbox" id="planneractive" name="taskplan">
-                <label for="tpactive">Planner</label>
-                <input type="checkbox" id="tpactive" name="taskplan">
-                <label for="tpactive">Task Planner</label>
-                <input type="checkbox" id="pomodoroactive" name="pomodoro">
-                <label for="tbactive">Time Block</label>
-                <input type="checkbox" id="eisenhoweractive" name="eisenhower" style="display: none;">
-                <label for="eisenhoweractive" style="display: none;">Eisenhower</label>
-                <input type="checkbox" id="dopamenuactive" name="dopamenu" style="display: none;">
-                <label for="dopamenuactive" style="display: none;">Dopamenu</label>
-                <input type="checkbox" id="remindersactive" name="reminders">
-                <label for="remindersactive">Reminders</label>
-            </form>
-        </div>
-
-        <h3>Themes</h3>
-        <form id="themeselector" class="checkinblock">
-            <input type="radio" name="theme" value="light">
-            <label for="light">Default (Light)</label>
-            <input type="radio" name="theme" value="dark">
-            <label for="dark">Default (Dark)</label>
-            <input type="radio" name="theme" value="gray">
-            <label for="gray">Grayscale</label>
-            <br>
-            <input type="radio" name="theme" value="vampire">
-            <label for="vampire">Vampire</label>
-            <input type="radio" name="theme" value="danishpastel">
-            <label for="danishpastel">Danish Pastel</label>
-            <input type="radio" name="theme" value="barbie">
-            <label for="barbie">Barbie</label>
-            <input type="radio" name="theme" value="dirt">
-            <label for="dirt">Dirt</label>
-            <br>
-            <input type="radio" name="theme" value="strawberry">
-            <label for="strawberry">Strawberry</label>
-            <input type="radio" name="theme" value="tangerine">
-            <label for="tangerine">Tangerine</label>
-            <input type="radio" name="theme" value="lemon">
-            <label for="lemon">Lemon</label>
-            <input type="radio" name="theme" value="matcha">
-            <label for="matcha">Matcha</label>
-            <input type="radio" name="theme" value="blueberry">
-            <label for="blueberry">Blueberry</label>
-            <input type="radio" name="theme" value="lilac">
-            <label for="lilac">Lilac</label>
-            <br>
-            <input type="radio" name="theme" value="macalester">
-            <label for="macalester">Macalester</label>
-            <input type="radio" name="theme" value="umn">
-            <label for="umn">University of Minnesota</label>
-            <input type="radio" name="theme" value="olaf">
-            <label for="olaf">St. Olaf</label>
-        </form>
+    
     </div>
 
-    <div class="tpcontainer" style="min-width: 30%; margin-left: 1rem; margin-right: 1rem;">
-        <h2>Welcome to Task Manager</h2>
-        <i id="versionlabel">Version </i>
-        <h3>Presented to you by Team Forkbomb</h3>
-        <p>This app helps people with ADHD (or those prone to procrastination) get more done, thus alleviating anxiety and pressure. The program’s killer features include the “<element class="helplabel">💡</element>” tab that suggests tasks when you’re overwhelmed or having trouble getting started, a notification system that checks in on you and keeps you focused, and the task/project planner for breaking down bigger projects into smaller tasks.</p>
-        
-        <h3>Please share your feedback with us!!</h3>
-        <a href="https://forms.gle/f915V9unTXcpqAVg7" target="_blank" class="settingsbutton" style="margin-top: 0.25rem; text-decoration: none;">🔗 Feedback Form</a>
-        
-        <h3 style="margin-bottom: 0.2rem;">What's New</h3>
-        <div style="text-align: left;">
-            <input type="checkbox" checked disabled>The default theme is now applied in new installations<br>
-            <input type="checkbox" checked disabled>Tasks added in Project Planner are now added to the Planner tab only once<br>
-            <input type="checkbox" checked disabled><element class="helplabel">💡</element> Tab label can no longer be empty<br>
-            <!-- <input type="checkbox" checked disabled>Checkboxes on Project Planner days indicating which ones have tasks are now prettier! -->
+    <div style="min-width: 30%; margin: 1rem">
+        <div class="container" id="updatecontainer" style="display: none; margin-bottom: 1rem;">
+            <h2 style="margin-top: 0;">🔄️ Update Available!</h2>
+            <h3>Version v<element id="updateversionlabel">0.0.0</element></h3>
+            <div id="updatenotesdiv">Notes here....</div>
+            <button class="settingsbutton" id="installupdatebutton" style="margin-top: 1rem;">Download and Install</button>
+            <i id="installstatuslabel" style="margin-top: 1rem; display: none;">testing123</i>
         </div>
-        <h3>Current Features</h3>
-        <ul>
-            <li>Task Tab - Contains a list view of all tasks and allows you to add tasks to your task lists</li>
-            <li>Planner Tab - Contains a weekly view of tasks that allows you to look forward and backward</li>
-            <li>Task Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
-            <li>Time Block Tab - Contains an alternating worktime/breaktime timer</li>
-            <li><div class="helplabel">💡</div> Tab - Recommends you certain tasks from your task list based on certain scenarios</li>
-            <li>Reminders Tab - Contains previous task reminders</li>
-            <li>Settings Tab - Allows you to customize the app such as</li>
-            <ul>
-                <li>Check-In Reminder frequency and scheduling</li>
-                <li>Customize tabs displayed</li>
-                <li>Themes</li>
-            </ul>
-        </ul>
+        <div class="container">
+            <h2 style="margin-top: 0px;">Task Sync</h2>
+            <span>
+                <input type="checkbox" name="syncenabled" id="syncenabled">
+                <label for="syncenabled">Sync your tasks to the cloud</label>
+            </span>
+            <div id="syncinfo" style="margin-bottom: 0.5rem; display: none;">
+                Checking your sync status...
+            </div>
+            <div id="syncsigninbox" style="display: none;">
+                <h3>Sign In</h3>
+                <form id="syncsigninform">
+                    Username: <input name="username" style="margin-top: 0.25rem;" required><br>
+                    Password: <input type="password" name="password" style="margin-top: 0.25rem;" required>
+                    <input type="submit" class="settingsbutton" style="margin-top: 0.5rem;">
+                </form>
+            </div>
+            <div id="syncbuttonbox" style="display: none;">
+                You're signed in!
+                <h3>Sync Options</h3>
+                <div style="display: flex;">
+                    <button id="pushnowbutton" class="settingsbutton" style="margin-right: 1rem;">Overwrite Server w/Local</button>
+                    <button id="pullfrombutton" class="settingsbutton">Overwrite Local w/Server</button>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 1rem">
+            <h2>Welcome to Task Manager</h2>
+            <i id="versionlabel">Version </i>
+            <h3>Presented to you by Team Forkbomb</h3>
+            <p>This app helps people with ADHD (or those prone to procrastination) get more done, thus alleviating anxiety and pressure. The program’s killer features include the “<element class="helplabel">💡</element>” tab that suggests tasks when you’re overwhelmed or having trouble getting started, a notification system that checks in on you and keeps you focused, and the task/project planner for breaking down bigger projects into smaller tasks.</p>
 
-        <h3>Future Features</h3>
-        <ul>
-            <li>"Events", tasks without progress checks</li>
-            <li>"Notes", tasks without deadlines</li>
-            <li>Task Tab</li>
+            <h3>Please share your feedback with us!!</h3>
+            <a href="https://forms.gle/f915V9unTXcpqAVg7" target="_blank" class="settingsbutton" style="margin-top: 0.25rem; text-decoration: none;">✏️ Feedback Form</a>
+            <button id="bugbutton" class="settingsbutton">🪲 Report a Bug</button>
+            
+            <h3>Current Features</h3>
+            <!-- <button id="changelogbutton" class="settingsbutton">Δ Changes from Last Release</button> -->
             <ul>
-                <li>Sort task view</li>
-                <li>Create subtasks in Task Tab</li>
-                <li>Option to separate tasklists based on category</li>
-                <li>Task Completion animation</li>
-                <li>Edit existing tasks</li>
-                <li>Add times to tasks</li>
+                <li>Task Tab - Contains a list view of all tasks and allows you to add tasks to your task lists</li>
+                <ul>
+                    <li>Sort task view</li>
+                    <li>Task Completion animation</li>
+                    <li>Edit existing tasks</li>
+                    <li>Add times to tasks</li>
+                </ul>
+                <li>Planner Tab - Contains a weekly view of tasks that allows you to look forward and backward</li>
+                <li>Project Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
+                <li>Time Block Tab - Contains an alternating worktime/breaktime timer</li>
+                <li><div class="helplabel">💡</div> Tab - Recommends you certain tasks from your task list based on certain scenarios</li>
+                <li>Reminders Tab - Contains previous task reminders</li>
+                <li>Settings Tab - Allows you to customize the app such as</li>
+                <ul>
+                    <li>Check-In Reminder frequency and scheduling</li>
+                    <li>Customize tabs displayed</li>
+                    <li>Themes</li>
+                </ul>
             </ul>
-            <li>Time Block Tab</li>
+
+            <!-- <h3>Future Features</h3>
             <ul>
-                <li>Alternate setup (total time, # of breaks)</li>
-                <li>Preset/saved time block settings</li>
-            </ul>
-            <li><div class="helplabel">💡</div> Tab</li>
-            <ul>
-                <li>Customize <div class="helplabel">💡</div> tab scenarios</li>
-                <li>View tasks through size/importance filters</li>
-            </ul>
-            <li>Notifications</li>
-            <ul>
-                <li>Option for multiple check-in reminder blocks</li>
-            </ul>
-        </ul>
+                <li>"Events", tasks without progress checks</li>
+                <li>"Notes", tasks without deadlines</li>
+                <li>Task Tab</li>
+                <ul>
+                    <li>Create subtasks in Task Tab</li>
+                    <li>Option to separate tasklists based on category</li>
+                </ul>
+                <li>Time Block Tab</li>
+                <ul>
+                    <li>Alternate setup (total time, # of breaks)</li>
+                    <li>Preset/saved time block settings</li>
+                </ul>
+                <li><div class="helplabel">💡</div> Tab</li>
+                <ul>
+                    <li>Customize <div class="helplabel">💡</div> tab scenarios</li>
+                    <li>View tasks through size/importance filters</li>
+                </ul>
+                <li>Notifications</li>
+                <ul>
+                    <li>Option for multiple check-in reminder blocks</li>
+                </ul>
+            </ul> -->
+        </div>
     </div>
 </div>

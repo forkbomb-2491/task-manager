@@ -2,20 +2,28 @@ import { TaskList } from "./tasklist";
 import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Planner } from "./planner";
-import { onSettingsLoad } from "./settings";
+import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
 import { saveTasks, loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, onTaskEvent, TaskEvent, TaskEventType } from "./task";
+import { Task, onTaskEvent, List, colorStrToEnum, TaskColor, onListEdit } from "./task";
 
 /**
  * The Task Manager.
  */
-
 export class TaskManager {
-    private _tasks: Task[] = [];
+    private _lists: List[] = [];
 
     get tasks(): Task[] {
-        return [...this._tasks];
+        var tasks: Task[] = []
+        this._lists.forEach(list => {
+            list.tasks.forEach(task => {
+                tasks.push(task)
+            })
+        })
+        return tasks;
+    }
+    get lists(): List[] {
+        return [...this._lists]
     }
 
     private taskList: TaskList;
@@ -25,6 +33,7 @@ export class TaskManager {
     private taskNotifier: TaskNotifier;
 
     private settingsLoaded: boolean = false;
+    // private syncEnabled: boolean = false;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -32,14 +41,30 @@ export class TaskManager {
         this.helpMgr = new HelpManager(this);
         this.taskPlanner = new TaskPlanner(this);
         this.taskNotifier = new TaskNotifier(this);
+        // this.algorithm = new TheAlgorithm(this)
 
-        // window.addEventListener(
-        //     "focus",
-        //     _ => this.refresh()
-        // );
-        onTaskEvent(_ => saveTasks(this._tasks).then());
+        onTaskEvent(_ => {
+            saveTasks(this._lists).then()
+            // if (this.syncEnabled) {
+            //     sendTasks(this._tasks).then()
+            // }
+        });
+
+        onListEdit(() => {
+            saveTasks(this._lists).then()
+            console.log("hi")
+        })
+
+        // document.getElementById("pushnowbutton")!.addEventListener("click", _ => this.sendTasks())
+        // document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
 
         onSettingsLoad(() => this.settingsLoaded = true);
+        // onTaskAdopt(e => {
+        //     const task = this.getTask(e.task.id)
+        //     const list = this.getList(e.listUUID!)
+        //     this.smartDueDate(task!, list!)
+        // })
+        // onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
     }
 
     async start() {
@@ -48,19 +73,10 @@ export class TaskManager {
     }
 
     private async loadTasks() {
-        this._tasks = (await loadTasks()).map(
-            o => new Task(
-                o.name,
-                o.size,
-                o.importance,
-                o.category,
-                o.due,
-                o.completed,
-                o.id,
-                o.subtasks,
-                null
-            )
-        );
+        var tasks = await loadTasks()
+        tasks.forEach(list => {
+            this._lists.push(List.fromRecord(list))
+        })
 
         this.render();
     }
@@ -76,7 +92,6 @@ export class TaskManager {
         } else {
             onSettingsLoad(() => this.taskNotifier.refresh());
         }
-
     }
 
     private flattenTaskList(currentList: Task[]): Task[] {
@@ -92,7 +107,7 @@ export class TaskManager {
     }
 
     getTasks() {
-        return this.flattenTaskList(this._tasks);
+        return this.flattenTaskList(this.tasks);
     }
 
     getTask(id: string): Task | null {
@@ -105,12 +120,46 @@ export class TaskManager {
 
         return null;
     }
-
-    addTask(task: Task) {
-        if (task.parent == null) {
-            this._tasks.push(task);
+    
+    getList(list: string): List | null {
+        for (let i = 0; i < this._lists.length; i++) {
+            const lis = this._lists[i];
+            if (lis.uuid == list || lis.name == list) {
+                return lis
+            }
         }
-        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record));
-        saveTasks(this._tasks).then();
+        return null
+    }
+
+    addTask(task: Task, list: string) {
+        var list_: List | undefined
+        for (let i = 0; i < this._lists.length; i++) {
+            const l = this._lists[i];
+            if (l.name == list || l.uuid == list) {
+                list_ = l
+                break
+            }
+        }
+        if (list_ == undefined) {
+            list_ = new List(list, colorStrToEnum(list))
+            this._lists.push(list_)
+        }
+
+        if (task.parent == null) {
+            list_!.addTask(task);
+        }
+        
+        saveTasks(this._lists).then();
+    }
+
+    newList(name: string, color: TaskColor) {
+        var list = new List(name, color)
+        this._lists.push(list)
+        saveTasks(this._lists).then()
+    }
+    
+    deleteList(list: List) {
+        this._lists = this._lists.filter(l => l.uuid != list.uuid)
+        saveTasks(this._lists).then()
     }
 }

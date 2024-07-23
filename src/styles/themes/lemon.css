@@ -27,6 +27,9 @@
     --help-button-text: #b08309;
     --help-button-hover: #fef05f;
     --help-button-text-hover: #b08309;
+    /* TaskPlanner page */
+    --tp-checkbox-project: #00d26a;
+    --tp-checkbox-nonproject: #785dc8;
 }
 
 .helpbutton.top:hover {

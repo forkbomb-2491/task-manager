@@ -1,6 +1,16 @@
 import { message, confirm } from '@tauri-apps/plugin-dialog'
 import { loadFile, saveFile } from './storage'
 import { Task } from './task'
+import { fetch } from '@tauri-apps/plugin-http'
+import { Schedule, sendNotification } from '@tauri-apps/plugin-notification'
+import { invoke } from '@tauri-apps/api/core'
+import { getSuggestedDueDateOffset, recordCompleteEvent, recordCreateEvent } from './algorithm'
+import { showSheet } from './utils'
+import { loadBugReport } from './feedback'
+import { sendNotif } from './utils'
+
+function theDump() { return document.getElementById("debugDump"); }
+function dumpIn(msg) { theDump().innerHTML += msg; }
 
 function setSliderMinsTo1() {
     document.getElementById("workduratslider").min = "1"
@@ -12,7 +22,6 @@ function setSliderMinsTo1() {
 
 function createOverdueTask() {
     window.taskMgr.addTask(new Task(
-        window.taskMgr,
         "overdue",
         4,
         4,
@@ -23,7 +32,6 @@ function createOverdueTask() {
 
 function createTaskTmrw() {
     window.taskMgr.addTask(new Task(
-        window.taskMgr,
         "tmrw",
         4,
         4,
@@ -41,16 +49,52 @@ async function pullv1Tasks() {
     }
 }
 
-var errorsBound = false
-function bindErrors() {
-    if (errorsBound) { return }
-    errorsBound = true
-    console.defaulterror = console.error
-    console.error = (data) => {
-        message(data, {"kind": "error"}).then()
-        console.defaulterror(data)
+async function pushv1Tasks() {
+    if (await confirm("Are you sure you want to overwrite tasks.json with tasks2.json?")) {
+        window.dispatchEvent(new Event("blocktasksave"))
+        var v1 = await loadFile("tasks2.json", [])
+        await saveFile(v1, "tasks.json")
+        message("Done. Restart the app to apply").then()
     }
-    console.error("hi")
+}
+
+async function clearDueEvents() {
+    if (await confirm("Are you sure you want to wipe all due events from the database?")) {
+        invoke("clear_due_events").then(
+            _ => dumpIn("Success.")
+        ).catch(
+            e => dumpIn(e)
+        )
+    }
+}
+
+async function pushTasksAsCreates() {
+    if (await confirm("Are you sure you want to push all existing tasks to the DB as create events?")) {
+        const tasks = window.taskMgr.getTasks()
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            await recordCreateEvent(task, task.list);
+        }
+        await message("Done.")
+    }
+}
+
+async function pushTasksAsCompletes() {
+    if (await confirm("Are you sure you want to push all completed existing tasks to the DB as completed events?")) {
+        const tasks = window.taskMgr.getTasks()
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            if (task.completed) { await recordCompleteEvent(task, task.category); }
+        }
+        await message("Done.")
+    }
+}
+
+function testNotif() {
+    sendNotif(
+        "urmom",
+        "lolololol gottem",
+    )
 }
 
 export function addDebugFuncs() {
@@ -58,4 +102,14 @@ export function addDebugFuncs() {
     window.createOverdueTask = createOverdueTask
     window.createTaskTmrw = createTaskTmrw
     window.pullv1Tasks = () => pullv1Tasks().then()
+    window.pushv1Tasks = () => pushv1Tasks().then()
+    window.testNotif = testNotif
+    window.tauriFetch = fetch
+    window.clearDueEvents = () => clearDueEvents().then()
+    window.pushTasksAsCreates = () => pushTasksAsCreates().then()
+    window.pushTasksAsCompletes = () => pushTasksAsCompletes().then()
+
+    window.getOffset = (s, i, l) => getSuggestedDueDateOffset(s, i, l).then()
+    window.showSheet = showSheet
+    window.bugReport = loadBugReport
 }

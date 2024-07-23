@@ -1,6 +1,7 @@
-import { sendNotification } from "@tauri-apps/plugin-notification";
+// import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getTimeString } from "./utils";
 import { getCurrent, ProgressBarStatus } from "@tauri-apps/api/window";
+import { sendNotif } from "./utils.ts";
 
 export class TimerHandler {
     private counter: number // times we swap isBreak. (# of work blocks * 2) -1
@@ -36,6 +37,10 @@ export class TimerHandler {
         document.getElementById("pomodorostatus")!.innerHTML = "Working..."
     }
 
+    /**
+     * For each tick, change display timer to show how much time is left
+     * if the timer hits 0, either move on to the next block or end timer
+     */
     private doTick() {
         this.intervalId = setTimeout(() => {
             this.intervalId = null
@@ -74,6 +79,10 @@ export class TimerHandler {
         }, 1000)
     }
 
+    /**
+     * Starts the timer for worktime
+     */
+
     private startWorkTimer() {
         document.getElementById("pomodorotimer")!.innerHTML = getTimeString(this.timer)
         document.getElementById("pomodorostatus")!.innerHTML = "Working..."
@@ -82,6 +91,9 @@ export class TimerHandler {
         this.doTick()
     }
     
+    /**
+     * Start the timer for breaktime
+     */
     private startBreakTimer() {
         document.getElementById("pomodorotimer")!.innerHTML = getTimeString(this.timer)
         document.getElementById("pomodorostatus")!.innerHTML = "Break!"
@@ -90,6 +102,9 @@ export class TimerHandler {
         this.doTick()
     }
 
+    /**
+     * Starts or unpauses pomodoro timer
+     */
     start() {
         if (this.isRunning) {
             return
@@ -97,6 +112,10 @@ export class TimerHandler {
 
         this.doTick()
     }
+
+    /**
+     * Stops and clears pomodoro timer
+     */
 
     stop() {
         if (!this.isRunning) {
@@ -107,6 +126,9 @@ export class TimerHandler {
         this.intervalId = null
     }
 
+    /**
+     * Pauses pomodoro timer
+     */
     pause() {
         if (this.isRunning) {
             this.stop()
@@ -115,24 +137,33 @@ export class TimerHandler {
         }
     }
 
+    /**
+     * Send a notif for the beginning of breaktime
+     */
     private sendBreakNotif() {
-        sendNotification({
-            title: "Work time over! Break time begins!",
-            body: "Good work! Do something nice during your break! Stretch or get a snack."
-        })
-    }
-    
-    private sendWorkNotif() {
-        sendNotification({
-            title: "Break time over! Work time begins!",
-            body: "Let's get to work!"
-        })
+        sendNotif(
+            "Work time over! Break time begins!",
+            "Good work! Do something nice during your break! Stretch or get a snack."
+        )
     }
 
+    /**
+     * Send a notif for the beginning of worktime
+     */
+    private sendWorkNotif() {
+        sendNotif(
+            "Break time over! Work time begins!",
+            "Let's get to work!"
+        )
+    }
+
+    /**
+     * Send a notif for the end of a pomodoro block
+     */
     private sendCompleteNotif() {
-        sendNotification({
-            title: "Congratulations",
-            body: "You completed this Pomodoro work session! Reward yourself!"
-        })
+        sendNotif(
+            "Congratulations",
+            "You completed this Pomodoro work session! Reward yourself!"
+        )
     }
 }

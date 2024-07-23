@@ -1,20 +1,11 @@
-import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
+// import { sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
 import { Task } from "./task";
 import { TaskManager } from "./taskmanager.ts";
 import { RemindersContainer } from "./reminders.ts";
 import { onSettingChange } from "./settings.ts";
+import { sendNotif } from "./utils.ts";
 
-export async function sendNotif(title: string, body: string) {
-    if (!(await isPermissionGranted())) {
-        await requestPermission()
-    }
-
-    sendNotification({
-        title: title,
-        body: body
-    })
-}
 
 export class CheckInHandler {
     private startTime: string
@@ -26,6 +17,7 @@ export class CheckInHandler {
 
     private interval: number // milliseconds
 
+    // List of notifcontent
     private notifcontent: Object = {
         "Just checking in!": "Are you finding it hard to be productive? Open Task Manager for some help!",
         "You're doing great!": "Need any suggestions for what to do?  Open Task Manager for some help!",
@@ -74,6 +66,10 @@ export class CheckInHandler {
         return Date.parse(dateString) // Local
     }
 
+    /**
+     * return if the current time is between start and end
+     * @returns boolean
+     */
     private checkIsInTimeRange(interval: number) {
         var now = Date.now() // Local
         if (!this.daysEnabled[new Date().getDay()]) {
@@ -99,17 +95,20 @@ export class CheckInHandler {
         this.scheduledReminder = setTimeout(() => { this.sendReminder() }, interval)
     }
 
+    /**
+     * Send check-in reminder
+     */
     private sendReminder() {
         this.scheduledReminder = null
         this.notifnum = Math.floor(Math.random()*Object.keys(this.notifcontent).length)
         
         const notifTitle = Object.keys(this.notifcontent)[this.notifnum];
         if (this.enabledInSettings) {
-            sendNotification({
-                title: notifTitle,
+            sendNotif(
+                notifTitle,
                 // @ts-ignore
-                body: this.notifcontent[notifTitle]
-            })
+                this.notifcontent[notifTitle]
+            )
         }
         if (this.checkIsInTimeRange(this.interval)) {
             this.scheduleReminder()
@@ -201,36 +200,45 @@ export class TaskNotifier {
 
         onSettingChange("remindersEnabled", e => {
             this.enabledInSettings = e.value
-            console.log(e.value)
         })
     }
 
+    /**
+     * Gets tasks that have been notified to the user
+     * Used for display in Reminders tab
+     * @returns Task[]
+     */
     getNotifTasks(){
         return [...this.notifList]
     }
-    
+
+    /**
+     * If a specific task has not already been notified, send notification for this task
+     */
     private sendTaskReminder(task: Task) {
         // var task = this.tasks[0]
+        var thistitle: string
+        var thisbody: string
 
-        // If you haven't already gotten a notif, send notif
+        // If you haven't already gotten a notif about this task, send notif
         if (!this.notifList.includes(task) && this.enabledInSettings){
+
             if (task.dueIn < 0) {
-                sendNotification({
-                    title: "Checking on " + task.name + "!",
-                    body: "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
-                })
+            // overdue tasks reminder style
+                thistitle = "Checking on " + task.name + "!",
+                thisbody = "Have you made any progress on " + task.name + "? It was due " + ((task.dueIn*(-1))-1) + " day(s) ago!"
             } else if (task.dueIn == 0) {
-                sendNotification({
-                    title: "Checking on " + task.name + "!",
-                    body: "Have you made any progress on " + task.name + "? It's due today!"
-                })
+            // today tasks reminder style
+                thistitle = "Checking on " + task.name + "!",
+                thisbody = "Have you made any progress on " + task.name + "? It's due today!"
             }
             else {
-                sendNotification({
-                    title: "Checking on " + task.name + "!",
-                    body: "Have you made any progress on " + task.name + "? You have " + task.dueIn + " day(s) until it's due!"
-                })
+            // future tasks reminder style
+                thistitle = "Checking on " + task.name + "!",
+                thisbody = "Have you made any progress on " + task.name + "? You have " + task.dueIn + " day(s) until it's due!"
             }
+
+            sendNotif(thistitle, thisbody)
             this.notifList.push(task)
 
             this.remindersContainer.render()
@@ -239,25 +247,10 @@ export class TaskNotifier {
         // this.scheduleReminder()
     }
 
+    /**
+     * Schedules all relevant tasks: overdue, due today, and up next tasks
+     */
     private scheduleReminder() {
-        // // this.refresh()
-        // var interval: number
-
-        // if (this.tasks.length == 0) {
-        //     return
-        // }
-        // var task = this.tasks[0]
-        
-        // if (task.dueIn-1 == 0) {
-        //     interval = (task.dueIn-0.5)*86_400_000
-        // }
-        // else {
-        //     interval = (task.dueIn-1)*86_400_000
-        // }
-
-        // console.log(interval)
-        // this.scheduledReminder = setTimeout(() => { this.sendTaskReminder() }, interval)
-        // this.sendTaskReminder()
         if (this.overdue.length > 0) {
             this.overdue.forEach(task => {
                 this.sendTaskReminder(task)
@@ -277,49 +270,60 @@ export class TaskNotifier {
         }
     }
 
+    /**
+     * Refresh notifications:
+     * clear scheduled notifications, pull and sort tasklist, and schedule new task notifications
+     */
     public refresh() {
-        //     cancel schedueled notification
+        //  cancel schedueled notification
         if (this.scheduledReminder != null) {
             clearTimeout(this.scheduledReminder)
             this.scheduledReminder = null
         }
-        //  pulls (make sure contains no overdue tasks) and resorts notif list
+        //  pulls task list without completed or deleted tasks
         this.tasks = this.taskMgr.getTasks().filter(
             t => {
                 return !t.completed && !t.deleted
             }
         )
         this.remindersContainer.render()
+        // re-sorts notif list in order of due date
         this.tasks.sort(
             (t1, t2) => {
                 return t1.due.valueOf() - t2.due.valueOf()
             }
         )
 
+        // creates sublist of overdue tasks
         this.overdue = this.tasks.filter(
             t=> {
                 return (t.dueIn < 0)
             }
         )
 
+        // creates sublist of tasks due today
         this.today = this.tasks.filter(
             t=> {
                 return (t.dueIn == 0)
             }
         )
 
+        // creates sublist of tasks due the next day tasks are due
         this.nextup = this.tasks.filter(
             t=> {
                 return (t.dueIn > 1)
             }
         )
-
         this.nextup = this.nextup.filter(
+            // t=>{
+            //     return(t.due == this.nextup[0].due)
+            // } // NextUp
             t=>{
-                return(t.due == this.nextup[0].due)
+                // @ts-ignore
+                return(t.dueIn <= document.getElementById("taskreminderbuffer")!.value)
             }
         )
-
+        // Schedule reminders for: overdue, today and nextup tasks
         this.scheduleReminder()
 
     }

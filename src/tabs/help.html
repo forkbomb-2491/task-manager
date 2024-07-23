@@ -3,17 +3,27 @@
         --primary-color: purple;
     }
 </style> -->
-<h1 style="margin-top: 0;" id="helptabheader">Help</h1>
+
+<div style="display: flex; justify-content: space-between">
+    <h1 style="margin-top: 0;" id="helptabheader">Help</h1>
+    <div>
+        <label for="helptoggleoverdue">Show Overdue Tasks</label>
+        <input type="checkbox" id="helptoggleoverdue" name="helptoggleoverdue" value=1 checked="true">
+    </div>
+    <!-- <button class="settingsbutton" id="helptoggleoverdue" style="font-size: small;">Switch Orientation</button> -->
+</div>
 <div style="display: flex; justify-content: space-between;">
-    <div class="helpcontainer">
+    <div class="helpcontainer" style="min-width: 24ch; max-width: 24ch;">
         <button class="helpbutton top" name="overwhelmed">Feeling overwhelmed?</button>
         <button class="helpbutton top" name="cantstart">Can't Get Started?</button>
         <button class="helpbutton top" name="sidetracked">Getting Sidetracked?</button>
         <h1 style="min-height: 1rem;"> </h1>
-        <button class="helpbutton bottom" name="frog">Eat That Frog!</button>
-        <!-- <button class="helpbutton bottom" name="bigupcoming">Get big upcoming tasks</button>
+        <!-- <button class="helpbutton bottom" name="frog">Eat That Frog!</button> -->
+        <button class="helpbutton bottom" name="bigupcoming">Get big upcoming tasks</button>
         <button class="helpbutton bottom" name="smallupcoming">Get small upcoming tasks</button>
-        <button class="helpbutton bottom" name="bigdistant">Get big distant tasks</button> -->
+        <button class="helpbutton bottom" name="bigdistant">Get big distant tasks</button>
+        <button class="helpbutton bottom" name="filterview">Get tasks by filters</button>
+
     </div>
     
     <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
@@ -22,22 +32,22 @@
             <p>Try breaking larger tasks down to smaller, more bite-sized tasks.</p>
             <p>Task planner can help with that!</p>
             <p>Here are some of your smaller upcoming tasks!</p>
-            <!-- <p>Formula: (4 - size) * 4 + (7 - days left) * 2 + importance</p> -->
+            <p>Formula: (4 - size) * 4 + (7 - days left) * 2 + importance</p>
             <div id="overwhelmedtasks"></div>
         </div>
         <div class="helpcontent" name="cantstart">
             <h2>Can't Get Started?</h2>
             <p>Here are some of your tasks you can get started on to get in the groove.</p>
-            <!-- <p>Formula: (4 - size) * 4 + (7 - days left) * 2 + (4 - importance)</p> -->
+            <p>Formula: (4 - size) * 4 + (7 - days left) * 2 + (4 - importance)</p>
             <div id="cantstarttasks"></div>
         </div>
         <div class="helpcontent" name="sidetracked">
             <h2>Getting Sidetracked?</h2>
             <p>Remember that these things are coming up super soon!</p>
-            <!-- <p>Formula: (7 - days left) * 3 + (importance * 4) + (size * 3) </p> -->
+            <p>Formula: (7 - days left) * 3 + (importance * 4) + (size * 3) </p>
             <div id="sidetrackedtasks"></div>
         </div>
-        <div class="helpcontent" name="frog">
+        <!-- <div class="helpcontent" name="frog">
             <h2>Eat That Frog!</h2>
             <ul>
                 <li><i>Identify Your Frog</i> : figure out your most difficult tasks to work on.</li>
@@ -46,15 +56,75 @@
             </ul>
             Get the difficult, big and important tasks out of the way.
             Have a look at your Task List for help.
-        </div>
+        </div> -->
         <div class="helpcontent" name="bigupcoming">
             <h2>Big Upcoming</h2>
+            <div id="bigupcomingview"></div>
         </div>
         <div class="helpcontent" name="smallupcoming">
             <h2>Small Upcoming</h2>
+            <div id="smallupcomingview"></div>
         </div>
         <div class="helpcontent" name="bigdistant">
             <h2>Big Distant</h2>
+            <div id="bigdistantview"></div>
+        </div>
+        <div class="helpcontent" name="filterview">
+            <h2>Get tasks by filters</h2>
+            <form name="filterviewform">
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="sortbutton" style="min-width: 25%;">Color</div>
+                    <div class="sortbutton" style="min-width: 35%;">Size</div>
+                    <div class="sortbutton" style="min-width: 25%;">Importance</div>
+                    <div class="sortbutton" style="min-width: 30%;">Due</div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <select style="min-width: 13%" id = "colorfilterview" name = "catinput" required>
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="default">Default</option>
+                        <option name="red">Red</option>
+                        <option name="orange">Orange</option>
+                        <option name="yellow">Yellow</option>
+                        <option name="green">Green</option>
+                        <option name="blue">Blue</option>
+                        <option name="purple">Purple</option>
+                    </select>
+                    <select style="width: 12%;" id = "sizefilterview" name = "sizeinput" required style="font-size: small">
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="0">Tiny</option>
+                        <option name="1">Small</option>
+                        <option name="2">Medium</option>
+                        <option name="3">Big</option>
+                        <option name="4">Huge</option>
+                    </select>
+                    <select style="width: 15%;" id = "sizefilterview2" name = "sizeinput" required style="font-size: small">
+                        <option name="0">and up</option>
+                        <option name="1" selected = true>only</option>
+                        <option name="2">and under</option>
+                    </select>
+                    <select style="width: 20%;" id = "importancefilterview" name = "importanceinput" required style="font-size: small">
+                        <option name="default" selected = true>No Filter</option>
+                        <option name="0">Trivial</option>
+                        <option name="1">Unimportant</option>
+                        <option name="2">Average</option>
+                        <option name="3">Important</option>
+                        <option name="4">Vital</option>
+                    </select>
+                    <select style="width: 15%;" id = "importancefilterview2" name = "sizeinput" required style="font-size: small">
+                        <option name="0">and up</option>
+                        <option name="1" selected = true>only</option>
+                        <option name="2">and under</option>
+                    </select>
+                    <input id="deadlinefilterview" type="date" required>
+                    <select style="width: 15%;" id = "deadlinefilterview2" name = "sizeinput" style="font-size: small">
+                        <option name="0">or before</option>
+                        <option name="1" selected = true>exactly</option>
+                        <option name="2">or after</option>
+                    </select>
+                </div>    
+            </form>
+            <div id="filterview"></div>
+
         </div>
     </div>
 </div>

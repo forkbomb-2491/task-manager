@@ -1,3 +1,6 @@
+import { getCurrent } from "@tauri-apps/api/window"
+import { sendNotification } from "@tauri-apps/plugin-notification"
+
 /**
  * Registers the given closure/function as an event listener for 
  * "DOMContentLoaded", thus running it only once all content has loaded.
@@ -12,6 +15,21 @@ export function onLoad(closure: () => void) {
 export function onTasksChanged(closure: () => void) {
     window.addEventListener(
         "taskchanged", closure
+    )
+}
+
+export function sendNotif(title: string, body: string) {
+    getCurrent().isFocused().then(
+        isFocused => {
+            if (isFocused) {
+                inAppNotif(title, body)
+            } else {
+                sendNotification({
+                    title: title,
+                    body: body
+                })
+            }
+        }
     )
 }
 
@@ -91,7 +109,11 @@ window.addEventListener(
     "mousemove",
     e => {
         if (tooltip.style.display == "none" || ttMoveOnCooldown) return
-        tooltip.style.left = `${e.x + 10}px`
+        if (e.x < window.innerWidth/2) {
+            tooltip.style.right = `${e.x + 10}px`
+        } else {
+            tooltip.style.right = `${10 + (window.innerWidth - e.x)}px`
+        }
         tooltip.style.top = `${e.y + 10}px`
     }
 )
@@ -103,6 +125,76 @@ export function showTooltip(text: string) {
 
 export function hideTooltip() {
     tooltip.style.display = "none"
+}
+
+export function showTooltipOnHover(element: HTMLElement, text: string) {
+    element.addEventListener(
+        "mouseenter",
+        () => showTooltip(text)
+    )
+
+    element.addEventListener(
+        "mouseleave",
+        () => hideTooltip()
+    )
+}
+
+export function toHTMLDateTimeString(date: Date) {
+    var ret = String(date.getFullYear())
+    ret += "-" + padWithLeftZeroes(String(date.getMonth() + 1), 2)
+    ret += "-" + padWithLeftZeroes(String(date.getDate()), 2)
+    ret += " " + padWithLeftZeroes(String(date.getHours()), 2)
+    ret += ":" + padWithLeftZeroes(String(date.getMinutes()), 2)
+    return ret
+}
+
+export function registerShowHideButton(buttonId: string, targetId: string, display: string = "block") {
+    const button = document.getElementById(buttonId)!
+    const target = document.getElementById(targetId)!
+    button.className = "showhidebutton"
+    button.addEventListener(
+        "click",
+        _ => {
+            if (button.className.includes("folded")) {
+                button.className = "showhidebutton"
+                target.style.display = display
+            } else {
+                button.className = "showhidebutton folded"
+                target.style.display = "none"
+            }
+        }
+    )
+}
+
+export function showSheet(heading: string, contentHTML: string) {
+    document.getElementById("sheetheading")!.innerText = heading
+    document.getElementById("sheetcontent")!.innerHTML = contentHTML
+    const sheet = document.getElementById("sheet")!
+    sheet.style.animation = "sheetfade 150ms reverse"
+    sheet.style.display = "initial"
+    window.setTimeout(() => {
+        sheet.style.animation = "none"
+    }, 140)
+}
+
+export function inAppNotif(title: string, body: string, timeout: number = 3000) {
+    var html = `
+    <div class="container">
+        <b style="width: 100%; text-align: center">${title}</b>
+        ${body}
+    </div>`
+    const notif = document.createElement("div")
+    notif.className = "notif falling"
+    notif.innerHTML = html
+    document.body.appendChild(notif)
+    setTimeout(() => {
+        notif.className = "notif retracting"
+        setTimeout(() => notif.remove(), 900)
+    }, timeout)
+}
+
+export function getElement(id: string) {
+    return document.getElementById(id)!
 }
 
 /**

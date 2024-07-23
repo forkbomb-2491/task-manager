@@ -27,4 +27,11 @@
     --help-button-text: white;
     --help-button-hover: white;
     --help-button-text-hover: black;
+    /* TaskPlanner page */
+    --tp-checkbox-project: lightgray;
+    --tp-checkbox-nonproject: dimgray;
+}
+
+.tpdate.hastask {
+    background-color: lightgray;
 }

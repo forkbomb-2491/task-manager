@@ -1,6 +1,6 @@
 <h1 style="margin-top: 0;">Debug</h1>
 
-<input class="settingsbutton" id="notiftest"  value="Notification Test">
+<button class="settingsbutton" id="notiftest" onclick="testNotif()">Notification Test</button>
 
 <button class="settingsbutton" onclick="setSliderMinsTo1()">Set slider mins 1</button>
 
@@ -12,6 +12,19 @@
 
 <div style="display: flex;"> 
     <button class="settingsbutton" onclick="pullv1Tasks()">Pull v1 Tasks</button>
+    <button class="settingsbutton" onclick="pushv1Tasks()">Push v1 Tasks</button>
     <button class="settingsbutton" onclick='window.dispatchEvent(new Event("blocktasksave"))'>Block Tasks Saving</button>
 <!-- <button class="settingsbutton" onclick="bindErrors()">Bind console errors</button> -->
 </div>
+
+<div style="display: flex;"> 
+    <button class="settingsbutton" onclick="pushTasksAsCreates()">Push tasks as CreateEvs</button>
+    <button class="settingsbutton" onclick="pushTasksAsCompletes()">Push tasks as Completes</button>
+    <button class="settingsbutton" onclick="clearDueEvents()">Reset due events in DB</button>
+</div>
+
+<div style="display: flex;"> 
+    <button class="settingsbutton" onclick="showSheet('Testing123', 'urmom lolololol gottem')">TEst Sheet</button>
+</div>
+
+<div id="debugDump"></div>

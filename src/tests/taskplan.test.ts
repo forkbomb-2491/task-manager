@@ -13,29 +13,31 @@ beforeEach(() => {
     taskMgr = new TaskManager()
     // @ts-ignore
     taskplan = taskMgr.taskPlanner
+    // @ts-ignore
+    taskMgr.render()
 })
 
 describe("TaskPlan Task Changes", () => {
     it("Adding Task Adds to TaskPlan List", () => {
-        const task = new Task("bigenuff", 4, 4, "def", new Date())
+        const task = new Task("bigenuff", 4, 4, new Date())
         var taskSelect = document.getElementById("tptask")!
         assert.equal(taskSelect.children.length, 0)
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         assert.equal(taskSelect.children.length, 1)
     })
     
     it("Deleting Task Removes from Selector", () => {
-        const task = new Task("bigenuff", 4, 4, "def", new Date())
+        const task = new Task("bigenuff", 4, 4, new Date())
         var taskSelect = document.getElementById("tptask")!
-        taskMgr.addTask(task)
+        taskMgr.addTask(task, "Default")
         assert.equal(taskSelect.children.length, 1)
         task.delete()
         assert.equal(taskSelect.children.length, 0)
     })
     
     it("Deleting Task Refreshes", () => {
-        const task = new Task("bigenuff", 4, 4, "def", new Date())
-        taskMgr.addTask(task)
+        const task = new Task("bigenuff", 4, 4, new Date())
+        taskMgr.addTask(task, "Default")
         const spy = vi.spyOn(taskplan, "refresh")
         task.delete()
         expect(spy).toHaveBeenCalled()

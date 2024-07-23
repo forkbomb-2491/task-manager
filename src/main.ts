@@ -1,5 +1,4 @@
 import { loadTabs } from './storage'
-import { Task } from './task'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
@@ -8,12 +7,18 @@ import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } f
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
+import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
+import { invoke } from '@tauri-apps/api/core';
 import { check } from '@tauri-apps/plugin-updater';
-import { ask, message } from '@tauri-apps/plugin-dialog';
+import { ask } from '@tauri-apps/plugin-dialog';
+import { type } from '@tauri-apps/plugin-os';
 
 const DEBUG_TAB = false
 if (DEBUG_TAB) {
     addDebugFuncs()
+    // @ts-ignore
+    window.invoke = invoke
+    // @ts-ignore
     document.getElementById("debugtabbutton")!.style.display = "block"
 }
 
@@ -53,13 +58,14 @@ class App {
     async main() {
         this.taskMgr.start().then()
 
-        doUpdate().then(() => console.log("upodate called"))
+        doUpdate().then()
 
+        invoke("init_algo").then()
+
+        showTooltipOnHover(document.getElementById("sizetit")!, "Size: Based on how much time or work will go into a task.")
+        showTooltipOnHover(document.getElementById("importancetit")!, "Importance: Based on how important it is that the task is completed.")
+    
         // Register callbacks
-        document.getElementById("taskcreateform")!.addEventListener(
-            "submit",
-            (e) => { this.createTaskCallback(e) }
-        )
         
         document.getElementById("switchplanner")!.addEventListener(
             "click",
@@ -79,6 +85,18 @@ class App {
             _ => this.pomoStop(true)
         )
 
+        document.getElementById("dismisssheet")!.addEventListener(
+            "click",
+            _ => {
+                const sheet = document.getElementById("sheet")!;
+                sheet.style.animation = "sheetfade 160ms"
+                window.setTimeout(() => {
+                    sheet.style.display = "none"
+                    sheet.style.animation = "none"
+                }, 140)
+            }
+        )
+
         document.getElementById("pomostop")!.addEventListener(
             "click",
             _ => {
@@ -92,10 +110,11 @@ class App {
             }
         )
 
+        const now = new Date()
         // @ts-ignore; Populate fields' default values
-        document.getElementById("deadlineinput")!.valueAsDate = new Date()
+        document.getElementById("deadlineinput")!.value = toHTMLDateTimeString(now)
         // @ts-ignore; Populate fields' default values
-        document.getElementById("tpsubtaskdateinput")!.valueAsDate = new Date()
+        document.getElementById("tpsubtaskdateinput")!.value = toHTMLDateTimeString(now)
         
         onSettingsLoad(() => {
             this.changeTab(this.settings.lastTab)
@@ -119,6 +138,17 @@ class App {
             e => this.updateTabVisibility(e.value)
         )
 
+        window.dispatchEvent(new SettingsEvent(0, "lastTheme", "light"))
+
+        if (type() == "macos") {
+            const newStyle = document.createElement("style")
+            newStyle.innerHTML = `.taskcheckbox p {
+                -webkit-margin-top-collapse: collapse;
+                margin-top: -0.15ch;
+            }`
+            document.head.appendChild(newStyle)
+        }
+
         this.settings.load()
 
         document.body.style.display = "block"
@@ -128,27 +158,6 @@ class App {
             // @ts-ignore
             window.taskMgr = this.taskMgr
         }
-    }
-
-    private createTaskCallback(event: SubmitEvent) {
-        event.preventDefault()
-        
-        // @ts-ignore; Necessary to make this whole darn thing work
-        var form: HTMLFormElement = event.target
-        var title = form.titleinput.value
-        var cat = form.catinput.value
-        var date = form.deadlineinput.valueAsDate
-        var size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
-        var importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
-
-        var box = document.getElementById("taskcreatebox")!
-        box.style.scale = "1.03"
-        window.setTimeout(() => box.style.scale = "1.0", 100)
-        form.reset()
-        form.deadlineinput.valueAsDate = new Date()
-        
-        var task = new Task(title, size, importance, cat, date, false)
-        this.taskMgr.addTask(task)
     }
 
     private switchPlannerCallback() {

@@ -18,11 +18,13 @@ export function changeHelpStuff(target: string) {
 
 export class HelpManager {
     private taskMgr: TaskManager
-
     private panes: HelpPane[]
+    private _overdue: boolean
 
     constructor(taskMgr: TaskManager) {
         this.taskMgr = taskMgr
+        // @ts-ignore
+        this._overdue = !document.getElementById("helptoggleoverdue")!.checked
         this.panes = [
             new HelpPane(
                 this.taskMgr,
@@ -66,12 +68,66 @@ export class HelpManager {
                     return true
                 },
             ),
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("bigupcomingview")!,
+                t => {
+                    return t.size/2 + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size >= 2 && t.importance >= 2 
+                },
+            ),
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("smallupcomingview")!,
+                t => {
+                    return t.size + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size <= 2 && t.importance >= 2 
+                },
+            ),
+            new HelpPane(
+                this.taskMgr,
+                document.getElementById("bigdistantview")!,
+                t => {
+                    return t.size + t.importance - t.dueIn
+                },
+                (t: Task) => {
+                    return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
+                },
+            ),
+            // Filterview
+            // new HelpPane(
+            //     this.taskMgr,
+            //     document.getElementById("filterview")!,
+            //     t => {
+            //         return t.size + t.importance - t.dueIn
+            //     },
+            //     (t: Task) => {
+            //         return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
+            //     },
+            // ),
+            
         ]
         onWindowFocused(() => this.render())
+        // Listener for checkbox
+        document.getElementById("helptoggleoverdue")!.addEventListener(
+            "change",
+            _ => {
+                // @ts-ignore
+                this.overdue = !document.getElementById("helptoggleoverdue")!.checked
+                console.log(this._overdue);
+                this.render()
+            }
+        )
+        
     }
 
     render(): void {
         this.panes.forEach(pane => {
+            pane.overdue = this._overdue         
             pane.render()
         });
     }
@@ -83,6 +139,18 @@ export class HelpManager {
     addTask(_: Task): void {
         this.render()
     }
+
+    
+    public get overdue() : boolean {
+        return this._overdue
+    }
+
+    
+    public set overdue(v : boolean) {
+        this._overdue = v;
+    }
+    
+    
 }
 
 class HelpPane {
@@ -92,6 +160,7 @@ class HelpPane {
     private theAlgorithm: (t: Task) => number
     private taskFilter: (t: Task) => boolean
     private _recListLength: number
+    private _overdue: boolean = true
 
     get recListLength(): number {
         return this._recListLength
@@ -125,10 +194,30 @@ class HelpPane {
         tasks = tasks.sort((t1, t2) => {
             return this.theAlgorithm(t2) - this.theAlgorithm(t1)
         })
+        // Filter Overdo Tasks Button
+        if (this.overdue) {
+        tasks = tasks.filter(
+            t=> {
+                return (t.dueIn > 0)
+            }
+        )
+    }
         // return tasks.slice(0, nTasks)
         return tasks.slice(0, this._recListLength)
 
     }
+
+    
+    public get overdue() : boolean {
+        return this._overdue
+    }
+    
+    
+    public set overdue(v : boolean) {
+        this._overdue = v;
+    }
+    
+    
 
     render(): void {
         this.element.innerHTML = ""

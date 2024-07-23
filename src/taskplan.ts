@@ -1,13 +1,14 @@
-import { onTaskAdd, onTaskDelete, onTaskEvent } from './task';
+import { List, onTaskAdd, onTaskDelete, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
-import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused } from "./utils";
-
+import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused, toHTMLDateTimeString } from "./utils";
+import { smartDueDate } from './algorithm';
 
 export class TaskPlanner {
     private calStartDate: Date = new Date()
     private dates: TaskPlannerDate[] = []
 
+    private selectedList: List | null = null
     private selectedTask: Task | null = null
 
     private _fullCal: boolean = false
@@ -85,7 +86,20 @@ export class TaskPlanner {
                 )
                 this.selectTask(task!)
             }
-        )
+        )        
+
+        var taskSelect = document.getElementById("tplistfilter")!
+        taskSelect.addEventListener(
+            "change",
+            e => {
+                var list = this.taskMgr.getList(
+                    // @ts-ignore
+                    getFirstSelected(e.currentTarget)!.getAttribute("name")!
+                )
+                this.selectedList = list
+                this.updateFilter()
+            }
+        )        
     }
 
     private isStacked: boolean = false
@@ -94,7 +108,7 @@ export class TaskPlanner {
         const left = document.getElementById("tpleftside")!
         const container = document.getElementById("taskplan")!
 
-        if (this.isStacked && width > 1600) {
+        if (this.isStacked && width > 1500) {
             container.style.flexDirection = "row"
             right.style.width = "80%"
             right.style.marginLeft = "2rem"
@@ -102,7 +116,7 @@ export class TaskPlanner {
 
             left.style.width = "30%"
             this.isStacked = false
-        } else if (!this.isStacked && width < 1600) {
+        } else if (!this.isStacked && width < 1500) {
             container.style.flexDirection = "column"
             right.style.width = ""
             right.style.marginLeft = ""
@@ -135,9 +149,34 @@ export class TaskPlanner {
             return e.selected
         })[0]
         var importance = Number(importanceOption.getAttribute("name"))
+        
+        var listSelect = document.getElementById("tplistfilter")!
+        listSelect.innerHTML = ""
+        var lists = this.taskMgr.lists
+        
+        for (let i = 0; i < lists.length; i++) {
+            const list = lists[i]
+            var element = document.createElement("option")
+            element.setAttribute("name", list.uuid)
+            element.innerHTML = list.name
+            
+            if (this.selectedList != null && list.uuid == this.selectedList.uuid) {
+                element.selected = true
+            }
+            listSelect.appendChild(element)
+        }
+        
+        var nolist = document.createElement("option")
+        nolist.setAttribute("name", "none")
+        nolist.innerHTML = "All Tasks"
+        listSelect.appendChild(nolist)
 
+        if (this.selectedList == null) {
+            nolist.selected = true
+        }
+   
         this.filter = t => {
-            return t.importance >= importance && t.size >= size
+            return t.importance >= importance && t.size >= size && (this.selectedList != null ? t.list == this.selectedList.uuid : true)
         }
 
         this.updateSelector()
@@ -181,25 +220,24 @@ export class TaskPlanner {
         // @ts-ignore; Necessary to make this whole darn thing work
         var form: HTMLFormElement = event.target
         var title = form.titleinput.value
-        var date = form.deadlineinput.valueAsDate
-        console.log(form.sizeinput)
+        var date = new Date(form.deadlineinput.valueAsNumber + (new Date().getTimezoneOffset() * 60_000))
         var size = getFirstSelected(form.sizeinput)!.getAttribute("name")!
 
         var box = document.getElementById("tpsubtaskcreatebox")!
         box.style.scale = "1.03"
         window.setTimeout(() => box.style.scale = "1.0", 100)
         form.reset()
-        form.deadlineinput.valueAsDate = new Date()
+        form.deadlineinput.value = toHTMLDateTimeString(new Date())
     
         var task = new Task(
             title, 
             size, // Size presumed to be tiny
             this.selectedTask.importance, // Inherit importance
-            this.selectedTask.category, // Inherit category
+            // this.selectedTask._category, // Inherit category
             date, 
             false
         )
-        this.selectedTask.adoptChild(task)
+        smartDueDate(task, this.selectedTask!.list).then(_ => this.selectedTask!.adoptChild(task))
     }
 
     private selectTask(task: Task) {
@@ -211,13 +249,10 @@ export class TaskPlanner {
 
         var subtaskList = document.getElementById("tpsubtasklist")!
         subtaskList.innerHTML = ""
-        for (let i = 0; i < task.children.length; i++) {
-            const childId = task.children[i];
-            const subtask = this.taskMgr.getTask(childId)
-            if (subtask != null) {
-                subtaskList.appendChild(subtask.getTaskPlannerListElement())
-            }
-        }
+
+        task.subtasks.forEach(task => {
+            subtaskList.appendChild(task.getTaskPlannerListElement())
+        })
 
         var tpmaintask = document.getElementById("tpmaintaskname")
         tpmaintask!.innerHTML = task.name
@@ -370,12 +405,26 @@ class TaskPlannerDate {
     private addCheckboxes() {
         for (let i = 0; i < this.hoverElement.children.length; i++) {
             const st = this.hoverElement.children[i]
-            this.element.innerHTML += `<input type="checkbox" ${st.className.includes('completed') ? "checked": ""}>`;
+            this.element.innerHTML += `
+                <label class="checkcontainer">
+                    <input type="checkbox" ${st.className.includes('completed') ? "checked": ""} disabled>
+                    <span class="taskcheckbox project">
+                        <p>✔</p>
+                    </span>
+                </label>
+                `;
         }
         if (this.taskPlan.fullCal) {
             this.element.innerHTML += "<br>";
             this.getFullCalTasks().forEach(t => {
-                this.element.innerHTML += `<input type="radio" ${t.completed ? "checked": ""} disabled>`;
+                this.element.innerHTML += `
+                <label class="checkcontainer">
+                    <input type="checkbox" ${t.completed ? "checked": ""} disabled>
+                    <span class="taskcheckbox nonproject">
+                        <p>✔</p>
+                    </span>
+                </label>
+                `;
             })
         }
     }
@@ -394,25 +443,17 @@ class TaskPlannerDate {
         this.hoverElement.innerHTML = ""
 
         if (this._selectedTask != null) {
-            var childIds = this._selectedTask.children.filter(
-                t => {
-                    const task = this.taskMgr.getTask(t)
+            var displayedTasks = this._selectedTask.subtasks.filter(
+                task => {
                     return task != null && isSameDay(this.date, task.due) && !task.deleted
                 }
             )
 
-            if (isSameDay(this._date, this._selectedTask.due)) childIds.push(this._selectedTask.id)
+            if (isSameDay(this._date, this._selectedTask.due)) displayedTasks.push(this._selectedTask)
 
-            var children = childIds.map(
-                t => {
-                    return this.taskMgr.getTask(t)!
-                }
-            )
-
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
+            displayedTasks.forEach(child => {
                 this.hoverElement.appendChild(child.getPlannerElement())
-            }
+            })
         }
 
         this.refresh()
@@ -433,9 +474,13 @@ class TaskPlannerDate {
             return
         }
         if (this.hoverElement.children.length > 0 || this.getFullCalTasks().length > 0) {
-            this.element.className = "tpdate hastask"
+            this.element.className = "tpdate"
             this.element.innerHTML = this.label! + "<br>"
             this.addCheckboxes()
+        if (this.hoverElement.children.length > 0) {
+            this.element.className = "tpdate hastask"
+        }
+        
         } else {
             this.element.className = "tpdate"
             this.element.innerHTML = this.label!
