@@ -655,7 +655,7 @@ export class Task {
                 <div style="min-width: 10ch; max-width: 10ch;">
                     ${TaskSizes[this._size]}
                 </div>
-                <div style="min-width: 13ch; min-width: 13ch;">
+                <div style="min-width: 13ch; max-width: 13ch;">
                     ${TaskImportances[this._importance]}
                 </div>
                 <div style="min-width: 17ch; max-width: 17ch;">

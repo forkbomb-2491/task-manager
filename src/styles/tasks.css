@@ -81,6 +81,9 @@
 
 .deletetask {
     width: 2rem;
+    min-width: 2rem;
+    max-width: 2rem;
+
     padding: 0;
 }
 

@@ -7,10 +7,10 @@ import { Settings, SettingsEvent, SettingsView, TabsActive, onSettingChange, onS
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
-// import { check } from '@tauri-apps/plugin-updater';
-// import { ask } from '@tauri-apps/plugin-dialog';
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
+import { check } from '@tauri-apps/plugin-updater';
+import { ask } from '@tauri-apps/plugin-dialog';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
@@ -25,16 +25,16 @@ var app: App
 
 await loadTabs()
 
-// async function doUpdate() {
-//     var update = await check()
-//     if (update != null) {
-//         if (await ask("Update found! Install it?")) {
-//             await update.downloadAndInstall(e => {
-//                 console.log(e)
-//             })
-//         }
-//     }
-// }
+async function doUpdate() {
+    var update = await check()
+    if (update != null) {
+        if (await ask("Update found! Install it?")) {
+            await update.downloadAndInstall(e => {
+                console.log(e)
+            })
+        }
+    }
+}
 
 class App {
     // Frontend
@@ -55,6 +55,8 @@ class App {
     
     async main() {
         this.taskMgr.start().then()
+
+        doUpdate().then()
 
         invoke("init_algo").then()
 
