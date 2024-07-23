@@ -11,6 +11,7 @@ import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 import { check } from '@tauri-apps/plugin-updater';
 import { ask } from '@tauri-apps/plugin-dialog';
+import { type } from '@tauri-apps/plugin-os';
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {
@@ -137,6 +138,15 @@ class App {
         )
 
         window.dispatchEvent(new SettingsEvent(0, "lastTheme", "light"))
+
+        if (type() == "macos") {
+            const newStyle = document.createElement("style")
+            newStyle.innerHTML = `.taskcheckbox p {
+                -webkit-margin-top-collapse: collapse;
+                margin-top: -0.15ch;
+            }`
+            document.head.appendChild(newStyle)
+        }
 
         this.settings.load()
 
