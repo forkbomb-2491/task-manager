@@ -435,6 +435,7 @@ export class SettingsView {
 
     private async syncSettingsChange(newStatus: boolean) {
         if (newStatus) {
+            getElement("synccontainer").style.display = "block" // <- This is to hide prerelease feature; SHOULD NOT BE PERMANENT
             getElement("syncinfo").innerHTML = "Checking your sync status..."
             getElement("syncinfo").style.display = "block"
             var isAuthed = await isAuthenticated()
@@ -446,6 +447,7 @@ export class SettingsView {
             }
             this.syncSignedIn()
         } else {
+            getElement("synccontainer").style.display = "none" // <- This is to hide prerelease feature; SHOULD NOT BE PERMANENT
             getElement("syncinfo").style.display = "none"
             getElement("syncsigninbox").style.display = "none"
             getElement("syncbuttonbox").style.display = "none"
@@ -680,7 +682,7 @@ export class Settings {
         return {
             "startTime": this.getKey("checkInStart", "12:00"),
             "endTime": this.getKey("checkInEnd", "12:00"),
-            "interval": this.getKey("checkInInterval", 60),
+            "interval": this.getKey("checkInInterval", 60_000 * 60),
             "daysEnabled": this.getKey("checkInDaysEnabled", [false, false, false, false, false, false, false])
         }
     }

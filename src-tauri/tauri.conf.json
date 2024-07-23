@@ -38,7 +38,7 @@
         "withGlobalTauri": true,
         "windows": [
             {
-                "title": "Task Manager (DEV)",
+                "title": "Task Manager",
                 "width": 1080,
                 "height": 700,
                 "minWidth": 1080,

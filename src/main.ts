@@ -2,7 +2,7 @@ import { loadTabs } from './storage'
 import { switchPlannerOrientation } from './planner'
 import { changeHelpStuff } from './help'
 import { TimerHandler } from "./pomodoro";
-import { Settings, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
+import { Settings, SettingsEvent, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
 import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
@@ -10,7 +10,7 @@ import { TaskManager } from "./taskmanager";
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 import { check } from '@tauri-apps/plugin-updater';
-import { ask } from '@tauri-apps/plugin-dialog';
+import { ask, message } from '@tauri-apps/plugin-dialog';
 import { type } from '@tauri-apps/plugin-os';
 
 const DEBUG_TAB = false

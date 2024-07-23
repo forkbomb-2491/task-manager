@@ -133,11 +133,11 @@
                     <label for="tpactive">Project Planner</label>
                     <input type="checkbox" id="pomodoroactive" name="pomodoro">
                     <label for="tbactive">Time Block</label>
-                    <input type="checkbox" id="eisenhoweractive" name="eisenhower">
-                    <label for="eisenhoweractive">Eisenhower</label>
+                    <input type="checkbox" id="eisenhoweractive" name="eisenhower" style="display: none;">
+                    <label for="eisenhoweractive" style="display: none;">Eisenhower</label>
                     <br>
-                    <input type="checkbox" id="dopamenuactive" name="dopamenu">
-                    <label for="dopamenuactive">Dopamenu</label>
+                    <input type="checkbox" id="dopamenuactive" name="dopamenu" style="display: none;">
+                    <label for="dopamenuactive" style="display: none;">Dopamenu</label>
                     <input type="checkbox" id="remindersactive" name="reminders">
                     <label for="remindersactive">Reminders</label>
                 </form>
@@ -193,7 +193,7 @@
             <button class="settingsbutton" id="installupdatebutton" style="margin-top: 1rem;">Download and Install</button>
             <i id="installstatuslabel" style="margin-top: 1rem; display: none;">testing123</i>
         </div>
-        <div class="container">
+        <div class="container" id="synccontainer" style="display: none;">
             <h2 style="margin-top: 0px;">Task Sync</h2>
             <span>
                 <input type="checkbox" name="syncenabled" id="syncenabled">
@@ -234,10 +234,12 @@
             <ul>
                 <li>Task Tab - Contains a list view of all tasks and allows you to add tasks to your task lists</li>
                 <ul>
+                    <li>View all tasks in separate lists</li>
+                    <li>View all tasks in a single list</li>
+                    <li>Create new task lists</li>
                     <li>Sort task view</li>
-                    <li>Task Completion animation</li>
+                    <!-- <li>Task Completion animation</li> -->
                     <li>Edit existing tasks</li>
-                    <li>Add times to tasks</li>
                 </ul>
                 <li>Planner Tab - Contains a weekly view of tasks that allows you to look forward and backward</li>
                 <li>Project Planner Tab - Allows you to plan and create subtasks under existing tasks</li>
