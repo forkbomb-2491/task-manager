@@ -28,7 +28,7 @@
 #### Bugs
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
-- [ ] (macOS) Checkboxes on TaskPlan display checkmark 0.2rem too high.
+- [x] (macOS) Checkboxes on TaskPlan display checkmark 0.2rem too high.
 - [x] Task edit pencil shifts over task contents.
 - [x] Task list previews add wrong task elements when task is edited/refreshed.
 - [x] Color still doesn't change when task is added from taskplan.
