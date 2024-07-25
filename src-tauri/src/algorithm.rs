@@ -101,7 +101,7 @@ pub async fn init_algo<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), Strin
         .to_str()
         .expect("AppData failed to resolve")
         .to_owned()
-        + "/history.db";
+        + "/history2.db";
     unsafe {
         init_history();
         let hist = HISTORY.as_mut().unwrap();
