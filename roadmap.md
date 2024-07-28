@@ -1,6 +1,6 @@
 # Roadmap
 
-### v0.3 (Next Release)
+### v0.3 (Current Release)
 - [ ] Built-in Feedback Form
 - [ ] ~Custom Category Names~ <!-- Strikethrough: we're not doing it anymoreeee -->
 - [x] Sorting Applies to Subtasks too
@@ -16,6 +16,7 @@
 - [x] Sheets/info boxes
 
 #### Bugs
+- [ ] Tasks with \"quotes\" in them lose their name when editing.
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
 - [ ] Deleting subtasks and then editing parent task causes subtasks to reappear in Task List.
@@ -32,7 +33,7 @@ TBD
 
 ## Previous Releases
 
-## v0.2 (Current)
+## v0.2
 - [x] Project Planner
 - [x] Check-Ins & Notifications
 
