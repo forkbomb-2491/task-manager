@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ops::Deref};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -14,7 +14,7 @@ pub struct TaskRecord {
 }
 
 impl TaskRecord {
-    fn from_entry(entry: &TaskEntry) -> TaskRecord {
+    pub fn from_entry(entry: &TaskEntry) -> TaskRecord {
         return TaskRecord {
             name: entry.name.to_owned(),
             size: entry.size.to_owned(),
@@ -49,7 +49,7 @@ impl SubtaskNode {
     }
 }
 
-fn load_records(entries: &Vec<TaskEntry>) -> Vec<TaskRecord> {
+pub fn load_records(entries: &Vec<TaskEntry>) -> Vec<TaskRecord> {
     let mut ret: Vec<TaskRecord> = Vec::new();
     let mut parents: HashMap<String, Option<String>> = HashMap::new();
     let mut entry_map: HashMap<String, &TaskEntry> = HashMap::new();
@@ -115,88 +115,4 @@ pub struct ListEntry {
     pub color: i32,
     pub last_edited: Option<i64>,
     pub created: Option<i64>
-}
-
-#[cfg(test)]
-#[allow(unused)]
-mod tests {
-    // NOTE: These tests MUST be run with the --test-threads=1 argument
-    use crate::{testutils::get_due_event, utils::now};
-
-    use super::*;
-
-    #[test]
-    fn test_from_entry() {
-        let entry = TaskEntry {
-            name: "test".to_owned(),
-            size: 4,
-            importance: 2,
-            list: "test".to_owned(),
-            due: now(),
-            completed: false,
-            id: "123456".to_owned(),
-            parent: None,
-            last_edited: Some(now()),
-            created: Some(now()),
-        };
-        let record = TaskRecord::from_entry(&entry);
-        assert_eq!(record.name, entry.name);
-        assert_eq!(record.size, entry.size);
-        assert_eq!(record.importance, entry.importance);
-        assert_eq!(record.due, entry.due);
-        assert_eq!(record.completed, entry.completed);
-        assert_eq!(record.id, entry.id);
-    }
-
-    #[test]
-    fn test_from_entries_basic() {
-        let entries = Vec::from([
-            TaskEntry {
-                name: "test".to_owned(),
-                size: 4,
-                importance: 2,
-                list: "test".to_owned(),
-                due: now(),
-                completed: false,
-                id: "123456".to_owned(),
-                parent: None,
-                last_edited: Some(now()),
-                created: Some(now()),
-            },
-            TaskEntry {
-                name: "test2".to_owned(),
-                size: 4,
-                importance: 2,
-                list: "test".to_owned(),
-                due: now(),
-                completed: false,
-                id: "123466".to_owned(),
-                parent: None,
-                last_edited: Some(now()),
-                created: Some(now()),
-            },
-            TaskEntry {
-                name: "test3".to_owned(),
-                size: 4,
-                importance: 2,
-                list: "test".to_owned(),
-                due: now(),
-                completed: false,
-                id: "123465".to_owned(),
-                parent: Some("123456".to_owned()),
-                last_edited: Some(now()),
-                created: Some(now()),
-            },
-        ]);
-        let records = load_records(&entries);
-        assert!(records.len() == 2);
-        for r in &records {
-            if r.id == "123456" {
-                assert!(r.subtasks.len() == 1);
-            } else {
-                assert!(r.subtasks.len() == 0);
-            }
-        }
-        // print!("{}", serde_json::to_string(&records).unwrap());
-    }
 }
