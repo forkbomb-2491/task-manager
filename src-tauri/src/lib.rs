@@ -4,6 +4,9 @@
 mod algorithm;
 mod history;
 mod testutils;
+mod task;
+mod storage;
+mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

@@ -1,11 +1,8 @@
-use std::{
-    collections::HashMap,
-    time::{SystemTime, UNIX_EPOCH},
-};
+use std::collections::HashMap;
 
 use tauri::{Manager, Runtime};
 
-use crate::history::History;
+use crate::{history::History, utils::now};
 
 static mut HISTORY: Option<History> = None;
 
@@ -57,10 +54,7 @@ async fn record_due_event(
 ) -> Result<(), String> {
     let event = DueEvent {
         event_type: event_type,
-        timestamp: SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Timestamp issue in Rust (TS is before epoch)")
-            .as_millis() as i64,
+        timestamp: now(),
         id: id,
         list: color,
         importance: importance,
