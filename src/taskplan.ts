@@ -324,6 +324,27 @@ export class TaskPlanner {
             if (st.deleted) return
             subtaskList.appendChild(st.shortenedTaskListElement)
         })
+
+        // Completion
+        var tpprogress = document.getElementById("tpprogress")!
+        tpprogress.innerHTML = ""
+        if (this.selectedTask.subtasks.length>0) {
+            var completedsum = 0;
+            var totalsum = 0;
+            this.selectedTask.subtasks.forEach(st =>{
+                if (st.completed) {completedsum += st.size}
+                totalsum += st.size
+            })
+            tpprogress.innerHTML = (String(((completedsum/totalsum)*100).toFixed()) + "%")
+        }
+        else {
+            if (this.selectedTask.completed){
+                tpprogress.innerHTML = "100%"
+            } else (
+                tpprogress.innerHTML = "0%"
+
+            )
+        }
     }
 }
 

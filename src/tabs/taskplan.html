@@ -33,9 +33,13 @@
                 <select style="width: 33%;" id = "tplistfilter" name = "listinput" required style="font-size: small">
                 </select>
             </div>
-            <h3>Choose Task</h3>
-            <div>
-                <select id= "tptask" class="tpselect" name = "tptask" style="width: 100%;" required></select>
+            <div style="display: flex; justify-content: space-between;">
+                <h3>Choose Task</h3>
+                <h3>Completion</h3>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <select id= "tptask" class="tpselect" name = "tptask" style="max-width: 75%; min-width: 75%;" required></select>
+                <div id="tpprogress" style="width: 10%; margin: 0.25rem; text-align: right;">100%</div>
             </div>
 
         </form>
