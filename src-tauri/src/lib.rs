@@ -28,7 +28,9 @@ pub fn run() {
             algorithm::record_complete_event,
             algorithm::get_suggested_due_offset,
             algorithm::clear_due_events,
-            algorithm::remove_due_event
+            algorithm::remove_due_event,
+            task::migrate_tasks,
+            task::load_tasks
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

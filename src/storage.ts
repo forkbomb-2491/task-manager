@@ -4,6 +4,7 @@ import { List, ListRecord, TaskColor, TaskRecord, colorStrToEnum } from "./task"
 import { v4 as uuid4 } from 'uuid';
 import { message } from "@tauri-apps/plugin-dialog";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
+import { invoke } from "@tauri-apps/api/core";
 
 const TASKS_FN = "tasks2.json"
 export const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings2.json";
@@ -130,7 +131,7 @@ export async function saveFile(data: Object, fn: string) {
                 return {
                     name: t.name,
                     completed: t.completed,
-                    due: t.due,
+                    due: t.due.valueOf(),
                     id: t.id,
                     importance: t.importance,
                     size: t.size,
@@ -163,7 +164,7 @@ export async function saveFile(data: Object, fn: string) {
             list!.tasks.push({
                 name: t.name,
                 completed: t.completed,
-                due: t.due,
+                due: t.due.valueOf(),
                 id: t.id,
                 importance: t.importance,
                 size: t.size,
@@ -191,6 +192,7 @@ async function formatTasks(obj: any): Promise<ListRecord[]> {
 }
 
 export async function loadTasks(): Promise<ListRecord[]> {
+    // return await invoke("load_tasks")
     var loadedJSON = await loadFile(
         TASKS_FN, 
         {
@@ -218,6 +220,16 @@ export async function saveTasks(tasks: Array<List>) {
         TASKS_FN
     )
 }
+
+async function migrateTasks() {
+    var lists = await loadTasks()
+    console.log(lists)
+    await invoke("migrate_tasks", {
+        lists: lists
+    })
+}
+// @ts-ignore
+window.migrateTasks = () => migrateTasks().then().catch(e => console.error(e));
 
 window.addEventListener(
     "blocktasksave",

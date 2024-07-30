@@ -1,4 +1,4 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{fs, time::{SystemTime, UNIX_EPOCH}};
 
 use crate::algorithm::{DueEvent, DueEventType};
 
@@ -19,4 +19,19 @@ pub fn get_due_event() -> DueEvent {
             .expect("Timestamp issue in Rust (TS is before epoch)")
             .as_millis() as i64,
     }
+}
+
+pub fn delete_test_db() {
+    let _ = fs::remove_file("testDb.db").or_else(|e| {
+        println!("{e}");
+        Err(e)
+    });
+    let _ = fs::remove_file("testDb.db-shm").or_else(|e| {
+        println!("{e}");
+        Err(e)
+    });
+    let _ = fs::remove_file("testDb.db-wal").or_else(|e| {
+        println!("{e}");
+        Err(e)
+    });
 }

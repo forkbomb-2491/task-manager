@@ -1,7 +1,7 @@
 use serde_json::{json, Value as JsonValue};
 use sqlx::{migrate::MigrateDatabase, sqlite::SqliteRow, Error, FromRow, Pool};
 
-use crate::{task::ListEntry, utils::now};
+use crate::{task::{ListEntry, TaskEntry}, utils::now};
 
 type Db = sqlx::sqlite::Sqlite;
 
@@ -14,6 +14,7 @@ async fn connect(path: &str) -> Result<Pool<Db>, Error> {
     Ok(pool)
 }
 
+#[derive(Clone)]
 pub struct DatabaseManager {
     pool: Option<Pool<Db>>,
     is_loaded: bool,
@@ -41,6 +42,8 @@ impl DatabaseManager {
                 query = query.bind(None::<JsonValue>);
             } else if val.is_string() {
                 query = query.bind(val.as_str().unwrap().to_owned());
+            } else if val.is_boolean() {
+                query = query.bind(val.as_bool().unwrap());
             } else {
                 query = query.bind(val);
             }
@@ -66,6 +69,8 @@ impl DatabaseManager {
                 query = query.bind(None::<JsonValue>);
             } else if val.is_string() {
                 query = query.bind(val.as_str().unwrap().to_owned())
+            } else if val.is_boolean() {
+                query = query.bind(val.as_bool().unwrap());
             } else {
                 query = query.bind(val);
             }
@@ -91,6 +96,8 @@ impl DatabaseManager {
                 query = query.bind(None::<JsonValue>);
             } else if val.is_string() {
                 query = query.bind(val.as_str().unwrap().to_owned())
+            } else if val.is_boolean() {
+                query = query.bind(val.as_bool().unwrap());
             } else {
                 query = query.bind(val);
             }
@@ -111,11 +118,21 @@ impl DatabaseManager {
         self.is_loaded = true;
         Ok(())
     }
+
+    #[allow(unused)]
+    pub async fn close(&mut self) -> bool {
+        if !self.is_loaded { return false; }
+        self.pool.clone().unwrap().close().await;
+        self.pool = None;
+        self.is_loaded = false;
+        return true;
+    }
 }
 
+#[derive(Clone)]
 pub struct TaskDb {
     db_mgr: Option<DatabaseManager>,
-    is_loaded: bool,
+    pub is_loaded: bool,
 }
 
 impl TaskDb {
@@ -124,6 +141,15 @@ impl TaskDb {
             db_mgr: None,
             is_loaded: false,
         };
+    }
+
+    #[allow(unused)]
+    pub async fn close(&mut self) -> bool {
+        if !self.is_loaded { return false; }
+        self.db_mgr.clone().unwrap().close().await;
+        self.db_mgr = None;
+        self.is_loaded = false;
+        return true;
     }
 
     pub async fn load(&mut self, path: &str) -> Result<(), Error> {
@@ -150,6 +176,7 @@ impl TaskDb {
 
     pub async fn new_list(&mut self, list: &ListEntry) -> Result<bool, Error> {
         if !self.is_loaded { return Ok(false); }
+        if self.get_list(list.uuid.clone()).await.unwrap().is_some() { return Ok(false); }
         let result = self.db_mgr.as_mut().unwrap().execute(
             "INSERT INTO Lists \
             (uuid, name, color, created, last_edited) \
@@ -171,6 +198,7 @@ impl TaskDb {
             importance INTEGER, \
             size INTEGER, \
             due BIGINT, \
+            completed BOOLEAN, \
             parent TEXT, \
             created BIGINT, \
             last_edited BIGINT, \
@@ -228,5 +256,87 @@ impl TaskDb {
         ).await?;
         if result.is_none() { return Ok(false); }
         Ok(true)
+    }
+
+    pub async fn new_task(&mut self, list: String, task: &TaskEntry) -> Result<bool, Error> {
+        if !self.is_loaded { return Ok(false); }
+        let result = self.db_mgr.as_mut().unwrap().execute(
+            &format!("INSERT INTO '{}' \
+                (id, name, importance, size, due, completed, parent, created, last_edited) \
+                VALUES \
+                (?, ?, ?, ?, ?, ?, ?, ?, ?) \
+            ", list.clone()),
+            vec![
+                json!(task.id),
+                json!(task.name),
+                json!(task.importance),
+                json!(task.size),
+                json!(task.due),
+                json!(task.completed),
+                json!(task.parent),
+                json!(now()),
+                json!(now())
+            ]
+        ).await?;
+        Ok(result.is_some())
+    }
+
+    pub async fn get_tasks(&mut self, list: String) -> Result<Option<Vec<TaskEntry>>, Error> {
+        if !self.is_loaded { return Ok(None); }
+        let result = self.db_mgr.as_mut().unwrap().select_all::<TaskEntry>(
+            &format!("SELECT * FROM '{}'", &list), Vec::new()
+        ).await?;
+        Ok(result)
+    }
+
+    pub async fn get_task(&mut self, list: String, id: String) -> Result<Option<TaskEntry>, Error> {
+        if !self.is_loaded { return Ok(None); }
+        if self.get_list(list.clone()).await.unwrap().is_none() { return Ok(None); }
+        let entry = self.db_mgr.as_mut().unwrap().select_one::<TaskEntry>(
+            &format!("SELECT * FROM '{list}' WHERE id=?", ),
+            vec![json!(id)]
+        ).await?;
+        Ok(entry)
+    }
+
+    pub async fn edit_task(&mut self, list: String, task: &TaskEntry) -> Result<bool, Error> {
+        if !self.is_loaded { return Ok(false); }
+        if self.get_list(list.clone()).await.unwrap().is_none() { return Ok(false); }
+        if self.get_task(list.clone(), task.id.clone()).await.unwrap().is_none() { return Ok(false); }
+        let result = self.db_mgr.as_mut().unwrap().execute(
+            &format!("UPDATE '{}' SET \
+                name=?, \
+                size=?, \
+                importance=?, \
+                due=?, \
+                completed=?, \
+                id=?, \
+                parent=?, \
+                last_edited=? \
+            WHERE id=?", list.clone()),
+            vec![
+                json!(task.name),
+                json!(task.size),
+                json!(task.importance),
+                json!(task.due),
+                json!(task.completed),
+                json!(task.id),
+                json!(task.parent),
+                json!(now()),
+                json!(task.id)
+            ]
+        ).await?;
+        Ok(result.is_some())
+    }
+
+    pub async fn delete_task(&mut self, list: String, id: String) -> Result<bool, Error> {
+        if !self.is_loaded { return Ok(false); }
+        if self.get_list(list.clone()).await.unwrap().is_none() { return Ok(false); }
+        if self.get_task(list.clone(), id.clone()).await.unwrap().is_none() { return Ok(false); }
+        let result = self.db_mgr.as_mut().unwrap().execute(
+            &format!("DELETE FROM '{}' WHERE id=?", list.clone()), 
+            vec![json!(id.clone())]
+        ).await?;
+        Ok(result.is_some())
     }
 }

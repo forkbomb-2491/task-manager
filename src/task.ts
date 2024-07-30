@@ -6,7 +6,7 @@ export type TaskRecord = {
     "name": string,
     "size": number,
     "importance": number,
-    "due": Date,
+    "due": number,
     "completed": boolean,
     "id": string,
     "subtasks": TaskRecord[]
@@ -321,7 +321,7 @@ export class Task {
             "name": this._name,
             "size": this._size,
             "importance": this._importance,
-            "due": this._due,
+            "due": this._due.valueOf(),
             "completed": this.completed,
             "id": this.id,
             "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
@@ -506,7 +506,7 @@ export class Task {
                 o.name,
                 o.size,
                 o.importance,
-                o.due,
+                new Date(o.due),
                 o.completed,
                 o.id,
                 o.subtasks,
@@ -527,10 +527,10 @@ export class Task {
             record.name,
             record.size,
             record.importance,
-            record.due,
+            new Date(record.due),
             record.completed,
             record.id,
-            record.subtasks.map(st => Task.fromRecord(st))
+            record.subtasks
         )
     }
 
