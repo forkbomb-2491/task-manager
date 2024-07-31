@@ -1,6 +1,6 @@
 import { path } from "@tauri-apps/api"
-import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
-import { List, ListRecord, TaskColor, TaskRecord, colorStrToEnum } from "./task";
+import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs"
+import { ListRecord, TaskColor, TaskRecord, colorStrToEnum, onListAdd, onListDelete, onListEdit, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskEdit, onTaskUncomplete } from "./task";
 import { v4 as uuid4 } from 'uuid';
 import { message } from "@tauri-apps/plugin-dialog";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
@@ -41,7 +41,7 @@ export async function loadFile(fn: string, defaultdata: Object) {
         })
         return JSON.parse(text)
     } catch (error) {
-        await saveFile(defaultdata, fn)
+        // await saveFile(defaultdata, fn)
         return defaultdata
     }
 }
@@ -58,23 +58,7 @@ export async function saveFile(data: Object, fn: string) {
     })
 }
 
-/*
-
-{
-    uuid: {
-        name: list name
-        color: color
-        tasks: [
-            {
-                name...
-            }
-        ]
-    }
-}
-
-*/
-
-// Legacy TaskRecord translator
+// Legacy TaskRecord translator et al.
     type V1TaskRecord = {
         "name": string,
         "size": number,
@@ -174,25 +158,49 @@ export async function saveFile(data: Object, fn: string) {
 
         return lists
     }
+
+    async function formatTasks(obj: any): Promise<ListRecord[]> {
+        if (!obj.hasOwnProperty("format")) {
+            await saveFile(obj, "tasks-v1-backup.json")
+            message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
+            // @ts-ignore
+            return v2tov3(obj.map(i => v1tov2(i.id, obj, false)).filter(i => i != null))
+        } else if (obj.format == 2) {
+            await saveFile(obj, "tasks-v2-backup.json")
+            message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
+            // @ts-ignore
+            return v2tov3(obj.tasks)
+        }
+        return obj.tasks
+    }
+
+    function recursiveTypeFix(taskList: TaskRecord[]): TaskRecord[] {
+        return taskList.map(t => {
+            t.name = String(t.name),
+            t.size = Number(t.size),
+            t.importance = Number(t.importance),
+            t.due = new Date(t.due).valueOf()
+            t.completed = Boolean(t.completed),
+            t.id = String(t.id),
+            t.subtasks = recursiveTypeFix(t.subtasks)
+            return t
+        })
+    }
+    
+    async function migrateTasks(lists: ListRecord[]) {
+        await invoke("migrate_tasks", {
+            lists: lists.map(l => {
+                l.name = String(l.name)
+                l.uuid = String(l.uuid)
+                l.color = Number(l.color)
+                l.tasks = recursiveTypeFix(l.tasks)
+                return l
+            })
+        })
+    }
 // End
 
-async function formatTasks(obj: any): Promise<ListRecord[]> {
-    if (!obj.hasOwnProperty("format")) {
-        await saveFile(obj, "tasks-v1-backup.json")
-        message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
-        // @ts-ignore
-        return v2tov3(obj.map(i => v1tov2(i.id, obj, false)).filter(i => i != null))
-    } else if (obj.format == 2) {
-        await saveFile(obj, "tasks-v2-backup.json")
-        message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
-        // @ts-ignore
-        return v2tov3(obj.tasks)
-    }
-    return obj.tasks
-}
-
 export async function loadTasks(): Promise<ListRecord[]> {
-    // return await invoke("load_tasks")
     var loadedJSON = await loadFile(
         TASKS_FN, 
         {
@@ -201,37 +209,83 @@ export async function loadTasks(): Promise<ListRecord[]> {
         }
     )
 
-    return await formatTasks(loadedJSON)
+    var formatted =  await formatTasks(loadedJSON)
+    if (formatted.length != 0) {
+        await saveFile(loadedJSON, "tasks-json-backup.json")
+        message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
+        await remove(TASKS_FN, {
+            baseDir: BaseDirectory.AppConfig
+        })
+        await migrateTasks(formatted)
+        return formatted
+    }
+
+    return await invoke("load_tasks")
 }
 
 var blockTaskSave: boolean = false
-
-export async function saveTasks(tasks: Array<List>) {
-    if (blockTaskSave) {
-        console.warn("Tasks not saved--blocked by event.")
-        return
-    }
-
-    await saveFile(
-        {
-            "format": 3,
-            "tasks": tasks.map(t => t.record)
-        }, 
-        TASKS_FN
-    )
-}
-
-async function migrateTasks() {
-    var lists = await loadTasks()
-    console.log(lists)
-    await invoke("migrate_tasks", {
-        lists: lists
-    })
-}
-// @ts-ignore
-window.migrateTasks = () => migrateTasks().then().catch(e => console.error(e));
 
 window.addEventListener(
     "blocktasksave",
     _ => blockTaskSave = true
 );
+
+async function saveList(command: string, list: ListRecord) {
+    const res: boolean = await invoke(
+        command, {
+            list: list
+        }
+    )
+    if (!res) {
+        console.warn(`Failed to save list ${list.name} (${list.uuid}). Rust function (${command}) returned false.`)
+    }
+}
+
+onListAdd(async e => {
+    await saveList("add_list", e.list)
+})
+
+onListEdit(async e => {
+    await saveList("edit_list", e.list)
+})
+
+onListDelete(async e => {
+    await saveList("delete_list", e.list)
+})
+
+async function saveTask(command: string, list: string, task: TaskRecord, parent: string | null = null) {
+    const res: boolean = await invoke(
+        command, {
+            list: list,
+            task: task,
+            parent: parent
+        }
+    )
+    if (!res) {
+        console.warn(`Failed to save list ${task.name} (${task.id}). Rust function (${command}) returned false.`)
+    }
+}
+
+onTaskAdd(async e => {
+    await saveTask("add_task", e.listUUID, e.task)
+})
+
+onTaskAdopt(async e => {
+    await saveTask("add_task", e.listUUID, e.task, e.parent!)
+})
+
+onTaskEdit(async e => {
+    await saveTask("edit_task", e.listUUID, e.task)
+})
+
+onTaskComplete(async e => {
+    await saveTask("edit_task", e.listUUID, e.task)
+})
+
+onTaskUncomplete(async e => {
+    await saveTask("edit_task", e.listUUID, e.task)
+})
+
+onTaskDelete(async e => {
+    await saveTask("delete_task", e.listUUID, e.task)
+})

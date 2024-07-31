@@ -1,4 +1,3 @@
-// import { sendNotification } from "@tauri-apps/plugin-notification";
 import { todayDateString } from "./utils";
 import { Task } from "./task";
 import { TaskManager } from "./taskmanager.ts";

@@ -30,9 +30,10 @@ export class TaskEvent extends Event {
     private _task: TaskRecord
     get task(): TaskRecord { return this._task }
 
-    readonly listUUID: string | null
+    readonly listUUID: string
+    readonly parent: string | null
 
-    constructor(type: TaskEventType, task: TaskRecord, listUUID: string | null = null) {
+    constructor(type: TaskEventType, task: TaskRecord, listUUID: string, parent: string | null = null) {
         var typeString: string
         switch (type) {
             case TaskEventType.delete:
@@ -66,6 +67,7 @@ export class TaskEvent extends Event {
 
         this._task = task
         this.listUUID = listUUID
+        this.parent = parent
     }
 }
 
@@ -133,14 +135,73 @@ export type ListRecord = {
     tasks: TaskRecord[]
 }
 
+export class ListEvent extends Event {
+    readonly list: ListRecord
+    
+    constructor(type: TaskEventType, record: ListRecord) {
+        var typeString: string
+        switch (type) {
+            case TaskEventType.delete:
+                typeString = "listdelete"
+                break;
+        
+            case TaskEventType.edit:
+                typeString = "listedit"
+                break;
+        
+            case TaskEventType.add:
+                typeString = "listadd"
+                break;
+        
+            default:
+                break;
+        }
+        super(typeString!)
+
+        this.list = record
+    }
+}
+
 /**
  * When list attributes (not including tasks within the list) are edited
  */
-export function onListEdit(cb: () => void) {
+export function onListEdit(cb: (e: ListEvent) => void) {
+    // @ts-ignore
     window.addEventListener(
-        "listedited",
-        _ => cb()
+        "listedit",
+        cb
     )
+}
+
+/**
+ * When list is created
+ */
+export function onListAdd(cb: (e: ListEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "listadd",
+        cb
+    )
+}
+
+/**
+ * When list is deleted
+ */
+export function onListDelete(cb: (e: ListEvent) => void) {
+    // @ts-ignore
+    window.addEventListener(
+        "listdelete",
+        cb
+    )
+}
+
+/**
+ * Any time a list event is fired.
+ */
+export function onListEvent(cb: (e: ListEvent) => void) {
+    onListAdd(cb)
+    onListEdit(cb)
+    onListDelete(cb)
 }
 
 /**
@@ -158,7 +219,7 @@ export class List {
     get name(): string { return this._name }
     set name(val: string) {
         this._name = val
-        window.dispatchEvent(new Event("listedited"))
+        window.dispatchEvent(new ListEvent(TaskEventType.edit, this.record))
     }
 
     /** The List's color. */
@@ -236,7 +297,7 @@ export class Task {
     set name(val: string) { 
         this._name = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
     }
 
     private _size: number
@@ -245,7 +306,7 @@ export class Task {
     set size(val: number) { 
         this._size = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
     }
 
     private _importance: number
@@ -254,7 +315,7 @@ export class Task {
     set importance(val: number) { 
         this._importance = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
     }
     
     private _color: string = "Default"
@@ -284,7 +345,7 @@ export class Task {
     set due(val: Date) { 
         this._due = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
     }
 
     private _smarted: boolean = false
@@ -319,9 +380,9 @@ export class Task {
     get record(): TaskRecord {
         return {
             "name": this._name,
-            "size": this._size,
-            "importance": this._importance,
-            "due": this._due.valueOf(),
+            "size": Number(this._size),
+            "importance": Number(this._importance),
+            "due": Number(this._due.valueOf()),
             "completed": this.completed,
             "id": this.id,
             "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
@@ -563,8 +624,7 @@ export class Task {
 
         task.color = this._color
 
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this._list))
-        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, this._list, this.id))
     }
 
     /**
@@ -829,7 +889,7 @@ export class Task {
             this._size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
             this._importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
             // Dispatches Edit event
-            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.color))
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
             // Reverts element's HTML to normal Task List element.
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()

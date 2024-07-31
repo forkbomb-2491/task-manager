@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use tauri::{Manager, Runtime};
+use tauri::{async_runtime::block_on, Event, Listener, Manager, Runtime};
 
 use crate::{history::History, utils::now};
 
@@ -9,6 +9,14 @@ static mut HISTORY: Option<History> = None;
 unsafe fn init_history() {
     if HISTORY.is_none() {
         HISTORY = Some(History::new());
+    }
+}
+
+fn close_history(_e: Event) {
+    unsafe {
+        if HISTORY.is_some() {
+            block_on(HISTORY.as_mut().unwrap().close());
+        }
     }
 }
 
@@ -102,6 +110,7 @@ pub async fn init_algo<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), Strin
         hist.load(&path)
             .await
             .expect("Issue loading history database.");
+        app.listen_any("exit-requested", close_history);
     }
     Ok(())
 }

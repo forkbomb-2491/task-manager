@@ -1,4 +1,3 @@
-// import { sendNotification } from "@tauri-apps/plugin-notification";
 import { getTimeString } from "./utils";
 import { getCurrent, ProgressBarStatus } from "@tauri-apps/api/window";
 import { sendNotif } from "./utils.ts";

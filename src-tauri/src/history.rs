@@ -39,6 +39,15 @@ impl History {
         Ok(())
     }
 
+    #[allow(unused)]
+    pub async fn close(&mut self) -> bool {
+        if !self.is_loaded { return false; }
+        self.db_mgr.clone().unwrap().close().await;
+        self.db_mgr = None;
+        self.is_loaded = false;
+        return true;
+    }
+
     pub async fn insert_due_event(&mut self, event: DueEvent) -> Result<(), String> {
         if self.db_mgr.is_none() {
             return Err("DbMgr not loaded.".to_string());

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, Runtime};
+use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
 use crate::storage::TaskDb;
 
@@ -10,6 +10,14 @@ static mut TASKS: Option<TaskDb> = None;
 unsafe fn init_tasks() {
     if TASKS.is_none() {
         TASKS = Some(TaskDb::new());
+    }
+}
+
+fn close_tasks(_e: Event) {
+    unsafe {
+        if TASKS.is_some() {
+            block_on(TASKS.as_mut().unwrap().close());
+        }
     }
 }
 
@@ -25,6 +33,7 @@ async unsafe fn load_task_db<R: Runtime>(app: AppHandle<R>) {
         + "/tasks.db";
     if !TASKS.as_ref().unwrap().is_loaded {
         let _ = TASKS.as_mut().unwrap().load(&path).await;
+        app.listen_any("exit-requested", close_tasks);
     }
 }
 
@@ -244,7 +253,92 @@ pub async fn load_tasks<R: Runtime>(app: tauri::AppHandle<R>) -> Result<Vec<List
     Ok(ret)
 }
 
-// #[tauri::command]
-// async fn command_name<R: Runtime>(app: tauri::AppHandle<R>, window: tauri::Window<R>) -> Result<(), String> {
-//   Ok(())
-// }
+#[tauri::command]
+pub async fn add_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+    }
+    let list = ListEntry::from_record(&list);
+    unsafe {
+        let result = TASKS.as_mut().unwrap().new_list(&list).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn edit_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+    }
+    let list = ListEntry::from_record(&list);
+    unsafe {
+        let result = TASKS.as_mut().unwrap().edit_list(&list).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn delete_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+        let result = TASKS.as_mut().unwrap().delete_list(list.uuid).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn add_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String, parent: Option<String>) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+    }
+    let task = TaskEntry::from_record(&task, parent);
+    unsafe {
+        let result = TASKS.as_mut().unwrap().new_task(list, &task).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn edit_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String, parent: Option<String>) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+    }
+    let task = TaskEntry::from_record(&task, parent);
+    unsafe {
+        let result = TASKS.as_mut().unwrap().edit_task(list, &task).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn delete_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String) -> Result<bool, String> {
+    unsafe {
+        load_task_db(app).await;
+        let result = TASKS.as_mut().unwrap().delete_task(list, task.id).await;
+        if result.is_err() {
+            Err(format!("{}", result.unwrap_err()))
+        } else {
+            Ok(result.unwrap())
+        }
+    }
+}

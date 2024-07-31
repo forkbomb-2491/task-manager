@@ -21,6 +21,7 @@ pub fn get_due_event() -> DueEvent {
     }
 }
 
+#[allow(unused)]
 pub fn delete_test_db() {
     let _ = fs::remove_file("testDb.db").or_else(|e| {
         println!("{e}");

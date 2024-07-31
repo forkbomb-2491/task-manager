@@ -3,9 +3,9 @@ import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Planner } from "./planner";
 import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
-import { saveTasks, loadTasks } from "./storage";
+import { loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, onTaskEvent, List, colorStrToEnum, TaskColor, onListEdit } from "./task";
+import { Task, List, colorStrToEnum, TaskColor, ListEvent, TaskEventType } from "./task";
 
 /**
  * The Task Manager.
@@ -33,7 +33,6 @@ export class TaskManager {
     private taskNotifier: TaskNotifier;
 
     private settingsLoaded: boolean = false;
-    // private syncEnabled: boolean = false;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -41,30 +40,8 @@ export class TaskManager {
         this.helpMgr = new HelpManager(this);
         this.taskPlanner = new TaskPlanner(this);
         this.taskNotifier = new TaskNotifier(this);
-        // this.algorithm = new TheAlgorithm(this)
-
-        onTaskEvent(_ => {
-            saveTasks(this._lists).then()
-            // if (this.syncEnabled) {
-            //     sendTasks(this._tasks).then()
-            // }
-        });
-
-        onListEdit(() => {
-            saveTasks(this._lists).then()
-            console.log("hi")
-        })
-
-        // document.getElementById("pushnowbutton")!.addEventListener("click", _ => this.sendTasks())
-        // document.getElementById("pullfrombutton")!.addEventListener("click", _ => this.fetchTasks())
 
         onSettingsLoad(() => this.settingsLoaded = true);
-        // onTaskAdopt(e => {
-        //     const task = this.getTask(e.task.id)
-        //     const list = this.getList(e.listUUID!)
-        //     this.smartDueDate(task!, list!)
-        // })
-        // onSettingChange("syncEnabled", e => this.syncEnabled = e.value)
     }
 
     async start() {
@@ -143,23 +120,24 @@ export class TaskManager {
         if (list_ == undefined) {
             list_ = new List(list, colorStrToEnum(list))
             this._lists.push(list_)
+            window.dispatchEvent(new ListEvent(TaskEventType.add, list_.record))
         }
 
         if (task.parent == null) {
             list_!.addTask(task);
         }
         
-        saveTasks(this._lists).then();
+        // saveTasks(this._lists).then();
     }
 
     newList(name: string, color: TaskColor) {
         var list = new List(name, color)
         this._lists.push(list)
-        saveTasks(this._lists).then()
+        window.dispatchEvent(new ListEvent(TaskEventType.add, list.record))
     }
     
     deleteList(list: List) {
         this._lists = this._lists.filter(l => l.uuid != list.uuid)
-        saveTasks(this._lists).then()
+        window.dispatchEvent(new ListEvent(TaskEventType.delete, list.record))
     }
 }
