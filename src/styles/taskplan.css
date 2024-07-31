@@ -20,12 +20,12 @@
 
 .tpday {
     text-align: center;
-    width: 14%;
+    width: 15%;
     /* background-color: var(--secondary-color); */
 
     flex-flow: column;
     height: 100%;
-    min-height: 40vh;    
+    min-height: 40vh;
     
     background-color: rgba(0, 0, 0, 0);
     /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
@@ -51,7 +51,7 @@
     box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
     color: var(--primary-text-color);
-    padding: 0.5rem;
+    padding: 0.25rem;
 
     transition: ease-in-out 200ms;
 }

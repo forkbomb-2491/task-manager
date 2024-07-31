@@ -126,8 +126,6 @@ export class TaskManager {
         if (task.parent == null) {
             list_!.addTask(task);
         }
-        
-        // saveTasks(this._lists).then();
     }
 
     newList(name: string, color: TaskColor) {

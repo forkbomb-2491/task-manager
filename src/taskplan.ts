@@ -107,8 +107,10 @@ export class TaskPlanner {
         const right = document.getElementById("tprightside")!
         const left = document.getElementById("tpleftside")!
         const container = document.getElementById("taskplan")!
+        const stcreatecontent = document.getElementById("subtaskcreatecontent")!
 
-        if (this.isStacked && width > 1500) {
+
+        if (this.isStacked && width > 1250) {
             container.style.flexDirection = "row"
             right.style.width = "80%"
             right.style.marginLeft = "2rem"
@@ -116,7 +118,9 @@ export class TaskPlanner {
 
             left.style.width = "30%"
             this.isStacked = false
-        } else if (!this.isStacked && width < 1500) {
+
+            stcreatecontent.style.display = "inline"
+        } else if (!this.isStacked && width < 1250) {
             container.style.flexDirection = "column"
             right.style.width = ""
             right.style.marginLeft = ""
@@ -124,6 +128,8 @@ export class TaskPlanner {
 
             left.style.width = ""
             this.isStacked = true
+
+            stcreatecontent.style.display = "flex"
         }
     }
 
@@ -332,8 +338,8 @@ export class TaskPlanner {
             var completedsum = 0;
             var totalsum = 0;
             this.selectedTask.subtasks.forEach(st =>{
-                if (st.completed) {completedsum += st.size}
-                totalsum += st.size
+                if (st.completed) {completedsum += (st.size+1)}
+                totalsum += (st.size+1)
             })
             tpprogress.innerHTML = (String(((completedsum/totalsum)*100).toFixed()) + "%")
         }
@@ -437,15 +443,20 @@ class TaskPlannerDate {
         }
         if (this.taskPlan.fullCal) {
             this.element.innerHTML += "<br>";
+            var count = 0
             this.getFullCalTasks().forEach(t => {
-                this.element.innerHTML += `
-                <label class="checkcontainer">
-                    <input type="checkbox" ${t.completed ? "checked": ""} disabled>
-                    <span class="taskcheckbox nonproject">
-                        <p>✔</p>
-                    </span>
-                </label>
-                `;
+                count++
+                if (count <= 6) {
+
+                    this.element.innerHTML += `
+                    <label class="checkcontainer">
+                        <input type="checkbox" ${t.completed ? "checked": ""} disabled>
+                        <span class="taskcheckbox nonproject">
+                            <p>✔</p>
+                        </span>
+                    </label>
+                    `;
+                }
             })
         }
     }

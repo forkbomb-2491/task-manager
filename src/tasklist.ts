@@ -26,7 +26,6 @@ export class TaskList {
         )
 
         document.getElementById("alphasort")!.innerHTML = `${this.sortBasis == SortBasis.name ? (this.sortReverse ? "↑": "↓") + " ":""}Name`
-        // document.getElementById("categorysort")!.innerHTML = `${this.sortBasis == SortBasis.category ? (this.sortReverse ? "↑": "↓") + " ":""}Color`
         document.getElementById("sizesort")!.innerHTML = `${this.sortBasis == SortBasis.size ? (this.sortReverse ? "↑": "↓") + " ":""}Size`
         document.getElementById("importancesort")!.innerHTML = `${this.sortBasis == SortBasis.importance ? (this.sortReverse ? "↑": "↓") + " ":""}Importance`
         document.getElementById("duedatesort")!.innerHTML = `${this.sortBasis == SortBasis.duedate ? (this.sortReverse ? "↑": "↓") + " ":""}Due Date`
@@ -128,7 +127,6 @@ export class TaskList {
         showTooltipOnHover(
             document.getElementById("smartduedateinfo")!,
             "Check this box to have your task's due dates adjusted according to what Task-Manager's learned about you."
-            // Task Manager can learn from your previous tasks how long it takes you to get them done.
         )
         document.getElementById("smartduedateinfo")!.addEventListener(
             "click",

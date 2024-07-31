@@ -37,7 +37,6 @@ export function sendNotif(title: string, body: string) {
 export function todayDateString() {
     var date = new Date()
     return date.toDateString()
-    // return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
 
 export function padWithLeftZeroes(numString: string, numDigits: number) {

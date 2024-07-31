@@ -66,9 +66,6 @@ export class RemindersContainer {
         `
         }
         
-
-
-        
         this.elements.push(newElement)
 
         return newElement

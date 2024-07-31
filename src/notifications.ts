@@ -242,8 +242,6 @@ export class TaskNotifier {
 
             this.remindersContainer.render()
         }
-        // schedule the next notification in list to be day before due date
-        // this.scheduleReminder()
     }
 
     /**
