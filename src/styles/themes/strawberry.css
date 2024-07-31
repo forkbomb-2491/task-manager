@@ -10,8 +10,8 @@
     --primary-shadow-color: #e0653b;
     --secondary-shadow-color: #c1bb41;
     /* Fonts */
-    --primary-font-family: 'system-ui';
-    --secondary-font-family: 'system-ui';
+    --primary-font-family: 'Cantarell';
+    --secondary-font-family: 'Helvetica';
     /* Text Color */
     --primary-text-color: #fb6966;
     --secondary-text-color: #319c39;
@@ -23,13 +23,13 @@
     --cat5-color: #2969ff;
     --cat6-color: #b200c9;
     /*Help page*/
-    --help-button: rgb(110, 165, 184);
-    --help-button-text: black;
-    --help-button-hover: rgb(82, 120, 141);
-    --help-button-text-hover: black;
+    --help-button: #fcb3ac;
+    --help-button-text: 319c39;
+    --help-button-hover: #fb6966;
+    --help-button-text-hover: #319c39;
     /* TaskPlanner page */
-    --tp-checkbox-project: #00d26a;
-    --tp-checkbox-nonproject: #785dc8;
+    --tp-checkbox-project: #c1bb41;
+    --tp-checkbox-nonproject: #319c39;
 }
 
 .tabbutton {
@@ -38,4 +38,8 @@
 
 .tabbutton.active {
     color: #c1bb41;
+}
+
+.settingsbutton {
+    color: var(--secondary-text-color)
 }

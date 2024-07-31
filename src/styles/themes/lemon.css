@@ -1,20 +1,20 @@
 /* The properties here can be overriden for easy theme creation. */
 :root {
     /* Various fill colors */
-    --primary-color: #efcb13;
-    --secondary-color: #e7da80;
-    --container-background: #fef05f;
-    --unselected-tab-and-shadow: #d3bd50;
-    --tab-hover: e7da80;
+    --primary-color: #fff099;
+    --secondary-color: #ffffcc;
+    --container-background: #ffffcc;
+    --unselected-tab-and-shadow: #ffe880;
+    --tab-hover: ffffcc;
     /* Shadow colors */
-    --primary-shadow-color: #a79364;
-    --secondary-shadow-color: #b08309;
+    --primary-shadow-color: #ffd94d;
+    --secondary-shadow-color: #ffca1a;
     /* Fonts */
-    --primary-font-family: 'system-ui';
-    --secondary-font-family: 'system-ui';
+    --primary-font-family: 'Cantarell';
+    --secondary-font-family: 'Helvetica';
     /* Text Color */
-    --primary-text-color: #b08309;
-    --secondary-text-color: #b08309;
+    --primary-text-color: #ffca1a;
+    --secondary-text-color: #ffca1a;
     /* Category Color */
     --cat1-color: #e60000;
     --cat2-color: #ff8e00;
@@ -23,13 +23,13 @@
     --cat5-color: #004bff;
     --cat6-color: #780089;
     /*Help page*/
-    --help-button: #efcb13;
-    --help-button-text: #b08309;
-    --help-button-hover: #fef05f;
-    --help-button-text-hover: #b08309;
+    --help-button: #fff099;
+    --help-button-text: #ffca1a;
+    --help-button-hover: #ffe880;
+    --help-button-text-hover: #ffca1a;
     /* TaskPlanner page */
-    --tp-checkbox-project: #00d26a;
-    --tp-checkbox-nonproject: #785dc8;
+    --tp-checkbox-project: #ffffcc;
+    --tp-checkbox-nonproject: #ffd94d;
 }
 
 .helpbutton.top:hover {

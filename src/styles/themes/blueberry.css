@@ -1,37 +1,37 @@
 :root {
     /* Various fill colors */
-    --primary-color: #0855b1;
-    --secondary-color: #41a8f9;
-    --container-background: #4fa5d8;
-    --unselected-tab-and-shadow: #0855b1;
-    --tab-hover: #daeaf7;
+    --primary-color: #6e9fc1;
+    --secondary-color: #a3cae9;
+    --container-background: #a3cae9;
+    --unselected-tab-and-shadow: #6e9fc1;
+    --tab-hover: #acacac;
     /* Shadow colors */
-    --primary-shadow-color: #010e54;
-    --secondary-shadow-color: #010e54;
+    --primary-shadow-color: #395a7f;
+    --secondary-shadow-color: #e9ecee;
     /* Fonts */
     --primary-font-family: 'system-ui';
     --secondary-font-family: 'system-ui';
     /* Text Color */
-    --primary-text-color: #daeaf7;
-    --secondary-text-color: #daeaf7;
+    --primary-text-color: #395a7f;
+    --secondary-text-color: #e9ecee;
     /* Category Color */
-    --cat1-color: #e60000;
-    --cat2-color: #ff8e00;
-    --cat3-color: #dacd18;
-    --cat4-color: #00821b;
-    --cat5-color: #004bff;
-    --cat6-color: #780089;
+    --cat1-color: #dd3838;
+    --cat2-color: #fa9f2f;
+    --cat3-color: #ffee00;
+    --cat4-color: #01b925;
+    --cat5-color: #2969ff;
+    --cat6-color: #b200c9;
     /*Help page*/
-    --help-button: #0855b1;
-    --help-button-text: #daeaf7;
-    --help-button-hover: #4fa5d8;
-    --help-button-text-hover: #0855b1;
+    --help-button: #395a7f;
+    --help-button-text: #e9ecee;
+    --help-button-hover: #6e9fc1;
+    --help-button-text-hover: #395a7f;
     /* TaskPlanner page */
     --tp-checkbox-project: #00d26a;
     --tp-checkbox-nonproject: #785dc8;
 }
 
-.helpbutton.top:hover {
+/* .helpbutton.top:hover {
     background-color: var(--primary-color);
     color: var(--secondary-text-color);
-}
+} */
