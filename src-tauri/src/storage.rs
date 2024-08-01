@@ -311,7 +311,6 @@ impl TaskDb {
                 due=?, \
                 completed=?, \
                 id=?, \
-                parent=?, \
                 last_edited=? \
             WHERE id=?", list.clone()),
             vec![
@@ -321,7 +320,7 @@ impl TaskDb {
                 json!(task.due),
                 json!(task.completed),
                 json!(task.id),
-                json!(task.parent),
+                // json!(task.parent), disabled bc parents aren't changed unless by add
                 json!(now()),
                 json!(task.id)
             ]
