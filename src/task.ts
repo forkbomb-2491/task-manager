@@ -417,6 +417,7 @@ export class Task {
             if (this.sortReverse) { ret *= -1; }
             return ret;
         }).forEach(st => {
+            if (st.deleted) { return }
             subtaskContainer.appendChild(st.taskListElement)
         })
         // Add self
@@ -844,7 +845,7 @@ export class Task {
                 <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
                 <div style="display: flex; flex-grow: 1;">
                     <div style="flex-grow: 1;">
-                        <input type = "text" name="titleinput" required value="${this._name}">
+                        <input type = "text" name="titleinput" required value="${this._name.replaceAll('"', "&#34;")}">
                     </div>
                     <div style="min-width: 10ch; max-width: 10ch;">
                         <select name = "sizeinput" required>

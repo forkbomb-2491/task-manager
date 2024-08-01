@@ -26,22 +26,24 @@
 - [x] Sheets/info boxes
 
 #### Bugs
+- [ ] New tasks don't sort themselves in Help tab
+- [x] Deleting subtasks and then editing parent task causes subtasks to reappear in Task List.
+- [x] Switching Lists while one is being edited does not close the editor.
+- [x] Tasks with \"quotes\" in them lose their name when editing.
+
+#### Maybe Bugs, Maybe Features
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
-- [x] (macOS) Checkboxes on TaskPlan display checkmark 0.2rem too high.
-- [x] Task edit pencil shifts over task contents.
-- [x] Task list previews add wrong task elements when task is edited/refreshed.
-- [x] Color still doesn't change when task is added from taskplan.
-- [x] Changing task due date does not move planner element.
-    - Current solution is messy--make it so TaskEvents have before and after versions.
-- [x] Tasks do not appear in project planner after being made in Tasks tab without refresh.
-- [x] Tasks do not adopt color of parent list without refresh.
-- [x] Certain private properties of the Task class were public, potentially preventing task modifications from being registered by event listeners.
+
+## Future
 
 ### v0.4
 - [ ] Even more and more comprehensive recommendations
 - [ ] Can move tasks between lists
 - [ ] Calendar View
+
+#### Bugs
+- [x] After DB tasks, editing multiple tasks was bugged
 
 ### v0.5
 TBD

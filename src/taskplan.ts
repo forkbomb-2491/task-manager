@@ -1,4 +1,4 @@
-import { List, onTaskAdd, onTaskDelete, onTaskEvent } from './task';
+import { List, onTaskEvent } from './task';
 import { TaskManager } from "./taskmanager";
 import { Task } from "./task";
 import { Months, WEEKDAY_STRINGS, getFirstSelected, isSameDay, onTasksChanged, onWindowFocused, toHTMLDateTimeString } from "./utils";
@@ -71,9 +71,7 @@ export class TaskPlanner {
 
         this.resize(window.innerWidth)
         
-        onTaskEvent(() => { this.refresh() })
-        onTaskAdd(_ => this.refresh())
-        onTaskDelete(_ => this.refresh())
+        onTaskEvent(() => { this.refresh() }, true, true)
         onWindowFocused(() => this.refresh())
 
         var taskSelect = document.getElementById("tptask")!
