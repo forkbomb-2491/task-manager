@@ -10,6 +10,7 @@ import { smartDueDate } from "./algorithm";
 export class TaskList {
     private taskMgr: TaskManager;
     private selectedList: List | null = null
+    private editingList: boolean = false;
 
     private _sortBasis: SortBasis = SortBasis.duedate;
     private get sortBasis(): SortBasis { return this._sortBasis }
@@ -61,6 +62,7 @@ export class TaskList {
         document.getElementById("showalltasksbutton")!.addEventListener(
             "click",
             _ => {
+                if (this.editingList) { return }
                 this.selectedList = null
                 this.render()
             }
@@ -96,16 +98,19 @@ export class TaskList {
                 // @ts-ignore
                 const button: HTMLButtonElement = e.currentTarget
                 const title = document.getElementById("selectedlisttitle")!;
-                if (button.innerText == "✏️") {
+                if (!this.editingList) {
+                    this.editingList = true
                     button.style.display = "initial"
                     button.innerText = "✅"
-
+                    
                     var input = document.createElement("input")
                     title.replaceWith(
                         input
                     )
+                    input.value = this.selectedList!.name.replaceAll('"', "&#34;")
                     input.id = "selectedlisttitle"
                 } else {
+                    this.editingList = false
                     // @ts-ignore
                     if (title.value.length == 0) return
                     button.style.display = ""
@@ -240,6 +245,7 @@ export class TaskList {
             newElement.addEventListener(
                 "click",
                 _ => {
+                    if (this.editingList) { return }
                     this.selectedList = list
                     this.render()
                 }

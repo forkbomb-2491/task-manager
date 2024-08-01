@@ -16,12 +16,14 @@
 - [x] Sheets/info boxes
 
 #### Bugs
-- [ ] Tasks with \"quotes\" in them lose their name when editing.
+- [ ] New tasks don't sort themselves in Help tab
+- [x] Deleting subtasks and then editing parent task causes subtasks to reappear in Task List.
+- [x] Switching Lists while one is being edited does not close the editor.
+- [x] Tasks with \"quotes\" in them lose their name when editing.
+
+#### Maybe Bugs, Maybe Features
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
-- [ ] Deleting subtasks and then editing parent task causes subtasks to reappear in Task List.
-- [ ] New tasks don't sort themselves in Help tab
-- [ ] Switching Lists while one is being edited does not close the editor.
 
 ## Future
 
@@ -29,6 +31,9 @@
 - [ ] Even more and more comprehensive recommendations
 - [ ] Can move tasks between lists
 - [ ] Calendar Planner View
+
+#### Bugs
+- [x] After DB tasks, editing multiple tasks was bugged
 
 ### v0.5
 TBD
