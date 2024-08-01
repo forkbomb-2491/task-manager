@@ -9,6 +9,7 @@ mod testutils;
 mod task;
 mod storage;
 mod utils;
+mod http;
 
 mod tests;
 
@@ -39,6 +40,7 @@ pub fn run() {
             task::add_task,
             task::edit_task,
             task::delete_task,
+            http::test_http,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

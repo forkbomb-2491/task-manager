@@ -112,4 +112,6 @@ export function addDebugFuncs() {
     window.getOffset = (s, i, l) => getSuggestedDueDateOffset(s, i, l).then()
     window.showSheet = showSheet
     window.bugReport = loadBugReport
+
+    window.testHttp = (u, p) => invoke("test_http", { username: u, password: p })
 }

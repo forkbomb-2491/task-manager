@@ -223,13 +223,6 @@ export async function loadTasks(): Promise<ListRecord[]> {
     return await invoke("load_tasks")
 }
 
-var blockTaskSave: boolean = false
-
-window.addEventListener(
-    "blocktasksave",
-    _ => blockTaskSave = true
-);
-
 async function saveList(command: string, list: ListRecord) {
     const res: boolean = await invoke(
         command, {

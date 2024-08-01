@@ -20,13 +20,15 @@
 - [ ] Pause button on Pomodoro adds play/pause emojis endlessly.
 - [ ] Tasks remain on list previews after completion.
 - [ ] Deleting subtasks and then editing parent task causes subtasks to reappear in Task List.
+- [ ] New tasks don't sort themselves in Help tab
+- [ ] Switching Lists while one is being edited does not close the editor.
 
 ## Future
 
 ### v0.4
 - [ ] Even more and more comprehensive recommendations
 - [ ] Can move tasks between lists
-- [ ] Calendar View
+- [ ] Calendar Planner View
 
 ### v0.5
 TBD
