@@ -11,8 +11,8 @@
                             <h3>List Color</h3>
                         </div>
                         <div style="display: flex;">
-                            <input type="text" style="flex-grow: 1;" name="listtitleinput" required>
-                            <select name="catinput" style="width: 9ch; margin-left: 1rem;" required>
+                            <input type="text" style="flex-grow: 1;  max-width: calc(100% - 1rem - 9ch); margin-right: 1rem;" name="listtitleinput" required>
+                            <select name="catinput" style="width: 9ch;" required>
                                 <option name="0">None</option>
                                 <option name="1">Red</option>
                                 <option name="2">Orange</option>
@@ -69,9 +69,9 @@
                         style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
                     <div style="display: flex; flex-grow: 1;">
                         <div style="flex-grow: 1;">
-                            <input type="text" id="titleinput" name="titleinput" required>
+                            <input style="max-width: calc(100% - 2ch); margin-right: 1ch;" type="text" id="titleinput" name="titleinput" required>
                         </div>
-                        <div style="min-width: 10ch; max-width: 10ch;">
+                        <div style="min-width: 10ch; max-width: 10ch; display: flex;">
                             <select id="sizeinput" name="sizeinput" required>
                                 <option name="0">Tiny</option>
                                 <option name="1">Small</option>
@@ -80,7 +80,7 @@
                                 <option name="4">Huge</option>
                             </select>
                         </div>
-                        <div style="min-width: 13ch; min-width: 13ch; display: flex;">
+                        <div style="min-width: 13ch; max-width: 13ch; display: flex;">
                             <select id="importanceinput" name="importanceinput" required>
                                 <option name="0">Trivial</option>
                                 <option name="1">Unimportant</option>

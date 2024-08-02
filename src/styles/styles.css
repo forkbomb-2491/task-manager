@@ -63,6 +63,45 @@ button.small:hover:active {
     cursor: pointer;
 }
 
+
+select {
+    border: 0;
+    border: var(--primary-shadow-color) solid 2px;
+    padding-left: 0.5ch;
+    padding-right: 2px;
+    color: var(--primary-text-color);
+    appearance: none;
+    /* box-shadow: 0px 2px 0.5rem 0.01rem var(--primary-shadow-color); */
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 5px;
+}
+
+select:focus-within {
+    background-color: var(--secondary-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    /* background-color: rgba(0, 0, 0, 0); */
+}
+
+input {
+    background-color: rgba(0, 0, 0, 0);
+    /* border: var(--primary-text-color) dotted 1px; */
+    border: var(--primary-shadow-color) solid 2px;
+
+    color: var(--primary-text-color);
+
+    font-size: medium;
+    font-family: var(--primary-font-family);
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+    border-radius: 5px;
+}
+
 html {
     font-family: var(--primary-font-family);
     background-color: var(--primary-color);

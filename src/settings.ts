@@ -57,7 +57,7 @@ export class SettingsView {
         var update = await check()
         if (update != null) {
             document.getElementById("updateversionlabel")!.innerText = update.version
-            document.getElementById("updatenotesdiv")!.innerText = update.body!
+            document.getElementById("updatenotesdiv")!.innerHTML = update.body!
             document.getElementById("installupdatebutton")!.addEventListener(
                 "click",
                 _ => this.installUpdate(update!).then()
@@ -680,7 +680,7 @@ export class Settings {
         return {
             "startTime": this.getKey("checkInStart", "12:00"),
             "endTime": this.getKey("checkInEnd", "12:00"),
-            "interval": this.getKey("checkInInterval", 60),
+            "interval": this.getKey("checkInInterval", 3600000),
             "daysEnabled": this.getKey("checkInDaysEnabled", [false, false, false, false, false, false, false])
         }
     }
