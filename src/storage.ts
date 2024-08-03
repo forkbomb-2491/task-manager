@@ -162,12 +162,10 @@ export async function saveFile(data: Object, fn: string) {
     async function formatTasks(obj: any): Promise<ListRecord[]> {
         if (!obj.hasOwnProperty("format")) {
             await saveFile(obj, "tasks-v1-backup.json")
-            message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
             // @ts-ignore
             return v2tov3(obj.map(i => v1tov2(i.id, obj, false)).filter(i => i != null))
         } else if (obj.format == 2) {
             await saveFile(obj, "tasks-v2-backup.json")
-            message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
             // @ts-ignore
             return v2tov3(obj.tasks)
         }
