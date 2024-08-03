@@ -2,7 +2,6 @@ import { path } from "@tauri-apps/api"
 import { readTextFile, writeTextFile, BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs"
 import { List, ListRecord, TaskColor, TaskRecord, colorStrToEnum } from "./task";
 import { v4 as uuid4 } from 'uuid';
-import { message } from "@tauri-apps/plugin-dialog";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 
 const TASKS_FN = "tasks.json"
@@ -178,12 +177,10 @@ export async function saveFile(data: Object, fn: string) {
 async function formatTasks(obj: any): Promise<ListRecord[]> {
     if (!obj.hasOwnProperty("format")) {
         await saveFile(obj, "tasks-v1-backup.json")
-        message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
         // @ts-ignore
         return v2tov3(obj.map(i => v1tov2(i.id, obj, false)).filter(i => i != null))
     } else if (obj.format == 2) {
         await saveFile(obj, "tasks-v2-backup.json")
-        message("Your Tasks, as stored on the disk, have been updated to a new and improved format! A backup of the previous file has been created, just in case :)")
         // @ts-ignore
         return v2tov3(obj.tasks)
     }
