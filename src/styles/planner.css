@@ -67,3 +67,39 @@ button.plannershift {
 button.plannershift:hover {
     text-shadow: 0 0 0.5rem var(--primary-shadow-color);
 }
+
+.caldaylabel {
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+    margin-top: 0.75rem;
+    /* flex-grow: 1;  */
+    text-align: center;
+    min-width: calc(14.28% - 1.5rem - 0.286rch);
+    max-width: calc(14.28% - 1.5rem - 0.286rch);
+}
+
+#plannercalendar .caldate, #plannercalendar .calspacer {
+    min-width: calc(14.28% - 2.5rem - 0.286rch);
+    max-width: calc(14.28% - 2.5rem - 0.286rch);
+    padding: 0.5rem;
+
+    margin-bottom: 0.75rem;
+}
+
+#plannercalendar h2 {
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+}
+
+.calweek {
+    display: flex;
+}
+
+.calweek > button:hover ~ .caldate {
+    background-color: red;
+}
+
+.calweek .caldate:hover {
+    background-color: red;
+}

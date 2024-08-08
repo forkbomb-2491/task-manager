@@ -295,7 +295,7 @@ export class TaskPlanner {
             var day = document.getElementById(`${TaskPlanDays[i]}`)
 
             var element = document.createElement("div")
-            element.className = "tpspacer"
+            element.className = "calspacer"
 
             day!.appendChild(element)
         }
@@ -409,7 +409,7 @@ class TaskPlannerDate {
             if (this.hoverElement.children.length == 0) return
             this.element.innerHTML = ""
             this.element.appendChild(this.hoverElement)
-            this.element.className = "tpspacer"
+            this.element.className = "calspacer"
 
             this.hoverElement.style.minHeight = `calc(${this.element.clientHeight}px - 1rem)`
             this.hoverElement.style.minWidth = `calc(${this.element.clientWidth}px - 1rem)`
@@ -417,7 +417,7 @@ class TaskPlannerDate {
             this.hoverElement.style.display = "block"
         } else if (!hovered) {
             this.hoverElement.style.display = "none"
-            if (this.element.className == "tpspacer") {
+            if (this.element.className == "calspacer") {
                 this.element.className = "caldate hastask"
 
                 this.element.innerHTML = this.label! + "<br>"
