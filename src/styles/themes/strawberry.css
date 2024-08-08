@@ -43,3 +43,13 @@
 .settingsbutton {
     color: var(--secondary-text-color)
 }
+
+
+.caldate {
+    color: var(--secondary-text-color);
+}
+
+
+.caldate.hastask {
+    background-color: var(--unselected-tab-and-shadow);
+}

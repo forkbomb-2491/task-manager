@@ -49,10 +49,10 @@
     color: #ffffff;
 }
 
-.tpdate {
+.caldate {
     color: white;
 }
 
-.tpdate.hastask {
+.caldate.hastask {
     color: white;
 }

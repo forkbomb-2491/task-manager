@@ -383,7 +383,7 @@ class TaskPlannerDate {
         this._date = date
 
         this.element = document.createElement("div")
-        this.element.className = "tpdate"
+        this.element.className = "caldate"
 
         var container = document.getElementById(TaskPlanDays[date.getDay()])!
         container.appendChild(this.element)
@@ -405,7 +405,7 @@ class TaskPlannerDate {
     }
 
     private onHover(hovered: boolean = true) {
-        if (this.element.className == "tpdate hastask" && hovered) {
+        if (this.element.className == "caldate hastask" && hovered) {
             if (this.hoverElement.children.length == 0) return
             this.element.innerHTML = ""
             this.element.appendChild(this.hoverElement)
@@ -418,7 +418,7 @@ class TaskPlannerDate {
         } else if (!hovered) {
             this.hoverElement.style.display = "none"
             if (this.element.className == "tpspacer") {
-                this.element.className = "tpdate hastask"
+                this.element.className = "caldate hastask"
 
                 this.element.innerHTML = this.label! + "<br>"
                 this.addCheckboxes();
@@ -504,15 +504,15 @@ class TaskPlannerDate {
             return
         }
         if (this.hoverElement.children.length > 0 || this.getFullCalTasks().length > 0) {
-            this.element.className = "tpdate"
+            this.element.className = "caldate"
             this.element.innerHTML = this.label! + "<br>"
             this.addCheckboxes()
         if (this.hoverElement.children.length > 0) {
-            this.element.className = "tpdate hastask"
+            this.element.className = "caldate hastask"
         }
         
         } else {
-            this.element.className = "tpdate"
+            this.element.className = "caldate"
             this.element.innerHTML = this.label!
         }
     }

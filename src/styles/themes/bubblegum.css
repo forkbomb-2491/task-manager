@@ -52,3 +52,7 @@
 .task {
     background-color: rgb(254, 222, 237);
 }
+
+.caldate.hastask {
+    background-color: rgb(255,214,226);
+}
