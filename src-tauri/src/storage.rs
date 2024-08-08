@@ -338,4 +338,30 @@ impl TaskDb {
         ).await?;
         Ok(result.is_some())
     }
+
+    pub async fn filter_tasks(
+        &mut self,
+        list: String,
+        conditions: Vec<String>,
+    ) -> Result<Option<Vec<TaskEntry>>, Error> {
+        let mut query = format!("SELECT * FROM '{}'", list).to_string();
+        if conditions.len() > 0 {
+            let conditions = conditions.join(" AND ");
+            query += &(" WHERE ".to_string() + &conditions);
+        }
+        Ok(self.db_mgr.as_mut().unwrap().select_all::<TaskEntry>(&query, Vec::new()).await?)
+    }
+
+    pub async fn filter_lists(
+        &mut self,
+        conditions: Vec<String>,
+    ) -> Result<Option<Vec<ListEntry>>, Error> {
+        let mut query = "SELECT * FROM Lists".to_string();
+        if conditions.len() > 0 {
+            let conditions = conditions.join(" AND ");
+            query += &(" WHERE ".to_string() + &conditions);
+        }
+        Ok(self.db_mgr.as_mut().unwrap().select_all::<ListEntry>(&query, Vec::new()).await?)
+    }
 }
+

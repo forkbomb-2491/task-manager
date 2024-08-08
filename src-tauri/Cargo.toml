@@ -26,7 +26,7 @@ tokio = { version = "1.38.0", features = ["macros"] }
 tauri-plugin-os = "2.0.0-beta.8"
 uuid = { version = "1.10.0", features = ["std", "v4"] }
 futures = { version = "0.3.30", features = ["executor"] }
-reqwest = { version = "0.12.5", features = ["blocking"] }
+reqwest = { version = "0.12.5", features = ["blocking", "json"] }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

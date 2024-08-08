@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
-use crate::storage::TaskDb;
+use crate::{http::SyncData, storage::TaskDb};
 
 static mut TASKS: Option<TaskDb> = None;
 
@@ -122,7 +122,7 @@ pub fn load_records(entries: &Vec<TaskEntry>) -> Vec<TaskRecord> {
     return ret;
 }
 
-#[derive(sqlx::FromRow, Clone, Debug)]
+#[derive(sqlx::FromRow, Clone, Debug, Deserialize, Serialize)]
 pub struct TaskEntry {
     pub name: String,
     pub size: i32,
@@ -167,7 +167,7 @@ pub struct ListRecord {
     pub tasks: Vec<TaskRecord>
 }
 
-#[derive(sqlx::FromRow, Debug)]
+#[derive(sqlx::FromRow, Debug, Deserialize, Serialize)]
 pub struct ListEntry {
     pub name: String,
     pub uuid: String,
@@ -197,6 +197,33 @@ impl ListRecord {
             tasks: vec![]
         }
     }
+}
+
+pub async fn compare_and_save(data: &SyncData) -> Result<Option<SyncData>, sqlx::Error> {
+    unsafe {
+        if TASKS.is_none() { return Ok(None); }
+    }
+    let mut ret = SyncData::new();
+    unsafe {
+        ret.lists = TASKS
+            .as_mut().unwrap()
+            .filter_lists(vec![
+                format!("last_edited > {}", data.last_sync)
+            ]).await?.unwrap();
+        for l in &ret.lists {
+            ret.tasks.insert(
+                l.uuid.clone(), 
+                TASKS
+                    .as_mut().unwrap()
+                    .filter_tasks(
+                        l.uuid.clone(),
+                        vec![
+                            format!("last_edited > {}", data.last_sync)
+                        ]).await?.unwrap()
+            );
+        }
+    }
+    Ok(Some(ret))
 }
 
 #[tauri::command]
@@ -264,6 +291,7 @@ pub async fn add_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) ->
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
@@ -280,6 +308,7 @@ pub async fn edit_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
@@ -293,6 +322,7 @@ pub async fn delete_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord)
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
@@ -309,6 +339,7 @@ pub async fn add_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, li
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
@@ -325,6 +356,7 @@ pub async fn edit_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, l
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
@@ -338,6 +370,7 @@ pub async fn delete_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord,
         if result.is_err() {
             Err(format!("{}", result.unwrap_err()))
         } else {
+            // Syncing here
             Ok(result.unwrap())
         }
     }
