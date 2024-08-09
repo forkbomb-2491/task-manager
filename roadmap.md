@@ -29,8 +29,15 @@
 
 ### v0.4
 - [ ] Even more and more comprehensive recommendations
+    - [ ] Smart Help tab ordering
+    - [ ] Fallback due date adjustments (use other lists/importances)
+- [ ] Syncing
 - [ ] Can move tasks between lists
-- [ ] Calendar Planner View
+- [ ] Change task list colors
+- [ ] Eisenhower
+- [ ] Smart Time Block
+- [ ] View tasks by filter in Help
+- [x] Calendar Planner View
 
 #### Bugs
 - [x] After DB tasks, editing multiple tasks was bugged

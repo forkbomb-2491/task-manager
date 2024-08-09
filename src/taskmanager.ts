@@ -1,7 +1,7 @@
 import { TaskList } from "./tasklist";
 import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
-import { Planner } from "./planner";
+import { Calendar, Planner } from "./planner";
 import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
 import { loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
@@ -31,6 +31,7 @@ export class TaskManager {
     private helpMgr: HelpManager;
     private taskPlanner: TaskPlanner;
     private taskNotifier: TaskNotifier;
+    private calendar: Calendar;
 
     private settingsLoaded: boolean = false;
 
@@ -40,6 +41,7 @@ export class TaskManager {
         this.helpMgr = new HelpManager(this);
         this.taskPlanner = new TaskPlanner(this);
         this.taskNotifier = new TaskNotifier(this);
+        this.calendar = new Calendar(this)
 
         onSettingsLoad(() => this.settingsLoaded = true);
     }
@@ -63,6 +65,7 @@ export class TaskManager {
         this.planner.render();
         this.helpMgr.render();
         this.taskPlanner.render();
+        this.calendar.render();
 
         if (this.settingsLoaded) {
             this.taskNotifier.refresh();

@@ -83,6 +83,10 @@
     padding: 0.5rem;
 }
 
+.caldate.othermonth {
+ background-color: var(--secondary-shadow-color);
+}
+
 .tphoverelement {
     min-width: auto;
     min-height: auto;

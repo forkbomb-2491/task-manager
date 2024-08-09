@@ -72,7 +72,7 @@ describe("Task Event Funcs", () => {
     it("Task Delete Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskDelete(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.delete, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.delete, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -80,7 +80,7 @@ describe("Task Event Funcs", () => {
     it("Task Edit Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskEdit(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -88,7 +88,7 @@ describe("Task Event Funcs", () => {
     it("Task Complete Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskComplete(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.complete, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.complete, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -96,7 +96,7 @@ describe("Task Event Funcs", () => {
     it("Task Uncomplete Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskUncomplete(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -104,7 +104,7 @@ describe("Task Event Funcs", () => {
     it("Task Add Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskAdd(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.add, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -112,7 +112,7 @@ describe("Task Event Funcs", () => {
     it("Task Adopt Fires and Catches", () => {
         var event: TaskEvent | undefined
         onTaskAdopt(e => event = e)
-        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task))
+        window.dispatchEvent(new TaskEvent(TaskEventType.adopt, task.record, "test"))
         assert.notEqual(event, undefined)
         assert.equal(event!.task.id, task.id)
     })
@@ -211,7 +211,7 @@ describe("Task Time Tests", () => {
     it("Date and Time Midnight from Record", () => {
         var testDate = new Date(2024, 0, 1, 0, 0)
         var taskRecord = new Task("test", 1, 1, testDate).record
-        var task = new Task(taskRecord.name, taskRecord.size, taskRecord.importance, taskRecord.due)
+        var task = new Task(taskRecord.name, taskRecord.size, taskRecord.importance, new Date(taskRecord.due))
         assert.strictEqual(task.due.getFullYear(), testDate.getFullYear())
         assert.strictEqual(task.due.getMonth(), testDate.getMonth())
         assert.strictEqual(task.due.getDate(), testDate.getDate())

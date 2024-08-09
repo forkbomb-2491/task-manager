@@ -32,8 +32,15 @@ export class TaskEvent extends Event {
 
     readonly listUUID: string
     readonly parent: string | null
+    readonly previous: TaskRecord | null
 
-    constructor(type: TaskEventType, task: TaskRecord, listUUID: string, parent: string | null = null) {
+    constructor(
+        type: TaskEventType, 
+        task: TaskRecord, 
+        listUUID: string, 
+        parent: string | null = null, 
+        previous: TaskRecord | null = null
+    ) {
         var typeString: string
         switch (type) {
             case TaskEventType.delete:
@@ -68,6 +75,7 @@ export class TaskEvent extends Event {
         this._task = task
         this.listUUID = listUUID
         this.parent = parent
+        this.previous = previous
     }
 }
 
@@ -294,28 +302,31 @@ export class Task {
     private _name: string
     /** The name of the Task. */
     get name(): string { return this._name }
-    set name(val: string) { 
+    set name(val: string) {
+        const previous = this.record
         this._name = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
     }
 
     private _size: number
     /** The size of the Task. */
     get size(): number { return this._size }
     set size(val: number) { 
+        const previous = this.record
         this._size = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
     }
 
     private _importance: number
     /** The Task's importance. */
     get importance(): number { return this._importance }
     set importance(val: number) { 
+        const previous = this.record
         this._importance = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
     }
     
     private _color: string = "Default"
@@ -343,9 +354,10 @@ export class Task {
     /** When the Task is due. */
     get due(): Date { return this._due }
     set due(val: Date) { 
+        const previous = this.record
         this._due = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
+        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
     }
 
     private _smarted: boolean = false
@@ -360,7 +372,44 @@ export class Task {
     }
     
     /** If the Task is completed. */
-    completed: boolean
+    private _completed: boolean
+    get completed(): boolean {
+        return this._completed
+    }
+    set completed(val: boolean) {
+        if (val) {
+            this.elements.forEach(element => {
+                if (element.className == "taskcontainer") {
+                    element.style.scale = "1.03"
+                    window.setTimeout(() => element.style.scale = "1.0", 100)
+                    element.children[0].className += " completed"
+                } else {
+                    element.className += " completed"
+                }
+            })
+        } else {
+            this.elements.forEach(element => {
+                if (element.className == "taskcontainer") {
+                    element.style.scale = "1.03"
+                    window.setTimeout(() => element.style.scale = "1.0", 100)
+                    element.children[0].className = element.children[0].className.replaceAll(" completed", "")
+                } else {
+                    element.className = element.className.replaceAll(" completed", "")
+                }
+            })      
+        }
+        console.log(val)
+
+        this._completed = val
+
+        if (val) {
+            console.log(this.record)
+            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._list))
+        } else {
+            console.log(this.record)
+            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record, this._list))
+        }
+    }
 
     private _subtasks: Task[] = []
     private _parent: Task | null = null
@@ -383,7 +432,7 @@ export class Task {
             "size": Number(this._size),
             "importance": Number(this._importance),
             "due": Number(this._due.valueOf()),
-            "completed": this.completed,
+            "completed": this._completed,
             "id": this.id,
             "subtasks": this._subtasks.filter(t => !t.deleted).map(t => t.toBasicObject())
         }
@@ -419,7 +468,7 @@ export class Task {
         // Create new
         var newElement = document.createElement("p")
         newElement.setAttribute("name", this.id)
-        if (this.completed) {
+        if (this._completed) {
             newElement.className = " completed"
         }
         newElement.innerHTML = `
@@ -555,7 +604,7 @@ export class Task {
         
         this._due = new Date(due)
         // this.due = new Date(this.due.getUTCFullYear(), this.due.getUTCMonth(), this.due.getUTCDate())
-        this.completed = completed
+        this._completed = completed
 
         if (id == null) {
             this.id = Task.generateId()
@@ -652,35 +701,8 @@ export class Task {
      */
     toggleCompleted() {
         // Applies styling to all task elements.
-        if (!this.completed) {
-            this.elements.forEach(element => {
-                if (element.className == "taskcontainer") {
-                    element.style.scale = "1.03"
-                    window.setTimeout(() => element.style.scale = "1.0", 100)
-                    element.children[0].className += " completed"
-                } else {
-                    element.className += " completed"
-                }
-            })
-        } else {
-            this.elements.forEach(element => {
-                if (element.className == "taskcontainer") {
-                    element.style.scale = "1.03"
-                    window.setTimeout(() => element.style.scale = "1.0", 100)
-                    element.children[0].className = element.children[0].className.replace(" completed", "")
-                } else {
-                    element.className = element.className.replace(" completed", "")
-                }
-            })      
-        }
-        
         // Marks Task as completed or not; dispatch Events to which other classes may listen.
         this.completed = !this.completed
-        if (this.completed) {
-            window.dispatchEvent(new TaskEvent(TaskEventType.complete, this.record, this._list))
-        } else {
-            window.dispatchEvent(new TaskEvent(TaskEventType.uncomplete, this.record, this._list))
-        }
     }
 
     /**
@@ -778,7 +800,7 @@ export class Task {
         this.cleanUpElements()
 
         var newElement = document.createElement("div")
-        newElement.className = this.completed ? "task completed": "task"
+        newElement.className = this._completed ? "task completed": "task"
         if (full) {
             // Full length, Task List
             newElement.innerHTML = this.getTaskListElementHTML()
@@ -800,7 +822,7 @@ export class Task {
     private getMiniTaskListElement() {
         this.cleanUpElements()
         var newElement = document.createElement("div")
-        newElement.className = this.completed ? "task mini completed": "task mini"
+        newElement.className = this._completed ? "task mini completed": "task mini"
         newElement.innerHTML = this.getMiniTaskListElementHTML()
         // this.addButtonListeners(newElement)
         if (this._color != "Default") {
@@ -882,6 +904,7 @@ export class Task {
      */
     private editTask(element: HTMLDivElement) {
         if (element.className.includes(" editing")) {    
+            const previous = this.record
             // Gets edit form   
             var form: HTMLFormElement = element.getElementsByTagName("form")[0]
             // Updates values
@@ -890,7 +913,7 @@ export class Task {
             this._size = form.sizeinput.selectedOptions.item(0).getAttribute("name")
             this._importance = form.importanceinput.selectedOptions.item(0).getAttribute("name")
             // Dispatches Edit event
-            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list))
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
             // Reverts element's HTML to normal Task List element.
             element.className = "task"
             element.innerHTML = this.getTaskListElementHTML()
@@ -1042,7 +1065,7 @@ export function colorStrToEnum(color: string) {
     }
 }
 
-function getColor(color: string) {
+export function getColor(color: string) {
     switch (color) {
         case "Red":
             return "var(--cat1-color)"

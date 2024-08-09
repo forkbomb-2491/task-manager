@@ -1,5 +1,5 @@
-import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused } from "./utils"
-import { Task, onTaskAdd, onTaskAdopt, onTaskEdit } from "./task"
+import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused, Months, getElement } from "./utils"
+import { Task, getColor, onTaskAdd, onTaskAdopt, onTaskEdit, onTaskEvent } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
@@ -79,6 +79,45 @@ export class Planner {
         })
 
         onWindowFocused(() => this.refresh())
+
+        SelectWeek.onWindowDispatch(e => {
+            console.log("recv")
+            this.startDate = e.startDate
+            this.render()
+
+            getElement("plannercalendar").style.display = "none"
+            getElement("plannerweekly").style.display = "block"
+
+            getElement("switchplanner").style.display = "block"
+
+            getElement("plannercalbutton").innerText = "Monthly View"
+        })
+
+        getElement("plannercalbutton").addEventListener(
+            "click", _ => {
+                this.calendarView(getElement("plannercalendar").style.display == "none")
+            }
+        )
+
+        onSettingChange("plannerInCalendar", e => this.calendarView(e.value))
+    }
+
+    private calendarView(enabled: boolean) {
+        if (enabled) {
+            getElement("plannercalendar").style.display = "block"
+            getElement("plannerweekly").style.display = "none"
+
+            getElement("switchplanner").style.display = "none"
+
+            getElement("plannercalbutton").innerText = "Weekly View"
+        } else {
+            getElement("plannercalendar").style.display = "none"
+            getElement("plannerweekly").style.display = "block"
+
+            getElement("switchplanner").style.display = "block"
+
+            getElement("plannercalbutton").innerText = "Monthly View"
+        }
     }
 
     // Following 3 methods handle shifting the Planner from the UI
@@ -271,3 +310,233 @@ export function switchPlannerOrientation(): boolean {
     return true
 }
 
+export class Calendar {
+    private taskMgr: TaskManager
+    private weeks: CalendarWeek[] = []
+
+    private month: number
+    private year: number
+
+    private element = document.getElementById("plannercalweeks")!
+
+    constructor(taskMgr: TaskManager) {
+        this.taskMgr = taskMgr
+        const today = new Date()
+        this.year = today.getFullYear()
+        this.month = today.getMonth()
+
+        document.getElementById("callastmonth")!.addEventListener(
+            "click",
+            _ => this.shiftMonth(-1)
+        )
+
+        document.getElementById("calnextmonth")!.addEventListener(
+            "click",
+            _ => this.shiftMonth(1)
+        )
+
+        document.getElementById("plannerthismonth")!.addEventListener(
+            "click",
+            _ => {
+                const today = new Date()
+                this.month = today.getMonth()
+                this.year = today.getFullYear()
+                this.render()
+            }
+        )
+    }
+
+    private shiftMonth(by: number) {
+        var month = this.month + (by < 0 ? -1 : 1)
+        if (month < 0) {
+            this.month = 11
+            this.year--
+        } else if (month > 11) {
+            this.month = 0
+            this.year++
+        } else {
+            this.month = month
+        }
+
+        this.render()
+    }
+
+    render() {
+        var counter = 0
+        this.element.innerHTML = ""
+        this.weeks = []
+        var date = findFirstPrecedingDay(new Date(this.year, this.month, 1), Weekdays.sunday)
+        const loopCondition = () => {
+            if (date.getMonth() == 0 && this.month == 11) {
+                return false
+            } else if (this.month == 0 && date.getMonth() == 11) {
+                return true
+            } else {
+                return date.getMonth() <= this.month
+            }
+        }
+
+        while (loopCondition() && counter < 6) {
+            console.log(date.getMonth(), this.month)
+            const week = new CalendarWeek(this.taskMgr, date)
+            this.weeks.push(week)
+            week.render()
+            date = new Date(date.valueOf() + 86_400_000 * 7)
+            counter++
+        }
+        document.getElementById("calmonthlabel")!.innerHTML = `${Months[this.month].slice(0, 3)} ${this.year}`
+    }
+}
+
+class CalendarWeek {
+    private taskMgr: TaskManager
+    private element: Element | undefined
+
+    private days: CalendarDay[] = []
+    
+    private _startDate: Date
+    get startDate(): Date { return this._startDate }
+    set startDate(val: Date) {
+        this._startDate = val
+        // this.render()
+    }
+
+    constructor(taskMgr: TaskManager, startDate: Date) {
+        this.taskMgr = taskMgr
+        this._startDate = startDate
+    }
+    
+    private createElement() {
+        if (this.element != undefined) {
+            this.element.remove()
+        }
+
+        this.element = document.createElement("div")
+        this.element.className = "calweek"
+
+        const button = document.createElement("button")
+        button.title = "Click to select this week"
+        button.onclick = _ => {
+            window.dispatchEvent(new SelectWeek(this._startDate))
+        }
+        this.element.appendChild(button)
+
+        document.getElementById("plannercalweeks")!.appendChild(this.element)
+    }
+
+    render() {
+        // Make element
+        this.createElement()
+        // If start not sunday, add right num of spacers
+        // Make days
+        this.days = []
+        var date = new Date(this._startDate)
+        for (let i = 0; i < 7; i++) {
+            const day = new CalendarDay(this.taskMgr, new Date(date.valueOf() + 86400000 * i), this.element!)
+            this.days.push(day)
+            day.render()
+        }
+    }
+}
+
+class CalendarDay {
+    private taskMgr: TaskManager
+    private parentElement: Element
+    private element: Element | undefined
+    
+    private date: Date
+
+    constructor(taskMgr: TaskManager, date: Date, parent: Element) {
+        this.taskMgr = taskMgr
+        this.date = date
+        this.parentElement = parent
+
+        onTaskEvent(e => {
+            if (this.element!.matches(":hover")) {
+                return
+            }
+            if (
+                isSameDay(new Date(e.task.due), this.date) || 
+                (e.previous != null && isSameDay(new Date(e.previous!.due), this.date))
+            ) {
+                this.render()
+            }
+        })
+
+        onWindowFocused(() => this.checkIsToday())
+    }
+
+    private getTaskCheckbox(task: Task, disabled: boolean = false): HTMLLabelElement {
+        const element = document.createElement("label")
+        element.className = "checkcontainer"
+        element.title = task.name
+        
+        const checkbox = document.createElement("input")
+        checkbox.type = "checkbox"
+        checkbox.checked = task.completed
+        if (!disabled) {
+            checkbox.addEventListener("change", _ => {
+                task.completed = checkbox.checked
+            })
+        } else {
+            checkbox.disabled = true
+        }
+        element.appendChild(checkbox)
+
+        const checkmark = document.createElement("span")
+        checkmark.className = "taskcheckbox"
+        checkmark.style.backgroundColor = getColor(task.color)
+        checkmark.innerHTML = "<p>✔</p>"
+        element.appendChild(checkmark)
+
+        return element
+    }
+
+    private checkIsToday() {
+        if (isSameDay(this.date, new Date()) && this.element != undefined) {
+            this.element.className = "caldate today"
+        } else if (this.element != undefined) {
+            this.element.className = "caldate"
+        }
+    }
+
+    render() {
+        // Check element exists, if not create & append
+        if (this.element != undefined) {
+            // clear inner HTML
+            this.element.innerHTML = ""
+        } else {
+            this.element = document.createElement("div")
+            this.element.className = "caldate"
+
+            this.parentElement.appendChild(this.element)
+        }
+        // add date label
+        this.element.innerHTML += `<p>${this.date.getMonth() + 1}/${this.date.getDate()}</p>`
+        // filter tasks
+        var tasks = this.taskMgr.getTasks().filter(t => {
+            return isSameDay(this.date, t.due)
+        })
+        // add checkboxes
+        tasks.forEach(t => {
+            this.element!.appendChild(this.getTaskCheckbox(t))
+        })
+
+        this.checkIsToday()
+    }
+}
+
+class SelectWeek extends Event {
+    readonly startDate: Date
+    private static event: string = "planner://selectweek"
+
+    constructor(date: Date) {
+        super(SelectWeek.event)
+        this.startDate = date
+    }
+
+    static onWindowDispatch(cb: (e: SelectWeek) => void) {
+        // @ts-ignore
+        window.addEventListener(SelectWeek.event, cb)
+    }
+}

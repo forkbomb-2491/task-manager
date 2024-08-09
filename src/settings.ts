@@ -1,6 +1,6 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { Weekdays, getElement, onWindowFocused, registerShowHideButton } from "./utils";
+import { Weekdays, getElement, getFirstSelected, onWindowFocused, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
 import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
@@ -213,6 +213,19 @@ export class SettingsView {
             }
         )
 
+        getElement("defaultplannerview").addEventListener("change", _ => {
+            const selector = getElement("defaultplannerview") as HTMLFormElement
+            switch (selector.plannerview.value) {
+                case "monthly":
+                    this.settings.plannerInCalendar = true
+                    break;
+                    
+                default:
+                    this.settings.plannerInCalendar = false
+                    break;
+            }
+        })
+
         this.setSettingsFieldsToSavedValues()
     }
 
@@ -295,6 +308,16 @@ export class SettingsView {
 
         // @ts-ignore
         document.getElementById("helplabelinput")!.value = this.settings.helpTabName
+
+        var plannerViewSelector = getElement("defaultplannerview")
+        for (let i = 0; i < plannerViewSelector.getElementsByTagName("input").length; i++) {
+            const element = plannerViewSelector.getElementsByTagName("input")[i];
+            if (element.value == "weekly") {
+                element.checked = !this.settings.plannerInCalendar
+            } else if (element.value == "monthly") {
+                element.checked = this.settings.plannerInCalendar
+            }
+        }
     }
 
     private async loadCheckInHandler(): Promise<boolean> {
@@ -731,6 +754,14 @@ export class Settings {
 
     set syncEnabled(val: boolean) {
         this.setKey("syncEnabled", val)
+    }
+    
+    get plannerInCalendar(): boolean {
+        return this.getKey("plannerInCalendar", false)
+    }
+
+    set plannerInCalendar(val: boolean) {
+        this.setKey("plannerInCalendar", val)
     }
 }
 
