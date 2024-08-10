@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env::consts::OS, str::FromStr, sync::Mutex};
+use std::{collections::HashMap, env::consts::OS, fs::read_to_string, str::FromStr, sync::Mutex};
 
 use reqwest::{header, Error, Method, StatusCode};
 use serde::{Deserialize, Serialize};
@@ -12,6 +12,14 @@ use crate::{task::{ListEntry, TaskEntry}, utils::now};
 const API_ROOT: &str = "http://localhost:5000";
 
 static mut COOKIE: Option<SessionCooke> = None;
+static mut APP_CONF_DIR: Option<String> = None;
+
+pub fn set_app_conf_dir(path: String) {
+    unsafe {
+        APP_CONF_DIR = Some(path);
+        println!("Dir set to {}", &APP_CONF_DIR.as_mut().unwrap())
+    }
+}
 
 struct SessionCooke {
     cookie: Mutex<String>
@@ -64,7 +72,8 @@ fn base_request(endpoint: &str, method: Method) -> RequestBuilder {
     return ret;
 }
 
-fn is_logged_in() -> bool {
+#[tauri::command]
+pub fn is_logged_in() -> bool {
     unsafe {
         if COOKIE.is_none() {
             return false;
@@ -74,7 +83,8 @@ fn is_logged_in() -> bool {
     }
 }
 
-fn log_in(username: &str, password: &str) -> Result<bool, String> {
+#[tauri::command]
+pub fn log_in(username: &str, password: &str) -> Result<bool, String> {
     let mut request = base_request("/login", Method::GET);
     request = request.basic_auth(username, Some(password));
     let response = request.send().or_else(|e| Err(format!("{}", e)))?;

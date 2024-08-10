@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 
 mod algorithm;
 mod history;
@@ -41,9 +41,12 @@ pub fn run() {
             task::edit_task,
             task::delete_task,
             http::test_http,
+            http::log_in,
+            http::is_logged_in
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
+    http::set_app_conf_dir(app.path().app_local_data_dir().unwrap().to_str().unwrap().to_string());
     app.run(|handle, event| match event {
         tauri::RunEvent::ExitRequested { .. } => {
             let _ = handle.emit("exit-requested", ());

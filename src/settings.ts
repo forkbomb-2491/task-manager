@@ -1,11 +1,13 @@
 import { Store } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
-import { Weekdays, getElement, getFirstSelected, onWindowFocused, registerShowHideButton } from "./utils";
+import { Weekdays, getElement, onWindowFocused, padWithLeftZeroes, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
-import { isAuthenticated, logInWithToken, logOut, signIn } from "./http";
+import { isAuthenticated, logInWithToken, logOut, sendMetadata, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
+
+const VERSION = await getVersion()
 
 /**
  * Controls the Settings tab's UI elements and responds to (most) changes.
@@ -447,8 +449,7 @@ export class SettingsView {
         form.reset()
 
         try {
-            const token = await signIn(uname, passwd)
-            this.settings.syncToken = token
+            await signIn(uname, passwd)
             this.syncSignedIn()
         } catch (error) {
             getElement("syncinfo").innerHTML = "<element style='color: red;'>Username or password incorrect. Please try again.</element>"
@@ -460,9 +461,9 @@ export class SettingsView {
         if (newStatus) {
             getElement("syncinfo").innerHTML = "Checking your sync status..."
             getElement("syncinfo").style.display = "block"
-            var isAuthed = await isAuthenticated()
+            var isAuthed = isAuthenticated()
             if (!isAuthed) {
-                if (this.settings.syncToken != "" && await logInWithToken(this.settings.syncToken)) return this.syncSignedIn()
+                // if (this.settings.syncToken != "" && await logInWithToken(this.settings.syncToken)) return this.syncSignedIn()
                 getElement("syncinfo").style.display = "none"
                 getElement("syncsigninbox").style.display = "block"
                 return
@@ -586,6 +587,9 @@ export class Settings {
 
                     this._isLoaded = true
                     window.dispatchEvent(new Event("settingsloaded"))
+                    sendMetadata(this.deviceId, this.lastVersion).then(
+                        // Implement sheet; update version
+                    )
                 })
             }).catch(_ => {
                 this.store.save().then()
@@ -762,6 +766,28 @@ export class Settings {
 
     set plannerInCalendar(val: boolean) {
         this.setKey("plannerInCalendar", val)
+    }
+
+    private resetDeviceId() {
+        const newId = padWithLeftZeroes(Math.round(Math.random() * 16777215).toString(16), 6);
+        this.setKey("deviceId", newId);
+        return newId;
+    }
+
+    get deviceId(): string {
+        const stored = this.getKey("deviceId", null)
+        if (stored == null) {
+            return this.resetDeviceId();
+        }
+        return stored
+    }
+
+    get lastVersion(): string {
+        return this.getKey("lastVersion", "0.0.0")
+    }
+
+    updateVersion() {
+        this.setKey("lastVersion", VERSION)
     }
 }
 

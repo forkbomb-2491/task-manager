@@ -1,9 +1,10 @@
 import { fetch } from "@tauri-apps/plugin-http";
 import { Task, TaskRecord } from "./task";
+import { invoke } from "@tauri-apps/api/core";
 
-const API_URL = "https://api.forkbomb2491.dev"
-// const API_URL = "http://localhost:5000"
-var isAuthed: boolean | undefined
+// const API_URL = "https://api.forkbomb2491.dev"
+const API_URL = "http://localhost:5000"
+var isAuthed: boolean = false
 
 class HTTPError extends Error {
     readonly code: number
@@ -14,14 +15,12 @@ class HTTPError extends Error {
     }
 }
 
-export async function isAuthenticated(): Promise<boolean> {
-    if (isAuthed != undefined) return isAuthed
-
-    var response = await fetch(API_URL + "/login")
-    return response.ok
+export function isAuthenticated(): boolean {
+    return isAuthed
 }
 
 export async function signIn(username: string, password: string): Promise<string> {
+    return await invoke("log_in", {username: username, password: password}) ? "urmom" : ""
     const auth = "Basic " + btoa(username + ":" + password)
     const response = await fetch(API_URL + "/login", {
         headers: {
@@ -30,6 +29,7 @@ export async function signIn(username: string, password: string): Promise<string
     })
     if (response.ok) {
         const json = await response.json()
+        
         return json.token
     } else {
         throw new HTTPError(response.status)
@@ -37,6 +37,7 @@ export async function signIn(username: string, password: string): Promise<string
 }
 
 export async function logInWithToken(token: string): Promise<boolean> {
+    return false
     const response = await fetch(API_URL + "/login", {
         headers: {
             "Authorization": `token ${token}`
@@ -73,4 +74,8 @@ export async function sendTasks(tasks: Task[]) {
             "Content-Type": "application/json"
         }
     })
+}
+
+export async function sendMetadata(_deviceId: string, _version: string) {
+
 }
