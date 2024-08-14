@@ -76,6 +76,9 @@ export async function sendTasks(tasks: Task[]) {
     })
 }
 
-export async function sendMetadata(_deviceId: string, _version: string) {
-
+export async function sendMetadata(deviceId: string, previousVersion: string) {
+    await invoke("send_telemetry", {
+        deviceId: deviceId,
+        previousVersion: previousVersion
+    })
 }

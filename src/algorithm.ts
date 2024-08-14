@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { List, Task, TaskRecord, onTaskAdd, onTaskAdopt, onTaskComplete, onTaskDelete, onTaskUncomplete } from "./task";
+import { isSameDay } from "./utils";
 
 export async function clearDueEvents() {
     await invoke("clear_due_events")
@@ -55,9 +56,11 @@ export async function smartDueDate(task: Task, lis: List | string) {
                 task.importance,
                 typeof(lis) == "string" ? lis : lis.uuid
             )
+            console.log(offset)
             if (offset < 0) return;
             const date = new Date(task.due.valueOf() - offset);
             const now = new Date();
+            if (isSameDay(date, task.due)) { return }
             task.due = date.valueOf() > now.valueOf() ? date : now;
             task.smarted = true;
         } catch (error) {

@@ -131,35 +131,45 @@ impl CreateCompletePair {
 
 const MAX_STDEV_FOR_DUE_OFFSET: i32 = 86_400_000 * 3;
 
-#[tauri::command]
-pub async fn get_suggested_due_offset(
-    size: i32,
-    importance: i32,
-    list: String,
-) -> Result<i32, String> {
-    // Get due events from db
-    let values: Vec<DueEvent>;
-    unsafe {
-        let filtered = HISTORY
-            .as_mut()
-            .unwrap()
-            .filter_due_events(Vec::from([
-                format!("size={size}"),
-                format!("importance={importance}"),
-                format!("list='{list}'"),
-            ]))
-            .await
-            .expect("Error filtering events.");
-        if filtered.is_none() {
-            return Err("No due date event records found.".to_string());
-        } else if filtered.as_ref().unwrap().len() == 0 {
-            return Err("No due date event records found.".to_string());
+#[derive(PartialEq, Debug, Clone)]
+enum SmartDueError {
+    SqlError,
+    NoRecords,
+    NoPairs,
+    StdevTooHigh,
+}
+
+impl Into<i32> for SmartDueError {
+    fn into(self) -> i32 {
+        match self {
+            Self::SqlError => 0,
+            Self::NoRecords => 1,
+            Self::NoPairs => 2,
+            Self::StdevTooHigh => 3
         }
-        values = filtered.unwrap();
     }
+}
+
+impl PartialOrd for SmartDueError {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        // if is 5, other 10, return less
+        let lhs: i32 = (*self).clone().into();
+        let rhs: i32 = (*other).clone().into();
+        lhs.partial_cmp(&rhs)
+    }
+}
+
+async fn process_filter(filtered: Option<Vec<DueEvent>>) -> Result<i32, SmartDueError> {
+    if filtered.is_none() {
+        return Err(SmartDueError::NoRecords);
+    } else if filtered.as_ref().unwrap().len() == 0 {
+        // return Err("No due date event records found.".to_string());
+        return Err(SmartDueError::NoRecords);
+    }
+    let filtered = filtered.unwrap();
     // Iterate through values from db & store the due date & completion date
     let mut tasks: HashMap<String, CreateCompletePair> = HashMap::new();
-    for val in values {
+    for val in filtered {
         let id = val.id.clone();
         if !tasks.contains_key(&id) {
             tasks.insert(id.clone(), CreateCompletePair::new());
@@ -185,7 +195,8 @@ pub async fn get_suggested_due_offset(
     let sum: i64 = deltas.iter().sum();
     let count = deltas.len();
     if count == 0 {
-        return Err("No due date event create/complete pairs found.".to_string());
+        // return Err("No due date event create/complete pairs found.".to_string());
+        return Err(SmartDueError::NoPairs);
     }
     let mean: i64 = sum / count as i64;
     let mut stdev: i64 = 0;
@@ -195,10 +206,145 @@ pub async fn get_suggested_due_offset(
     stdev /= deltas.len() as i64;
     let stdev: f64 = (stdev as f64).sqrt();
     if stdev > MAX_STDEV_FOR_DUE_OFFSET as f64 {
-        return Err("Standard deviation too high.".to_string());
+        // return Err("Standard deviation too high.".to_string());
+        return Err(SmartDueError::StdevTooHigh);
     }
 
     Ok(mean as i32)
+} 
+
+async fn get_due_offset_all_filters(
+    size: i32,
+    importance: i32,
+    list: String,
+) -> Result<i32, SmartDueError> {
+    unsafe {
+        let filtered = HISTORY
+            .as_mut()
+            .unwrap()
+            .filter_due_events(Vec::from([
+                format!("size={size}"),
+                format!("importance={importance}"),
+                format!("list='{list}'"),
+            ]))
+            .await;
+        if filtered.is_err() {
+            return Err(SmartDueError::SqlError);
+        }
+        return process_filter(filtered.unwrap()).await;
+    }
+}
+
+async fn get_due_offset_size_importance(
+    size: i32,
+    importance: i32,
+) -> Result<i32, SmartDueError> {
+    unsafe {
+        let filtered = HISTORY
+            .as_mut()
+            .unwrap()
+            .filter_due_events(Vec::from([
+                format!("size={size}"),
+                format!("importance={importance}"),
+            ]))
+            .await;
+        if filtered.is_err() {
+            return Err(SmartDueError::SqlError);
+        }
+        return process_filter(filtered.unwrap()).await;
+    }
+}
+
+async fn get_due_offset_size_list(
+    size: i32,
+    list: String,
+) -> Result<i32, SmartDueError> {
+    unsafe {
+        let filtered = HISTORY
+            .as_mut()
+            .unwrap()
+            .filter_due_events(Vec::from([
+                format!("size={size}"),
+                format!("list='{list}'"),
+            ]))
+            .await;
+        if filtered.is_err() {
+            return Err(SmartDueError::SqlError);
+        }
+        return process_filter(filtered.unwrap()).await;
+    }
+}
+
+async fn get_due_offset_size(
+    size: i32,
+) -> Result<i32, SmartDueError> {
+    unsafe {
+        let filtered = HISTORY
+            .as_mut()
+            .unwrap()
+            .filter_due_events(Vec::from([
+                format!("size={size}"),
+            ]))
+            .await;
+        if filtered.is_err() {
+            return Err(SmartDueError::SqlError);
+        }
+        return process_filter(filtered.unwrap()).await;
+    }
+}
+
+#[tauri::command]
+pub async fn get_suggested_due_offset(
+    size: i32,
+    importance: i32,
+    list: String,
+) -> Result<i32, String> {
+    let all_result = get_due_offset_all_filters(size, importance, list.clone()).await;
+    if all_result.is_ok() {
+        println!("All filters found match");
+        return Ok(all_result.unwrap());
+    }
+
+    let size_list_result = get_due_offset_size_list(size, list.clone()).await;
+    if size_list_result.is_ok() {
+        println!("Fallback: Size & list filters found match");
+        return Ok(size_list_result.unwrap());
+    }
+
+    let size_importance_result = get_due_offset_size_importance(size, importance).await;
+    if size_importance_result.is_ok() {
+        println!("Fallback 2: Size & importance filters found match");
+        return Ok(size_importance_result.unwrap());
+    }
+
+    let size_result = get_due_offset_size(size).await;
+    if size_result.is_ok() {
+        println!("Fallback 3: Size filters found match");
+        return Ok(size_result.unwrap());
+    }
+
+    let all_result = all_result.unwrap_err();
+    let size_list_result = size_list_result.unwrap_err();
+    let size_importance_result = size_importance_result.unwrap_err();
+    let size_result = size_result.unwrap_err();
+
+    let mut max = &all_result;
+    if &size_list_result > max {
+        max = &size_list_result;
+    }
+    if &size_importance_result > max {
+        max = &size_importance_result;
+    }
+    if &size_result > max {
+        max = &size_result;
+    }
+
+    match max.to_owned() {
+        SmartDueError::SqlError => Err("Error returned from database".to_string()),
+        SmartDueError::NoRecords => Err("No due date event records found.".to_string()),
+        SmartDueError::NoPairs => Err("No due date event create/complete pairs found.".to_string()),
+        SmartDueError::StdevTooHigh => Err("Standard deviation too high.".to_string()),
+    }
 }
 
 #[tauri::command]

@@ -98,10 +98,13 @@ export class TaskList {
                 // @ts-ignore
                 const button: HTMLButtonElement = e.currentTarget
                 const title = document.getElementById("selectedlisttitle")!;
+                const colorpick = document.getElementById("listcolorchange")!;
                 if (!this.editingList) {
                     this.editingList = true
                     button.style.display = "initial"
                     button.innerText = "✅"
+                    colorpick.style.display = "block"
+                    
                     
                     var input = document.createElement("input")
                     title.replaceWith(
@@ -115,6 +118,8 @@ export class TaskList {
                     if (title.value.length == 0) return
                     button.style.display = ""
                     button.innerText = "✏️"
+                    colorpick.style.display = "none"
+
                     // @ts-ignore
                     this.selectedList!.name = title.value
                     title.contentEditable = "false"

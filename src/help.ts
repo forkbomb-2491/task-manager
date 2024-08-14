@@ -1,7 +1,7 @@
-import { Task, onTaskEvent } from "./task";
+import { Task, onListEvent, onTaskEvent } from "./task";
 import { TaskManager } from "./taskmanager";
 import { onSettingChange } from "./settings";
-import { onWindowFocused } from "./utils";
+import { getElement, getFirstSelected, onWindowFocused } from "./utils";
 
 export function changeHelpStuff(target: string) {
     // Change tab to target in all contexts
@@ -94,22 +94,15 @@ export class HelpManager {
                 t => {
                     return t.size + t.importance - t.dueIn
                 },
-                (t: Task) => {
+                t => {
                     return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
                 },
             ),
             // Filterview
-            // new HelpPane(
-            //     this.taskMgr,
-            //     document.getElementById("filterview")!,
-            //     t => {
-            //         return t.size + t.importance - t.dueIn
-            //     },
-            //     (t: Task) => {
-            //         return t.size >= 2 && t.importance >= 2 && t.dueIn > 3*(t.size)
-            //     },
-            // ),
-            
+            new FilterPane(
+                this.taskMgr,
+                document.getElementById("filterview")!
+            ),
         ]
         onWindowFocused(() => this.render())
         // Listener for checkbox
@@ -122,7 +115,7 @@ export class HelpManager {
                 this.render()
             }
         )
-        
+        // Listener for help filter
     }
 
     render(): void {
@@ -154,13 +147,13 @@ export class HelpManager {
 }
 
 class HelpPane {
-    private taskMgr: TaskManager
-    private element: HTMLElement
+    protected taskMgr: TaskManager
+    protected element: HTMLElement
 
-    private theAlgorithm: (t: Task) => number
-    private taskFilter: (t: Task) => boolean
-    private _recListLength: number
-    private _overdue: boolean = true
+    protected theAlgorithm: (t: Task) => number
+    protected taskFilter: (t: Task) => boolean
+    protected _recListLength: number
+    protected _overdue: boolean = true
 
     get recListLength(): number {
         return this._recListLength
@@ -187,7 +180,7 @@ class HelpPane {
         onSettingChange("recListLength", e => this.recListLength = e.value)
     }
 
-    private getTasks() {
+    protected getTasks() {
         var tasks = this.taskMgr.getTasks().filter((t) => {
             return !t.completed && !t.deleted && this.taskFilter(t)
         })
@@ -217,13 +210,135 @@ class HelpPane {
         this._overdue = v;
     }
     
-    
-
     render(): void {
         this.element.innerHTML = ""
         var tasks = this.getTasks()
         tasks.forEach(task => {
             this.element.appendChild(task.shortenedTaskListElement)
         });
+    }
+}
+
+class FilterPane extends HelpPane {
+    firstRender: boolean = false;
+
+    constructor(taskMgr: TaskManager, element: HTMLElement) {
+        super(taskMgr, element, _ => 1, _ => true);
+        this.taskFilter = this.applyFilters
+        getElement("filterviewform").addEventListener(
+            "change",
+            _ => {
+                this.render()
+            }
+        )
+
+        onListEvent(_ => {
+            this.firstRender = false
+            this.render()
+        })
+    }
+
+    override render() {
+        if (!this.firstRender) { 
+            this.listFilter() 
+            this.firstRender = true
+        }
+        super.render()
+    }
+
+    private listFilter() {
+        var listSelect = document.getElementById("listfilterview")!
+        listSelect.innerHTML = ""
+        var lists = this.taskMgr.lists
+        
+        for (let i = 0; i < lists.length; i++) {
+            const list = lists[i]
+            var element = document.createElement("option")
+            element.setAttribute("name", list.uuid)
+            element.innerHTML = list.name
+            
+            listSelect.appendChild(element)
+        }
+        
+        var nolist = document.createElement("option")
+        nolist.setAttribute("name", "nolist")
+        nolist.innerHTML = "No List"
+        nolist.selected = true
+        listSelect.appendChild(nolist)
+    }
+
+    private applyFilters(task: Task): boolean {
+        return this.checkSizeFilter(task) &&
+            this.checkDueDateFilter(task) &&
+            this.checkListFilter(task) &&
+            this.checkImportanceFilter(task)
+    }
+
+    private conditionHandler(conditionValue: string, filterValue: number, taskValue: number): boolean {
+        switch (conditionValue) {
+            case "0":
+                return taskValue >= filterValue
+            case "1":
+                return taskValue == filterValue
+            case "2":
+                return taskValue <= filterValue
+        
+            default:
+                return false;
+        }
+    }
+
+    private checkListFilter(task: Task): boolean {
+        // @ts-ignore
+        var filterValue = getFirstSelected(getElement("listfilterview"))!.getAttribute("name")!
+        if (filterValue == "nolist") {
+            return true
+        }
+        // @ts-ignore
+        return (task.list == filterValue)
+    }
+    
+    private checkSizeFilter(task: Task): boolean {
+        // @ts-ignore
+        var filterValue = getFirstSelected(getElement("sizefilterview"))!.getAttribute("name")!
+        if (filterValue == "default") {
+            return true
+        }
+        // @ts-ignore
+        var condition = getFirstSelected(getElement("sizefilterview2"))!.getAttribute("name")!
+        return this.conditionHandler(condition, Number(filterValue), task.size);
+    }
+
+    private checkImportanceFilter(task: Task): boolean {
+        // @ts-ignore
+        var filterValue = getFirstSelected(getElement("importancefilterview"))!.getAttribute("name")!
+        if (filterValue == "default") {
+            return true
+        }
+        // @ts-ignore
+        var condition = getFirstSelected(getElement("importancefilterview2"))!.getAttribute("name")!
+        return this.conditionHandler(condition, Number(filterValue), task.size);
+    }
+
+    private checkDueDateFilter(task: Task): boolean {
+        // @ts-ignore
+        var filterValue = getElement("deadlinefilterview").valueAsDate
+        if (filterValue == null) {
+            return true
+        }
+        filterValue = new Date(filterValue.valueOf() + (new Date().getTimezoneOffset() * 60_000))
+        // @ts-ignore
+        var condition = getFirstSelected(getElement("deadlinefilterview2"))!.getAttribute("name")!
+        switch (condition) {
+            case "0":
+                return task.due.valueOf() - filterValue.valueOf() < 86_400_000
+            case "1":
+                return Math.abs(task.due.valueOf() - filterValue.valueOf()) <= 86_400_000
+            case "2":
+                return task.due.valueOf() - filterValue.valueOf() > 86_400_000
+        
+            default:
+                return false;
+        }
     }
 }

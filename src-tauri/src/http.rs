@@ -1,10 +1,10 @@
-use std::{collections::HashMap, env::consts::OS, fs::read_to_string, str::FromStr, sync::Mutex};
+use std::{collections::HashMap, env::consts::OS, fs::read_to_string, str::FromStr, sync::Mutex, time::Duration};
 
 use reqwest::{header, Error, Method, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tauri::{http::response, Runtime, Url};
-use reqwest::blocking::{Client, Request, Response, RequestBuilder};
+use reqwest::{Client, Request, Response, RequestBuilder};
 
 use crate::{task::{ListEntry, TaskEntry}, utils::now};
 
@@ -69,6 +69,7 @@ fn base_request(endpoint: &str, method: Method) -> RequestBuilder {
             ret = ret.header(header::COOKIE, COOKIE.as_mut().unwrap().get_cookie());
         }
     }
+    ret = ret.timeout(Duration::from_secs(5));
     return ret;
 }
 
@@ -84,57 +85,57 @@ pub fn is_logged_in() -> bool {
 }
 
 #[tauri::command]
-pub fn log_in(username: &str, password: &str) -> Result<bool, String> {
+pub async fn log_in(username: &str, password: &str) -> Result<bool, String> {
     let mut request = base_request("/login", Method::GET);
     request = request.basic_auth(username, Some(password));
-    let response = request.send().or_else(|e| Err(format!("{}", e)))?;
+    let response = request.send().await.or_else(|e| Err(format!("{}", e)))?;
     if response.status() == StatusCode::FORBIDDEN {
         return Err("Invalid credentials.".to_string());
     }
     Ok(true)
 }
 
-fn get(endpoint: &str) -> Result<Response, Error> {
+async fn get(endpoint: &str) -> Result<Response, Error> {
     let request = base_request(endpoint, Method::GET);
-    request.send()
+    request.send().await
 }
 
-fn post<S: Serialize>(endpoint: &str, body: &S) -> Result<Response, Error> {
+async fn post<S: Serialize>(endpoint: &str, body: &S) -> Result<Response, Error> {
     let mut request = base_request(endpoint, Method::POST);
     request = request.json(body);
-    request.send()
+    request.send().await
 }
 
-fn patch<S: Serialize>(endpoint: &str, body: &S) -> Result<Response, Error> {
+async fn patch<S: Serialize>(endpoint: &str, body: &S) -> Result<Response, Error> {
     let mut request = base_request(endpoint, Method::PATCH);
     request = request.json(body);
-    request.send()
+    request.send().await
 }
 
-fn delete(endpoint: &str) -> Result<Response, Error> {
+async fn delete(endpoint: &str) -> Result<Response, Error> {
     let request = base_request(endpoint, Method::DELETE);
-    request.send()
+    request.send().await
 }
 
 // post list
-fn post_list(list: &ListEntry) -> Result<Response, Error> {
-    let response = post("/lists", list);
+async fn post_list(list: &ListEntry) -> Result<Response, Error> {
+    let response = post("/lists", list).await;
     if response.is_err() { return Err(response.unwrap_err()); }
     let response = response.unwrap();
     set_cookie(&response);
     Ok(response)
 }
 // patch list
-fn patch_list(list: &ListEntry) -> Result<Response, Error> {
-    let response = patch(&format!("/lists/{}", list.uuid), list);
+async fn patch_list(list: &ListEntry) -> Result<Response, Error> {
+    let response = patch(&format!("/lists/{}", list.uuid), list).await;
     if response.is_err() { return Err(response.unwrap_err()); }
     let response = response.unwrap();
     set_cookie(&response);
     Ok(response)
 }
 // delete list
-fn delete_list(list: String) -> Result<Response, Error> {
-    let response = delete(&format!("/lists/{}", list));
+async fn delete_list(list: String) -> Result<Response, Error> {
+    let response = delete(&format!("/lists/{}", list)).await;
     if response.is_err() { return Err(response.unwrap_err()); }
     let response = response.unwrap();
     set_cookie(&response);
@@ -153,8 +154,19 @@ fn do_sync() -> bool {
 }
 
 #[tauri::command]
-pub fn test_http(username: &str, password: &str) -> Result<bool, String> {
-    log_in(username, password)
+pub async fn send_telemetry(device_id: String, previous_version: String) -> Result<bool, String> {
+    let mut url = "".to_string();
+    if previous_version == "0.0.0" {
+        url = format!("/telemetry?device_id={}", device_id);
+    } else {
+        url = format!("/telemetry?device_id={}?previous={}", device_id, previous_version);
+    }
+    let resp = post(&url, &"".to_string()).await.or_else(|e| Err(format!("{}", e)));
+    if resp.is_err() {
+        return Err(resp.unwrap_err());
+    }
+    set_cookie(&resp.unwrap());
+    Ok(true)
 }
 
 #[derive(Serialize, Deserialize)]

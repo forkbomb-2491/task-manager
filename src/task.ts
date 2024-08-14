@@ -306,7 +306,9 @@ export class Task {
         const previous = this.record
         this._name = val
         this.refreshElements()
+        if (this.list != "") {
         window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+    }
     }
 
     private _size: number
@@ -316,7 +318,9 @@ export class Task {
         const previous = this.record
         this._size = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        if (this.list != "") {
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        }
     }
 
     private _importance: number
@@ -326,7 +330,9 @@ export class Task {
         const previous = this.record
         this._importance = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        if (this.list != "") {
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        }
     }
     
     private _color: string = "Default"
@@ -357,7 +363,9 @@ export class Task {
         const previous = this.record
         this._due = val
         this.refreshElements()
-        window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        if (this.list != "") {
+            window.dispatchEvent(new TaskEvent(TaskEventType.edit, this.record, this.list, null, previous))
+        }
     }
 
     private _smarted: boolean = false

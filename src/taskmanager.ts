@@ -2,6 +2,7 @@ import { TaskList } from "./tasklist";
 import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Calendar, Planner } from "./planner";
+import { EisenManager } from "./eisenhower";
 import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
 import { loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
@@ -32,6 +33,7 @@ export class TaskManager {
     private taskPlanner: TaskPlanner;
     private taskNotifier: TaskNotifier;
     private calendar: Calendar;
+    private eisenMgr: EisenManager;
 
     private settingsLoaded: boolean = false;
 
@@ -41,7 +43,8 @@ export class TaskManager {
         this.helpMgr = new HelpManager(this);
         this.taskPlanner = new TaskPlanner(this);
         this.taskNotifier = new TaskNotifier(this);
-        this.calendar = new Calendar(this)
+        this.calendar = new Calendar(this);
+        this.eisenMgr = new EisenManager(this);
 
         onSettingsLoad(() => this.settingsLoaded = true);
     }
@@ -66,6 +69,7 @@ export class TaskManager {
         this.helpMgr.render();
         this.taskPlanner.render();
         this.calendar.render();
+        this.eisenMgr.render();
 
         if (this.settingsLoaded) {
             this.taskNotifier.refresh();

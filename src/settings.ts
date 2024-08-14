@@ -3,7 +3,7 @@ import { CheckInHandler } from "./notifications";
 import { Weekdays, getElement, onWindowFocused, padWithLeftZeroes, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
-import { isAuthenticated, logInWithToken, logOut, sendMetadata, signIn } from "./http";
+import { isAuthenticated, logOut, sendMetadata as sendTelemetry, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
 
@@ -587,9 +587,12 @@ export class Settings {
 
                     this._isLoaded = true
                     window.dispatchEvent(new Event("settingsloaded"))
-                    sendMetadata(this.deviceId, this.lastVersion).then(
-                        // Implement sheet; update version
-                    )
+                    if (VERSION > this.lastVersion) {
+                        sendTelemetry(this.deviceId, this.lastVersion).then(() => {
+                            // Implement sheet
+                            this.updateVersion()
+                        })
+                    }
                 })
             }).catch(_ => {
                 this.store.save().then()

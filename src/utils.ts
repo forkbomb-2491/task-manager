@@ -76,7 +76,6 @@ export function getFirstSelected(select: HTMLSelectElement): HTMLOptionElement |
     for (let i = 0; i < select.options.length; i++) {
         const option = select.options[i]
         if (option.selected) {
-            console.log(option)
             return option
         }
     }

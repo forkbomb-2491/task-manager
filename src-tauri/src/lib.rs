@@ -40,9 +40,9 @@ pub fn run() {
             task::add_task,
             task::edit_task,
             task::delete_task,
-            http::test_http,
             http::log_in,
-            http::is_logged_in
+            http::is_logged_in,
+            http::send_telemetry
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
