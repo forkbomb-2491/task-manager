@@ -1,6 +1,6 @@
 <h1>Time Block</h1>
 <div style="display: flex; justify-content: space-between;">
-    <div class="helpcontainer">
+    <div class="container" style="max-width: 33%; min-width: 33%;">
         <h2>Timer</h2>
         <div>
             Work duration of <b><label for="workduratslider" id="workdurat">60</label></b> minutes,<br>
@@ -24,18 +24,31 @@
             <h2 id="pomodorostatus">Not Running</h2>
         </div>
     </div>
-    <div class="helpcontainer" id="helpcontentcontainer" style="flex-grow: 2; margin-left: 2rem;">
-        <h3>Pomodoro</h3>
-        <ul>
-            <li>Choose a task to focus on</li>
-            <li>Choose a length for worktime (recommended: 25-30 minutes)</li>
-            <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
-            <li>Alternate between the two.</li>
-        </ul>
-        <h3>Minute Focus Block</h3>
-        <ul>
-            <li>Block out a larger time in your day to work on tasks, in order to minimize distractions for an extended period of time </li>
-            <li>Schedule 60-90 minute-long blocks during your most productive hours</li>
-        </ul>                        
+    <div class="container" style="margin-left: 2rem; flex-grow: 1;">
+        <div style="display: none;">
+            <h3>Pomodoro</h3>
+            <ul>
+                <li>Choose a task to focus on</li>
+                <li>Choose a length for worktime (recommended: 25-30 minutes)</li>
+                <li>Choose a length for breaktime (recommented: 5-10 minutes)</li>
+                <li>Alternate between the two.</li>
+            </ul>
+            <h3>Minute Focus Block</h3>
+            <ul>
+                <li>Block out a larger time in your day to work on tasks, in order to minimize distractions for an extended period of time </li>
+                <li>Schedule 60-90 minute-long blocks during your most productive hours</li>
+            </ul>  
+        </div>   
+        <div>
+            <div class="container" style="width: 25%;">
+                <div style="display:flex; justify-content: space-between; max-width: 100%;">
+                    <input type="text" style="width: 100%;" required placeholder="urmom">
+                </div>
+                Work Duration:<br>
+                Break Duration:<br>
+                Repeat times:
+                <button class="button" style="width: 40%;">Save Timer</button>
+            </div>
+        </div>                   
     </div>
 </div>

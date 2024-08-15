@@ -1,4 +1,4 @@
-import { SortBasis, onWindowFocused, registerShowHideButton, showSheet, showTooltipOnHover, toHTMLDateTimeString } from "./utils";
+import { SortBasis, getFirstSelected, onWindowFocused, registerShowHideButton, showSheet, showTooltipOnHover, toHTMLDateTimeString } from "./utils";
 import { onTaskEvent, onTaskAdd, Task, List, TaskColor } from "./task";
 import { TaskManager } from "./taskmanager";
 import { ask } from "@tauri-apps/plugin-dialog";
@@ -98,13 +98,22 @@ export class TaskList {
                 // @ts-ignore
                 const button: HTMLButtonElement = e.currentTarget
                 const title = document.getElementById("selectedlisttitle")!;
-                const colorpick = document.getElementById("listcolorchange")!;
+                // @ts-ignore
+                const colorpick: HTMLSelectElement = document.getElementById("listcolorchange")!;
                 if (!this.editingList) {
                     this.editingList = true
                     button.style.display = "initial"
                     button.innerText = "✅"
                     colorpick.style.display = "block"
                     
+                    for (let i = 0; i < colorpick.options.length; i++) {
+                        const option = colorpick.options[i];
+                        console.log(String(this.selectedList!.color))
+                        if (option.getAttribute("name")! == String(this.selectedList!.color)) {
+                            colorpick.selectedIndex = i
+                            break
+                        }
+                    }
                     
                     var input = document.createElement("input")
                     title.replaceWith(
@@ -122,6 +131,7 @@ export class TaskList {
 
                     // @ts-ignore
                     this.selectedList!.name = title.value
+                    this.selectedList!.color = Number(getFirstSelected(colorpick)!.getAttribute("name"))
                     title.contentEditable = "false"
 
                     var h2 = document.createElement("h2")

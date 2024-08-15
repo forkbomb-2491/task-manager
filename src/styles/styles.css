@@ -1,13 +1,5 @@
 /* Light theme stuff moved to themes/light.css */
 
-button:hover {
-    cursor: pointer;
-}
-
-button {
-    transition: ease-in-out 200ms;
-}
-
 button.small {
     background-color: var(--secondary-color);
 
@@ -129,6 +121,8 @@ header {
 }
 
 header button {
+    all: revert;
+
     font-family: var(--primary-font-family);
     background-color: var(--unselected-tab-and-shadow);
     color: var(--primary-text-color);
@@ -141,6 +135,7 @@ header button {
     margin-left: 0.5ch;
     min-width: fit-content;
 
+    transition: ease-in-out 200ms;
 
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
@@ -149,11 +144,15 @@ header button {
     box-shadow: 0px 0px 2px 1px var(--unselected-tab-and-shadow);
 }
 
-.tabbutton:hover {
+header button:hover {
+    cursor: pointer;
+}
+
+button.tabbutton:hover {
     background-color: var(--tab-hover);
 }
 
-.tabbutton.active {
+button.tabbutton.active {
     background-color: var(--primary-color);
     color: var(--secondary-color);
 
@@ -402,4 +401,36 @@ button.blank {
     background: none;
     border: none;
     color: var(--primary-text-color);
+}
+
+button {
+    background-color: var(--container-background);
+
+    color: var(--primary-text-color);
+
+    font-family: var(--primary-font-family);
+    font-size: medium;
+    text-align: center;
+    vertical-align: middle;
+
+    /* width: 30%; */
+    text-shadow: 0 0 0.25rem var(--primary-shadow-color);
+
+    border: 2px solid var(--primary-shadow-color);
+
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
+    border-radius: 5px;
+
+    transition: ease-in-out 200ms;
+
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+button:active {
+    background-color: var(--primary-color);
+}
+
+button:hover {
+    cursor: pointer;
 }

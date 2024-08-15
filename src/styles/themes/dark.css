@@ -37,6 +37,6 @@
     color: white;
 }
 
-.tabbutton.active {
+header .tabbutton.active {
     color: var(--primary-text-color);
 }

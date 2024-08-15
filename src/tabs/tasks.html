@@ -27,7 +27,7 @@
                         <h3>Description</h3>
                         <input type="text" style="width: 100%;" name="listdesc" required>
                     </div> -->
-                    <input type="submit" class="settingsbutton" value="Create List" style="margin-top: 1rem;">
+                    <input type="submit" value="Create List" style="margin-top: 1rem;">
                 </form>
             </div>
             <button class="settingsbutton" id="showalltasksbutton" style="width: 100%; max-height: fit-content;">View All Tasks</button>
@@ -39,7 +39,7 @@
         <div class="listheader" style="display: flex">
             <button id="listnamechange" style="background: none; border: 0; text-decoration: none;">✏️</button>
             <h2 id="selectedlisttitle">Title</h2>
-            <select name="catinput" id="listcolorchange" style="width: 9ch;" required>
+            <select name="catinput" id="listcolorchange" style="width: 9ch; display: none;" required>
                 <option name="0">None</option>
                 <option name="1">Red</option>
                 <option name="2">Orange</option>
@@ -81,7 +81,7 @@
                             <input style="max-width: calc(100% - 2ch); margin-right: 1ch;" type="text" id="titleinput" name="titleinput" required>
                         </div>
                         <div style="min-width: 10ch; max-width: 10ch; display: flex;">
-                            <select id="sizeinput" name="sizeinput" required>
+                            <select id="sizeinput" name="sizeinput" style="flex-grow: 1; margin-right: 1ch;" required>
                                 <option name="0">Tiny</option>
                                 <option name="1">Small</option>
                                 <option name="2">Medium</option>
@@ -90,7 +90,7 @@
                             </select>
                         </div>
                         <div style="min-width: 13ch; max-width: 13ch; display: flex;">
-                            <select id="importanceinput" name="importanceinput" required>
+                            <select id="importanceinput" name="importanceinput" style="flex-grow: 1; margin-right: 1ch;" required>
                                 <option name="0">Trivial</option>
                                 <option name="1">Unimportant</option>
                                 <option name="2">Average</option>

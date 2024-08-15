@@ -33,8 +33,10 @@
     - [x] Fallback due date adjustments (use other lists/importances)
 - [ ] Syncing
 - [ ] Can move tasks between lists
-- [ ] Change task list colors
-- [ ] Smart Time Block
+- [ ] Time Block
+    - [ ] Preset Time Blocks
+    - [ ] Smart Time Block
+- [x] Change task list colors
 - [x] Eisenhower
 - [x] View tasks by filter in Help
 - [x] Calendar Planner View
@@ -43,7 +45,7 @@
 - [x] After DB tasks, editing multiple tasks was bugged
 
 ### v0.5
-TBD
+- [ ] Schedule planner
 
 ## Previous Releases
 

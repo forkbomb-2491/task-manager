@@ -73,14 +73,7 @@ export function findFirstPrecedingDay(date: Date, day: Weekdays) {
 }
 
 export function getFirstSelected(select: HTMLSelectElement): HTMLOptionElement | null {
-    for (let i = 0; i < select.options.length; i++) {
-        const option = select.options[i]
-        if (option.selected) {
-            return option
-        }
-    }
-
-    return null
+    return select.options.item(select.selectedIndex)
 }
 
 export function onWindowFocused(cb: () => void) {

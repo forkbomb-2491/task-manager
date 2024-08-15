@@ -231,7 +231,17 @@ export class List {
     }
 
     /** The List's color. */
-    readonly color: TaskColor
+    private _color: TaskColor
+    get color(): TaskColor {
+        return this._color
+    }
+    set color(val: TaskColor) {
+        this._color = val
+        this._tasks.forEach(t => {
+            t.color = String(TaskColor[this._color])
+        })
+        window.dispatchEvent(new ListEvent(TaskEventType.edit, this.record))
+    }
 
     private _tasks: Task[] = []
     /** The Tasks belonging to this List. */
@@ -244,7 +254,7 @@ export class List {
         return {
             name: this._name,
             uuid: this.uuid,
-            color: this.color,
+            color: this._color,
             tasks: this._tasks.filter(t => !t.deleted).map(t => t.record)
         }
     }
@@ -264,7 +274,7 @@ export class List {
         }
 
         this._name = name
-        this.color = color
+        this._color = color
         this._tasks = tasks
         this._tasks.forEach(
             t => {
@@ -287,7 +297,7 @@ export class List {
     /** Adds a Task to this List. */
     public addTask(task: Task) {
         this._tasks.push(task)
-        task.color = String(TaskColor[this.color])
+        task.color = String(TaskColor[this._color])
         task.list = this.uuid
         window.dispatchEvent(new TaskEvent(TaskEventType.add, task.record, this.uuid))
     }
@@ -503,6 +513,30 @@ export class Task {
     get taskListElement(): HTMLDivElement {
         // Gets own task element
         var ownTaskElement = this.getTaskListLikeElement(true)
+
+        ownTaskElement.addEventListener(
+            "mousedown",
+            e => {
+                const xOffset = ownTaskElement.getBoundingClientRect().left - e.x
+                const yOffset = ownTaskElement.getBoundingClientRect().top - e.y
+                console.log(xOffset, yOffset)
+                // ownTaskElement.style.position = "absolute"
+                ownTaskElement.onmousemove = e => {
+                    console.log(e.x, e.y)
+                    console.log(ownTaskElement.style.left, ownTaskElement.style.right)
+                    // ownTaskElement.style.left = String(e.x + xOffset) + "px"
+                    // ownTaskElement.style.top = String(e.y + yOffset) + "px"
+                }
+            }
+        )
+        // ownTaskElement.addEventListener(
+        //     "mouseup",
+        //     _ => {
+        //         ownTaskElement.style.position = "initial"
+        //         ownTaskElement.onmousemove = _ => {}
+        //     }
+        // )
+
         // Creates container, which holds task element and the subtask container
         var newContainer = document.createElement("div")
         newContainer.className = "taskcontainer"
