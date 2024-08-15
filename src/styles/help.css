@@ -4,13 +4,21 @@
 
     min-width: 33%;
 
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
+    border: 1px var(--primary-border) solid;
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
 
     padding: 1rem;
 
+}
+
+.helpbutton {
+    all: revert;
+    transition: 200ms ease-in-out;
+
+    border: 1px var(--primary-border) solid;
 }
 
 .helpbutton.top {
@@ -25,13 +33,10 @@
     width: 100%;
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
-    border: 0;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border-radius: 0.5rem;
-
+    
     transition: ease-in-out 200ms;
-
+    
     padding: 0.75rem;
     margin-bottom: 0.5rem;
 }
@@ -40,8 +45,8 @@
     background-color: var(--tab-hover);
     color: var(--secondary-text-color);
     cursor: pointer;
-
-    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+    
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
 }
 
 .helplabel {
@@ -51,22 +56,23 @@
 .helpbutton.bottom {
     display: flex;
     background-color: var(--help-button);
-
+    
     color: var(--help-button-text);
-
+    
     font-family: var(--primary-font-family);
     font-size: medium;
     text-align: center;
     width: 100%;
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-
+    
     border: 0;
-
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--secondary-shadow-color);
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--secondary-shadow-color); */
+    
     border-radius: 0.5rem;
-
+    
     transition: ease-in-out 200ms;
-
+    
     padding: 0.75rem;
     margin-bottom: 0.5rem;
 }
@@ -75,8 +81,9 @@
     background-color: var(--help-button-hover);
     color: var(--help-button-text-hover);
     cursor: pointer;
-
-    box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color);
+    
+    /* box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color); */
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
 }
 
 .helpcontent {

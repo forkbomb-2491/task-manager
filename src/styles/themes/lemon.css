@@ -30,6 +30,9 @@
     /* TaskPlanner page */
     --tp-checkbox-project: #ffffcc;
     --tp-checkbox-nonproject: #ffd94d;
+    /* Border colors */
+    --primary-border: #ffca1a;
+    --secondary-border: #ffca1a;
 }
 
 .helpbutton.top:hover {

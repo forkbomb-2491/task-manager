@@ -30,6 +30,9 @@
     /* TaskPlanner page */
     --tp-checkbox-project: lightgray;
     --tp-checkbox-nonproject: dimgray;
+    /* Border colors */
+    --primary-border: black;
+    --secondary-border: black;
 }
 
 .caldate.hastask {

@@ -2,7 +2,7 @@
 :root {
     /* Various fill colors */
     --primary-color: #e88b4d;
-    --secondary-color: #f0a56c91;
+    --secondary-color: #f0a56c;
     --container-background: #f0e1c4;
     --unselected-tab-and-shadow: #f0a56c;
     --tab-hover: #f0e1c4;
@@ -30,6 +30,9 @@
     /* TaskPlanner page */
     --tp-checkbox-project: #00d26a;
     --tp-checkbox-nonproject: #785dc8;
+    /* Border colors */
+    --primary-border: #7e583a91;
+    --secondary-border: #7e583a91;
 }
 
 .tabbutton.active {

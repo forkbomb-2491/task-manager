@@ -6,11 +6,12 @@
 
 .daycolumn {
     width: calc(13% - 2rem);
-    background-color: var(--secondary-color);
+    background-color: var(--container-background);
     min-height: calc(96vh - 20rem);
     overflow-wrap: break-word;
 
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
+    border: 1px var(--primary-border) solid;
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
@@ -38,7 +39,7 @@
 }
 
 .daycolumn.today {
-    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
+    box-shadow: 0px 0px 0.25rem 0.125rem var(--primary-shadow-color);
     color: var(--secondary-text-color);
 }
 
@@ -54,6 +55,8 @@
 }
 
 button.plannershift {
+    all: revert;
+
     background: none;
     font-size: xx-large;
 
@@ -80,11 +83,21 @@ button.plannershift:hover {
 }
 
 #plannercalendar .caldate, #plannercalendar .calspacer {
-    min-width: calc(14.28% - 2.5rem - 0.286rch);
-    max-width: calc(14.28% - 2.5rem - 0.286rch);
+    min-width: calc(14.28% - 2.5rem - 0.286rch - 1px);
+    max-width: calc(14.28% - 2.5rem - 0.286rch - 1px);
     padding: 0.5rem;
 
     margin-bottom: 0.75rem;
+}
+
+.caldate:not(:hover) {
+    background-color: var(--container-background);
+    border: 1px solid var(--primary-border);
+}
+
+.caldate:hover {
+    border: 1px solid var(--tab-hover);
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
 }
 
 #plannercalendar h2 {
@@ -99,16 +112,20 @@ button.plannershift:hover {
 
 .calweek > button:hover ~ .caldate {
     background-color: var(--tab-hover);
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
 }
 
 .calweek .caldate:hover {
     background-color: var(--tab-hover);
+    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
 }
 
 .calweek > button {
+    all: revert;
+    transition: 200ms ease-in-out;
+
     background-color: var(--primary-color);
     border-radius: 0.25rem;
-    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
     border: none;
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
@@ -117,6 +134,7 @@ button.plannershift:hover {
 
 .calweek > button:hover {
     background-color: var(--tab-hover);
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color);
 }
 
 .caldate > p {
@@ -130,6 +148,6 @@ button.plannershift:hover {
 }
 
 .caldate.today {
-    box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color);
+    box-shadow: 0px 0px 0.5rem 0.125rem var(--secondary-shadow-color);
     color: var(--secondary-text-color);
 }

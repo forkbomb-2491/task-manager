@@ -783,7 +783,7 @@ export class Task {
                 <div style="min-width: 13ch; max-width: 13ch;">
                     ${TaskImportances[this._importance]}
                 </div>
-                <div style="min-width: 17ch; max-width: 17ch;">
+                <div style="min-width: 18ch; max-width: 18ch;">
                     <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
@@ -807,7 +807,7 @@ export class Task {
                 <div style="min-width: 9ch; max-width: 9ch;">
                     ${TaskSizes[this._size]}
                 </div>
-                <div style="min-width: 17ch; max-width: 17ch;">
+                <div style="min-width: 18ch; max-width: 18ch;">
                     <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
@@ -824,7 +824,7 @@ export class Task {
                 <div style="flex-grow: 1;">
                     ${this._name}
                 </div>
-                <div style="min-width: 17ch; max-width: 17ch;">
+                <div style="min-width: 18ch; max-width: 18ch;">
                     <div class="overduewarning">${this.dueIn < 0 ? "⚠️ ": ""}${this._smarted ? "✨ ": ""}</div>${this._due.toDateString()}
                 </div>
             </div>
@@ -990,7 +990,7 @@ export class Task {
                             <option name="4" ${this._importance == 4 ? "selected": ""}>Vital</option>
                         </select>
                     </div>
-                    <div style="min-width: calc(17ch + 2rem); max-width: calc(17ch + 2rem); display: flex;">
+                    <div style="min-width: calc(18ch + 2rem); max-width: calc(18ch + 2rem); display: flex;">
                         <input name="deadlineinput" type="datetime-local" value="${toHTMLDateTimeString(this._due)}" required>
                     </div>
                 </div>

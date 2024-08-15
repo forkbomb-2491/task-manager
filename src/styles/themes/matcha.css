@@ -30,4 +30,7 @@
     /* TaskPlanner page */
     --tp-checkbox-project: #00d26a;
     --tp-checkbox-nonproject: #785dc8;
+    /* Border colors */
+    --primary-border: #44624a;
+    --secondary-border: #44624a;
 }

@@ -12,7 +12,7 @@
     --primary-font-family: 'Georgia';
     --secondary-font-family: 'Helvetica';
     /* Text Color */
-    --primary-text-color: rgb(255,134,171);
+    --primary-text-color: rgba(212, 54, 102, 0.5);
     --secondary-text-color: rgb(212, 89, 142);
     /* Category Color */
     --cat1-color: #e60000;
@@ -29,6 +29,9 @@
     /* TaskPlanner page */
     --tp-checkbox-project: #00d26a;
     --tp-checkbox-nonproject: #785dc8;
+    /* Border colors */
+    --primary-border: rgba(212, 54, 102, 0.5);
+    --secondary-border: rgba(212, 54, 102, 0.5);
 }
 
 .tabbutton.active {

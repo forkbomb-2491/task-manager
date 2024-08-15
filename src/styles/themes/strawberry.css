@@ -7,13 +7,13 @@
     --unselected-tab-and-shadow: #fcb3ac;
     --tab-hover: #fb6966;
     /* Shadow colors */
-    --primary-shadow-color: #e0653b;
+    --primary-shadow-color: #c1bb41;
     --secondary-shadow-color: #c1bb41;
     /* Fonts */
     --primary-font-family: 'Cantarell';
     --secondary-font-family: 'Helvetica';
     /* Text Color */
-    --primary-text-color: #fb6966;
+    --primary-text-color: #319c39;
     --secondary-text-color: #319c39;
     /* Category Color */
     --cat1-color: #ff6663;
@@ -24,12 +24,15 @@
     --cat6-color: #cc99c9;
     /*Help page*/
     --help-button: #fcb3ac;
-    --help-button-text: 319c39;
+    --help-button-text: #319c39;
     --help-button-hover: #fb6966;
     --help-button-text-hover: #319c39;
     /* TaskPlanner page */
     --tp-checkbox-project: #c1bb41;
     --tp-checkbox-nonproject: #319c39;
+    /* Border colors */
+    --primary-border: #319c39;
+    --secondary-border: #319c39;
 }
 
 .tabbutton {

@@ -23,7 +23,7 @@
     
             <h3>Schedule Check-In Notifications</h3>
             <!-- <div> -->
-            <div class="checkinblock">
+            <div class="container">
                 <form name="remindersettings" id="remindersettings">
                     You will receive check-in reminders between <input id="notifstart" type="time"> and <input id="notifend" type="time"> on <br>
                     
@@ -134,7 +134,7 @@
         </h2>
         <div id="displaysettingsdiv">
             <h3>Tab Display</h3>
-            <div class="checkinblock">
+            <div class="container">
                 <p><i>Keep tabs you find helpful. Unselect tabs you find unnecessary to you.</i></p>
                 <form name="tabsettings" id="tabsettings">
                     <input type="checkbox" id="planneractive" name="taskplan">
@@ -154,36 +154,41 @@
             </div>
     
             <h3>Themes</h3>
-            <form id="themeselector" class="checkinblock">
-                <input type="radio" name="theme" value="light">
-                <label for="light">Default (Light)</label>
-                <input type="radio" name="theme" value="dark">
-                <label for="dark">Default (Dark)</label>
-                <input type="radio" name="theme" value="gray">
-                <label for="gray">Grayscale</label>
-                <br>
-                <input type="radio" name="theme" value="vampire">
-                <label for="vampire">Vampire</label>
-                <input type="radio" name="theme" value="danishpastel">
-                <label for="danishpastel">Danish Pastel</label>
-                <input type="radio" name="theme" value="bubblegum">
-                <label for="bubblegum">Bubblegum</label>
-                <input type="radio" name="theme" value="dirt">
-                <label for="dirt">Dirt</label>
-                <br>
-                <input type="radio" name="theme" value="strawberry">
-                <label for="strawberry">Strawberry</label>
-                <input type="radio" name="theme" value="tangerine">
-                <label for="tangerine">Tangerine</label>
-                <input type="radio" name="theme" value="lemon">
-                <label for="lemon">Lemon</label>
-                <br>
-                <input type="radio" name="theme" value="matcha">
-                <label for="matcha">Matcha</label>
-                <input type="radio" name="theme" value="blueberry">
-                <label for="blueberry">Blueberry</label>
-                <input type="radio" name="theme" value="lilac">
-                <label for="lilac">Lilac</label>
+            <form id="themeselector" class="container" style="display: flex;">
+                <div>
+                    <input type="radio" name="theme" value="light">
+                    <label for="light">Default (Light)</label>
+                    <input type="radio" name="theme" value="dark">
+                    <label for="dark">Default (Dark)</label>
+                    <input type="radio" name="theme" value="gray">
+                    <label for="gray">Grayscale</label>
+                </div>
+                <div>
+                    <input type="radio" name="theme" value="vampire">
+                    <label for="vampire">Vampire</label>
+                    <input type="radio" name="theme" value="danishpastel">
+                    <label for="danishpastel">Danish Pastel</label>
+                    <input type="radio" name="theme" value="bubblegum">
+                    <label for="bubblegum">Bubblegum</label>
+                    <input type="radio" name="theme" value="dirt">
+                    <label for="dirt">Dirt</label>
+                </div>
+                <div>
+                    <input type="radio" name="theme" value="strawberry">
+                    <label for="strawberry">Strawberry</label>
+                    <input type="radio" name="theme" value="tangerine">
+                    <label for="tangerine">Tangerine</label>
+                    <input type="radio" name="theme" value="lemon">
+                    <label for="lemon">Lemon</label>
+                </div>
+                <div>
+                    <input type="radio" name="theme" value="matcha">
+                    <label for="matcha">Matcha</label>
+                    <input type="radio" name="theme" value="blueberry">
+                    <label for="blueberry">Blueberry</label>
+                    <input type="radio" name="theme" value="lilac">
+                    <label for="lilac">Lilac</label>
+                </div>
             </form>
         </div>
     
