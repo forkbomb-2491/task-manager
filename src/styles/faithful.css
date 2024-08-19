@@ -1,0 +1,17 @@
+html {
+    background-color: unset;
+}
+
+header {
+    background-color: unset;
+    top: 0.25rem;
+}
+
+.tabcontainer {
+    min-height: calc(100vh - 7rem);
+    background-color: var(--primary-color);
+
+    margin-top: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
