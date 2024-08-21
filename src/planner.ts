@@ -1,4 +1,4 @@
-import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused, Months, getElement } from "./utils"
+import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused, Months, getElement, showSheetElement } from "./utils"
 import { Task, getColor, onTaskAdd, onTaskAdopt, onTaskEdit, onTaskEvent } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
@@ -443,6 +443,7 @@ class CalendarDay {
     private taskMgr: TaskManager
     private parentElement: Element
     private element: Element | undefined
+    private clickListenerAdded: boolean = false
     
     private date: Date
 
@@ -500,6 +501,21 @@ class CalendarDay {
         }
     }
 
+    private showTaskSheet() {
+        // Create element
+        var element = document.createElement("div")
+        // Load tasks
+        var tasks = this.taskMgr.getTasks().filter(t => {
+            return isSameDay(this.date, t.due)
+        })
+        // Add tasks to element
+        tasks.forEach(t => {
+            element.appendChild(t.shortenedTaskListElement)
+        })
+        // Show task element
+        showSheetElement(this.date.toDateString(), element)
+    }
+
     render() {
         // Check element exists, if not create & append
         if (this.element != undefined) {
@@ -523,6 +539,10 @@ class CalendarDay {
         })
 
         this.checkIsToday()
+        if (!this.clickListenerAdded) {
+            this.element.addEventListener("click", _ => this.showTaskSheet())
+            this.clickListenerAdded = true
+        }
     }
 }
 

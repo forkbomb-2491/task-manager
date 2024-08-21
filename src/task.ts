@@ -774,7 +774,7 @@ export class Task {
             <button class="complete"></button>
             <button class="edittask" style="background: none; border: 0; text-decoration: none;">✏️</button>
             <div style="display: flex; flex-grow: 1">
-                <div style="flex-grow: 1">
+                <div style="flex-grow: 1; padding-right: 1.5ch;">
                     ${this._name}
                 </div>
                 <div style="min-width: 10ch; max-width: 10ch;">
@@ -801,7 +801,7 @@ export class Task {
         return `
             <button class="complete"></button>
             <div style="display: flex; flex-grow: 1;">
-                <div style="flex-grow: 1">
+                <div style="flex-grow: 1; padding-right: 1.5ch;">
                     ${this._name}
                 </div>
                 <div style="min-width: 9ch; max-width: 9ch;">

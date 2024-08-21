@@ -1,10 +1,9 @@
-use std::{collections::HashMap, env::consts::OS, fs::read_to_string, str::FromStr, sync::Mutex, time::Duration};
+use std::{collections::HashMap, env::consts::OS, str::FromStr, sync::Mutex, time::Duration};
 
 use reqwest::{header, Error, Method, StatusCode};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use tauri::{http::response, Runtime, Url};
-use reqwest::{Client, Request, Response, RequestBuilder};
+use tauri::Url;
+use reqwest::{Client, Response, RequestBuilder};
 
 use crate::{task::{ListEntry, TaskEntry}, utils::now};
 

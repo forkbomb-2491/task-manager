@@ -5,8 +5,6 @@
     height: 100%;
     min-height: 60vh;
 
-
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
@@ -21,16 +19,13 @@
 .calday {
     text-align: center;
     width: 15%;
-    /* background-color: var(--secondary-color); */
 
     flex-flow: column;
     height: 100%;
     min-height: 40vh;
     
     background-color: rgba(0, 0, 0, 0);
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
-    /* border: var(--primary-color) 1px dashed; */
 
     transition: ease-in-out 200ms;
 
@@ -41,14 +36,12 @@
     overflow-wrap: break-word;
     overflow: hidden;
     
-    /* width: 80%; */
     margin-left: 0.75rem;
     margin-right: 0.75rem;
     margin-top: 0.75rem;
     background-color: var(--primary-color);
     aspect-ratio: 1/1;
 
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
     color: var(--primary-text-color);
     padding: 0.5rem;
@@ -57,7 +50,6 @@
 }
 
 .caldate.today {
-    /* box-shadow: 0px 0px 1rem 0.25rem var(--secondary-shadow-color); */
     color: var(--secondary-text-color);
 }
 
@@ -74,7 +66,6 @@
 .caldate.hastask {
     z-index: 0;
     background-color: var(--tab-hover);
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
     color: var(--primary-text-color);
 
@@ -94,7 +85,6 @@
     
     z-index: 10;
     background-color: var(--tab-hover);
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
     color: var(--primary-text-color);
 
@@ -114,10 +104,7 @@
 }
 
 .caldate.hastask:hover {
-    /* width: fit-content; */
     z-index: 5;
-    /* background-color: rgba(0, 0, 0, 0); */
-    /* opacity: 0; */
 }
 
 #tprightside .caldate:hover {
@@ -159,7 +146,6 @@
     font-size: medium;
     font-family: var(--primary-font-family);
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    /* background-color: rgba(0, 0, 0, 0); */
 }
 
 .tpcontainer h2 {
@@ -169,7 +155,6 @@
 
 .tpcontainer h3 {
     font-size: medium;
-    /* margin-top: 0; */
     margin-bottom: 0;
     font-style: italic;
     color: var(--secondary-text-color);

@@ -23,12 +23,10 @@ textarea {
     text-align: center;
     vertical-align: middle;
 
-    /* width: 30%; */
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
     border: 0;
 
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
@@ -44,7 +42,6 @@ textarea {
 .settingsslider {
     -webkit-appearance: none;
     appearance: none;
-    /* width: 50%; */
     height: 10px;
     background: var(--unselected-tab-and-shadow);
     outline: none;
@@ -52,7 +49,6 @@ textarea {
     -webkit-transition: .2s;
     transition: opacity .2s;
     border-radius: 0.5rem;
-    /* box-shadow: 0px 0px 0.5rem 0.25rem var(--secondary-shadow-color); */
     margin-top: 0.75rem;
     margin-bottom: 1rem;
 }
@@ -66,16 +62,13 @@ textarea {
     cursor: pointer;
     border: 2px solid var(--secondary-color);
     border-radius: 1rem;
-    /* box-shadow: 0px 0px 0.5rem 0.25rem var(--primary-shadow-color); */
 }
 
 .checkinblock {
     flex-grow: 1;
     background-color: var(--secondary-color);
 
-    /* min-width: 90%; */
     max-width: 100%;
-    /* box-shadow: 0px 0px 0.5rem 0.125rem var(--primary-shadow-color); */
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;

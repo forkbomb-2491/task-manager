@@ -168,6 +168,10 @@ export function showSheet(heading: string, contentHTML: string) {
     }, 140)
 }
 
+export function showSheetElement(heading: string, element: Element) {
+    showSheet(heading, element.outerHTML)
+}
+
 export function inAppNotif(title: string, body: string, timeout: number = 3000) {
     var html = `
     <div class="container">
