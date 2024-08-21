@@ -10,7 +10,7 @@
     min-height: calc(96vh - 20rem);
     overflow-wrap: break-word;
 
-    border: 1px var(--primary-border) solid;
+    border: 0.5px var(--primary-border) solid;
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
@@ -69,13 +69,15 @@ button.plannershift:hover {
     margin-top: 0.75rem;
     font-style: bold;
     text-align: center;
-    min-width: calc(14.28% - 1.5rem - 0.286rch);
-    max-width: calc(14.28% - 1.5rem - 0.286rch);
+    min-width: calc(14.28% - 2.7rem + 1px);
+    max-width: calc(14.28% - 2.7rem + 1px);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 #plannercalendar .caldate, #plannercalendar .calspacer {
-    min-width: calc(14.28% - 2.5rem - 0.286rch - 1px);
-    max-width: calc(14.28% - 2.5rem - 0.286rch - 1px);
+    min-width: calc(14.28% - 2.7rem - 1px);
+    max-width: calc(14.28% - 2.7rem - 1px);
     padding: 0.5rem;
 
     margin-bottom: 0.75rem;
@@ -83,7 +85,7 @@ button.plannershift:hover {
 
 .caldate:not(:hover) {
     background-color: var(--container-background);
-    border: 1px solid var(--primary-border);
+    border: 0.5px solid var(--primary-border);
 }
 
 .caldate:hover {

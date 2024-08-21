@@ -55,7 +55,8 @@ button.small:hover:active {
 
 select {
     border: 0;
-    border: var(--primary-shadow-color) solid 2px;
+    border: var(--primary-shadow-color) solid 0.5px;
+    border-bottom: var(--primary-shadow-color) solid 2px;
     padding-left: 0.5ch;
     padding-right: 2px;
     color: var(--primary-text-color);
@@ -64,7 +65,7 @@ select {
     font-size: medium;
     font-family: var(--primary-font-family);
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
-    background-color: rgba(0, 0, 0, 0);
+    background-color: var(--container-background);
     border-radius: 5px;
 }
 
@@ -77,8 +78,9 @@ select:focus-within {
 }
 
 input {
-    background-color: rgba(0, 0, 0, 0);
-    border: var(--primary-shadow-color) solid 2px;
+    background-color: var(--container-background);
+    border: var(--primary-shadow-color) solid 0.5px;
+    border-bottom: var(--primary-shadow-color) solid 2px;
 
     color: var(--primary-text-color);
 
@@ -107,6 +109,7 @@ body {
 }
 
 header {
+    top: 0rem;
     display: flex;
     position: fixed;
     width: 100%;
@@ -172,14 +175,18 @@ button.tabbutton.active {
     display: flex;
     break-after: always;
 
-    max-height: calc(100vh - 7rem);
+    min-height: calc(100vh - 5rem);
+    max-height: calc(100vh - 5rem);
 
-    padding-left: 2rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
     padding-right: 2rem;
-    padding-top: 5rem;
+    overflow-y: scroll;
 
     padding-left: 2rem;
     overscroll-behavior: auto;
+
+    scrollbar-width: none;
 }
 
 .tab {
@@ -187,7 +194,8 @@ button.tabbutton.active {
     position: relative;
 
     max-height: 100%;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    padding-bottom: 2rem;
     scrollbar-width: none;
 
     flex-grow: 1;
@@ -234,7 +242,7 @@ button.tabbutton.active {
     height: 20px;
     background: var(--primary-color);
     cursor: pointer;
-    border: 2px solid var(--secondary-color);
+    border: 2px solid var(--primary-shadow-color);
     border-radius: 1rem;
 }
 
@@ -269,7 +277,7 @@ button.tabbutton.active {
 }
 
 .tab > .container {
-    border: 1px solid var(--unselected-tab-and-shadow);
+    border: 0.5px solid var(--unselected-tab-and-shadow);
 }
 
 .container {
@@ -278,7 +286,7 @@ button.tabbutton.active {
     flex-flow: column;
 
     border-radius: 0.5rem;
-    border: 1px solid var(--primary-border);
+    border: 0.5px solid var(--primary-border);
 
 
     transition: ease-in-out 200ms;
@@ -412,7 +420,8 @@ button {
 
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
-    border: 1px var(--primary-border) solid;
+    border: var(--primary-shadow-color) solid 0.5px;
+    border-bottom: var(--primary-shadow-color) solid 2px;
 
     border-radius: 5px;
 

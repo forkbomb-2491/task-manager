@@ -45,7 +45,7 @@
                     <br>
                     with the average time between notifs being
                     <b><label for="notifintervalslider" id="notifinterval">60</label></b> minutes <br>
-                    <input type="range" class="settingsslider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 95%;" oninput="notifinterval.innerText=this.value">
+                    <input type="range" class="slider" id="notifintervalslider" name = "worktime" min="5" max="120" value="60" step="5" style="width: 95%;" oninput="notifinterval.innerText=this.value">
                     <div style="display:flex; justify-content: space-between;">
                         <input type="submit" class="settingsbutton" id="confirmremindsettings"  value="Confirm Reminder Settings">
                     </div>
@@ -57,13 +57,13 @@
             <h3>Task Reminder Notifications</h3>
             <div class="container">
                 <div>You will receive reminders for tasks as early as <b><label for="taskreminderbuffer" id="taskreminderbufferlabel">2</label></b> days before they are due!</div>
-                <input type="range" class="settingsslider" id="taskreminderbuffer" name = "taskreminderbuffer" min="1" max="14" value="2" step="1" style="width: 95%;" oninput="taskreminderbufferlabel.innerText=this.value">
+                <input type="range" class="slider" id="taskreminderbuffer" name = "taskreminderbuffer" min="1" max="14" value="2" step="1" style="width: 95%;" oninput="taskreminderbufferlabel.innerText=this.value">
             </div>
         </div>
 
 
         <!-- <h3>Time Block</h3>
-        <input type="range" class="settingsslider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 90%;" oninput="timervolume.innerText = this.value">            
+        <input type="range" class="slider" id="timervolumeslider" name = "worktime" min="0" max="50" value="25" step="5" style="width: 90%;" oninput="timervolume.innerText = this.value">            
         <label for="timervolumeslider" id="timervolume">25</label> -->
 
         <h2>
@@ -112,7 +112,7 @@
             <h3>Algorithm Display Length</h3>
             <div class="container">
                 <p><i>Length of recommended task list.</i></p>
-                <input type="range" class="settingsslider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
+                <input type="range" class="slider" id="reclistslider" name = "worktime" min="4" max="12" value="6" step="1" style="width: 50%;" oninput="reclistlabel.innerText = this.value">            
                 <div>
                     Each <div class="helplabel">Help</div> Tab option will suggest up to <b><label for="reclistslider" id="reclistlabel">6</label></b> tasks to you.
                 </div>
@@ -287,3 +287,4 @@
         </div>
     </div>
 </div>
+<div style="height: 1rem;"></div>

@@ -25,7 +25,8 @@ textarea {
 
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 
-    border: 0;
+    border: var(--primary-shadow-color) solid 0.5px;
+    border-bottom: var(--primary-shadow-color) solid 2px;
 
     border-radius: 0.5rem;
 
@@ -37,31 +38,6 @@ textarea {
 
 .settingsbutton:active {
     background-color: var(--primary-color);
-}
-
-.settingsslider {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 10px;
-    background: var(--unselected-tab-and-shadow);
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-    border-radius: 0.5rem;
-    margin-top: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.settingsslider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
-    cursor: pointer;
-    border: 2px solid var(--secondary-color);
-    border-radius: 1rem;
 }
 
 .checkinblock {

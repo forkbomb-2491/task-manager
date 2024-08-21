@@ -4,7 +4,7 @@
 
     min-width: 33%;
 
-    border: 1px var(--primary-border) solid;
+    border: 0.5px var(--primary-border) solid;
     border-radius: 0.5rem;
 
     transition: ease-in-out 200ms;
@@ -17,7 +17,7 @@
     all: revert;
     transition: 200ms ease-in-out;
 
-    border: 1px var(--primary-border) solid;
+    border: 0.5px var(--primary-border) solid;
 }
 
 .helpbutton.top {

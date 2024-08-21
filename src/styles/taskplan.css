@@ -109,7 +109,7 @@
 
 #tprightside .caldate:hover {
     background-color: var(--container-background);
-    border: 1px solid var(--primary-border);
+    border: 0.5px solid var(--primary-border);
     box-shadow: none;
 }
 
@@ -148,27 +148,28 @@
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);
 }
 
-.tpcontainer h2 {
-    margin-top: 0;
-    margin-bottom: 0;
+#tpleftside h2, #tprightside h2 {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
-.tpcontainer h3 {
+#tpleftside h3, #tprightside h3 {
     font-size: medium;
-    margin-bottom: 0;
+    margin-bottom: 0.25rem;
     font-style: italic;
     color: var(--secondary-text-color);
 }
 
-.tpcontainer h4 {
+#tpleftside h4, #tprightside h4 {
     font-size: small;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     font-style: italic;
     color: var(--secondary-text-color);
 }
 
-.tpcontainer ul {
+#tpleftside ul, #tprightside ul {
     margin-top: 0;
     margin-bottom: 0;
 }
+
