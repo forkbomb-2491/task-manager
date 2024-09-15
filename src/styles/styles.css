@@ -321,6 +321,7 @@ button.tabbutton.active {
 
 .sheet {
     position: absolute;
+    top: 0;
     display: flex;
     z-index: 1000;
     margin-inline: auto;

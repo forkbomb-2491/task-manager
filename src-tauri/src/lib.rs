@@ -42,7 +42,8 @@ pub fn run() {
             task::delete_task,
             http::log_in,
             http::is_logged_in,
-            http::send_telemetry
+            http::send_telemetry,
+            http::do_sync
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");

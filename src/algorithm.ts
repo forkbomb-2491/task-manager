@@ -95,5 +95,6 @@ onTaskUncomplete(e => {
 })
 
 onTaskDelete(e => {
+    if (e.task.completed) { return }
     removeDueEvent(e.task.id, true, true)
 })
