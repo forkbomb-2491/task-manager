@@ -3,7 +3,7 @@ use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
-use crate::{http::{check_timestamp, SyncData}, storage::TaskDb};
+use crate::{http::{check_timestamp, SyncData}, storage::TaskDb, utils::de_float_guard};
 
 static mut TASKS: Option<TaskDb> = None;
 
@@ -131,7 +131,9 @@ pub struct TaskEntry {
     pub completed: bool,
     pub id: String,
     pub parent: Option<String>,
+    #[serde(deserialize_with = "de_float_guard")]
     pub last_edited: Option<i64>,
+    #[serde(deserialize_with = "de_float_guard")]
     pub created: Option<i64>
 }
 
@@ -172,7 +174,9 @@ pub struct ListEntry {
     pub name: String,
     pub uuid: String,
     pub color: i32,
+    #[serde(deserialize_with = "de_float_guard")]
     pub last_edited: Option<i64>,
+    #[serde(deserialize_with = "de_float_guard")]
     pub created: Option<i64>
 }
 
