@@ -100,6 +100,7 @@ pub async fn log_in(username: &str, password: &str) -> Result<bool, String> {
     if response.status() == StatusCode::FORBIDDEN {
         return Err("Invalid credentials.".to_string());
     }
+    set_cookie(&response);
     Ok(true)
 }
 
@@ -155,7 +156,8 @@ async fn delete_list(list: String) -> Result<Response, Error> {
 // delete task
 
 // sync
-async fn do_sync() -> Result<(), String> {
+#[tauri::command]
+pub async fn do_sync() -> Result<(), String> {
     // Check connection is active
     unsafe {
         if COOKIE.is_none() || (COOKIE.is_some() && COOKIE.as_mut().unwrap().get_cookie() == "") {
@@ -170,7 +172,7 @@ async fn do_sync() -> Result<(), String> {
     let body = response.text().await;
     if body.is_err() { return Err("Received no data from server.".to_string()); }
     let data: Result<SyncData, serde_json::Error> = from_str(&body.unwrap());
-    if data.is_err() { return Err("Failed to parse JSON".to_string()); }
+    if data.is_err() { return Err(format!("JSON Error: {}", data.unwrap_err())); }
     let comp_save_res = compare_and_save(&data.unwrap()).await;
     if comp_save_res.is_err() { return Err(format!("Compare and Save Error: {}", comp_save_res.unwrap_err())); }
     // TODO: Implement POST sync
@@ -201,6 +203,7 @@ pub async fn send_telemetry(device_id: String, previous_version: String) -> Resu
 }
 
 pub fn check_timestamp(last_sync: i64) -> i64 {
+    let last_sync = last_sync + 1;
     if last_sync.ilog10() < 10 {
         last_sync * 1000
     } else {
