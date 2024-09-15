@@ -168,6 +168,14 @@ pub async fn send_telemetry(device_id: String, previous_version: String) -> Resu
     Ok(true)
 }
 
+pub fn check_timestamp(last_sync: i64) -> i64 {
+    if last_sync.ilog10() < 10 {
+        last_sync * 1000
+    } else {
+        last_sync
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct SyncData {
     pub last_sync: i64,

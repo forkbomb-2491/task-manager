@@ -1,9 +1,9 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
-use crate::{http::SyncData, storage::TaskDb};
+use crate::{http::{check_timestamp, SyncData}, storage::TaskDb};
 
 static mut TASKS: Option<TaskDb> = None;
 
@@ -167,7 +167,7 @@ pub struct ListRecord {
     pub tasks: Vec<TaskRecord>
 }
 
-#[derive(sqlx::FromRow, Debug, Deserialize, Serialize)]
+#[derive(sqlx::FromRow, Debug, Deserialize, Serialize, Clone)]
 pub struct ListEntry {
     pub name: String,
     pub uuid: String,
@@ -203,27 +203,183 @@ pub async fn compare_and_save(data: &SyncData) -> Result<Option<SyncData>, sqlx:
     unsafe {
         if TASKS.is_none() { return Ok(None); }
     }
-    let mut ret = SyncData::new();
+    // Double check last sync time (sec vs. ms)
+    let last_sync = check_timestamp(data.last_sync);
+    // Load local changes
+    let mut local = SyncData::new();
     unsafe {
-        ret.lists = TASKS
+        local.lists = TASKS
             .as_mut().unwrap()
             .filter_lists(vec![
-                format!("last_edited > {}", data.last_sync)
+                format!("last_edited > {}", last_sync)
             ]).await?.unwrap();
-        for l in &ret.lists {
-            ret.tasks.insert(
+        for l in &local.lists {
+            local.tasks.insert(
                 l.uuid.clone(), 
                 TASKS
                     .as_mut().unwrap()
                     .filter_tasks(
                         l.uuid.clone(),
                         vec![
-                            format!("last_edited > {}", data.last_sync)
+                            format!("last_edited > {}", last_sync)
                         ]).await?.unwrap()
             );
         }
     }
+    let local = local;
+    // To apply to remote
+    let mut ret = SyncData::new();
+    // List maps
+    let mut local_lists: HashMap<String, &ListEntry> = HashMap::new();
+    for l in &local.lists {
+        local_lists.insert(l.uuid.to_owned(), l);
+    }
+    let mut remote_lists: HashMap<String, &ListEntry> = HashMap::new();
+    for l in &data.lists {
+        remote_lists.insert(l.uuid.to_owned(), l);
+    }
+    // Compare lists
+    ret.lists = compare_and_save_lists(&local_lists, &remote_lists).await?;
+    // Compare tasks
+    for local_key in local.tasks.keys() {
+        if !data.tasks.contains_key(local_key) {
+            // If remote does NOT contain this list (i.e., no remote tasks have changed in this list)
+            ret.tasks.insert(local_key.to_owned(), local.tasks.get(local_key).unwrap().to_owned());
+        } else {
+            // Check that entry isn't empty
+            if local.tasks.get(local_key).unwrap().len() == 0 {
+                continue;
+            }
+            // Do comparison
+            let mut local_tasks: HashMap<String, &TaskEntry> = HashMap::new();
+            for t in local.tasks.get(local_key).unwrap() {
+                local_tasks.insert(t.id.to_owned(), t);
+            }
+            let mut remote_tasks: HashMap<String, &TaskEntry> = HashMap::new();
+            for t in data.tasks.get(local_key).unwrap() {
+                remote_tasks.insert(t.id.to_owned(), t);
+            }
+            ret.tasks.insert(local_key.to_owned(), compare_and_save_tasks(local_key.to_owned(), &local_tasks, &remote_tasks).await?);
+        }
+    }
+    for remote_key in data.tasks.keys() {
+        if local.tasks.contains_key(remote_key) {
+            continue;
+        }
+        for task in data.tasks.get(remote_key).unwrap() {
+            unsafe {
+                if TASKS.as_mut().unwrap().get_task(remote_key.clone(), task.id.clone()).await?.is_some() {
+                    TASKS.as_mut().unwrap().edit_task(remote_key.clone(), task).await?;
+                } else {
+                    TASKS.as_mut().unwrap().new_task(remote_key.clone(), task).await?;
+                }
+            }
+        }
+    }
     Ok(Some(ret))
+}
+
+async fn compare_and_save_lists(
+    local_lists: &HashMap<String, &ListEntry>, 
+    remote_lists: &HashMap<String, &ListEntry>
+) -> Result<Vec<ListEntry>, sqlx::Error> {
+    let mut ret: Vec<ListEntry> = Vec::new();
+    for l in local_lists {
+        let list = l.1.to_owned();
+        let other_list = remote_lists.get(l.0);
+        if other_list.is_some() {
+            let other_list = other_list.unwrap().to_owned();
+            if other_list.last_edited.is_none() || list.last_edited.is_none() {
+                // If bad timestamps, change nothing
+                continue;
+            }
+            if check_timestamp(other_list.last_edited.clone().unwrap()) > list.last_edited.clone().unwrap() {
+                // Server is newer -- save
+                unsafe {
+                    if TASKS.as_mut().unwrap().get_list(list.uuid.clone()).await?.is_some() {
+                        TASKS.as_mut().unwrap().edit_list(other_list).await?;
+                    } else {
+                        TASKS.as_mut().unwrap().new_list(other_list).await?;
+                    }
+                }
+                continue;
+            }
+        }
+        // Local is newer -- update server
+        ret.push(list.clone());
+    }
+    // Add any remaining remotes
+    for l in remote_lists {
+        if local_lists.contains_key(l.0) {
+            // Already handled
+            continue;
+        }
+        let list = l.1.to_owned();
+        if list.last_edited.is_none() {
+            // If bad timestamps, change nothing
+            continue;
+        }
+        unsafe {
+            if TASKS.as_mut().unwrap().get_list(list.uuid.clone()).await?.is_some() {
+                TASKS.as_mut().unwrap().edit_list(list).await?;
+            } else {
+                TASKS.as_mut().unwrap().new_list(list).await?;
+            }
+        }
+    }
+    Ok(ret)
+}
+
+async fn compare_and_save_tasks(
+    list: String,
+    local_tasks: &HashMap<String, &TaskEntry>, 
+    remote_tasks: &HashMap<String, &TaskEntry>
+) -> Result<Vec<TaskEntry>, sqlx::Error> {
+    let mut ret: Vec<TaskEntry> = Vec::new();
+    for t in local_tasks {
+        let task = t.1.to_owned();
+        let other_task = remote_tasks.get(t.0);
+        if other_task.is_some() {
+            let other_task = other_task.unwrap().to_owned();
+            if other_task.last_edited.is_none() || task.last_edited.is_none() {
+                // If bad timestamps, change nothing
+                continue;
+            }
+            if check_timestamp(other_task.last_edited.clone().unwrap()) > task.last_edited.clone().unwrap() {
+                // Server is newer -- save
+                unsafe {
+                    if TASKS.as_mut().unwrap().get_task(list.clone(), task.id.clone()).await?.is_some() {
+                        TASKS.as_mut().unwrap().edit_task(list.clone(), other_task).await?;
+                    } else {
+                        TASKS.as_mut().unwrap().new_task(list.clone(), other_task).await?;
+                    }
+                }
+                continue;
+            }
+        }
+        // Local is newer -- update server
+        ret.push(task.clone());
+    }
+    // Add any remaining remotes
+    for t in remote_tasks {
+        if local_tasks.contains_key(t.0) {
+            // Already handled
+            continue;
+        }
+        let task = t.1.to_owned();
+        if task.last_edited.is_none() {
+            // If bad timestamps, change nothing
+            continue;
+        }
+        unsafe {
+            if TASKS.as_mut().unwrap().get_task(list.clone(), task.id.clone()).await?.is_some() {
+                TASKS.as_mut().unwrap().edit_task(list.clone(), task).await?;
+            } else {
+                TASKS.as_mut().unwrap().new_task(list.clone(), task).await?;
+            }
+        }
+    }
+    Ok(ret)
 }
 
 #[tauri::command]

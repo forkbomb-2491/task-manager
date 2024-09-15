@@ -32,6 +32,9 @@
     - [ ] Smart Help tab ordering
     - [x] Fallback due date adjustments (use other lists/importances)
 - [ ] Syncing
+    - [ ] Get changes
+    - [ ] Send changes
+    - [ ] Implement deletions
 - [ ] Can move tasks between lists
 - [ ] Time Block
     - [ ] Preset Time Blocks
