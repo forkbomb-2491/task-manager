@@ -502,6 +502,12 @@ class CalendarDay {
     }
 
     private showTaskSheet() {
+        for (let i = 0; i < this.element!.children.length; i++) {
+            const child = this.element!.children[i];
+            if (child.classList.contains("checkcontainer") && child.matches(":hover")) {
+                return
+            } 
+        }
         // Create element
         var element = document.createElement("div")
         // Load tasks
