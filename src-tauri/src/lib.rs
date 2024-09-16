@@ -43,11 +43,12 @@ pub fn run() {
             http::log_in,
             http::is_logged_in,
             http::send_telemetry,
-            http::do_sync
+            http::do_sync,
+            http::log_out,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
-    http::set_app_conf_dir(app.path().app_local_data_dir().unwrap().to_str().unwrap().to_string());
+    http::set_app_conf_dir(app.path().app_data_dir().unwrap().to_str().unwrap().to_string());
     app.run(|handle, event| match event {
         tauri::RunEvent::ExitRequested { .. } => {
             let _ = handle.emit("exit-requested", ());

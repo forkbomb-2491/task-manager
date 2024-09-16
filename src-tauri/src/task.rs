@@ -5,6 +5,9 @@ use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtim
 
 use crate::{http::{check_timestamp, SyncData}, storage::TaskDb, utils::{de_float_guard, now}};
 
+// static TASKS_PATH: &str = "/tasks.db"; // Prod
+static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
+
 static mut TASKS: Option<TaskDb> = None;
 
 unsafe fn init_tasks() {
@@ -30,7 +33,7 @@ async unsafe fn load_task_db<R: Runtime>(app: AppHandle<R>) {
         .to_str()
         .expect("AppData failed to resolve")
         .to_owned()
-        + "/tasks.db";
+        + TASKS_PATH;
     if !TASKS.as_ref().unwrap().is_loaded {
         let _ = TASKS.as_mut().unwrap().load(&path).await;
         app.listen_any("exit-requested", close_tasks);
@@ -248,7 +251,6 @@ pub async fn compare_and_save(data: &SyncData) -> Result<Option<SyncData>, sqlx:
     // Compare tasks
     for local_key in local.tasks.keys() {
         if !data.tasks.contains_key(local_key) {
-            println!("{}", local_key);
             // If remote does NOT contain this list (i.e., no remote tasks have changed in this list)
             // Check that entry isn't empty
             if local.tasks.get(local_key).unwrap().len() == 0 {

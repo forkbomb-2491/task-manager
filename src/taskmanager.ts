@@ -3,10 +3,14 @@ import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Calendar, Planner } from "./planner";
 import { EisenManager } from "./eisenhower";
-import { /*onSettingChange,*/ onSettingsLoad } from "./settings";
+import { onSettingChange, onSettingsLoad } from "./settings";
 import { loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, List, colorStrToEnum, TaskColor, ListEvent, TaskEventType } from "./task";
+import { Task, List, colorStrToEnum, TaskColor, ListEvent, TaskEventType, onTaskEvent, onListEdit } from "./task";
+import { getElement, onWindowFocused } from "./utils";
+import { doSync, isAuthenticated } from "./http";
+
+const MIN_SYNC_SPACING = 5 * 60 * 1000
 
 /**
  * The Task Manager.
@@ -36,6 +40,8 @@ export class TaskManager {
     private eisenMgr: EisenManager;
 
     private settingsLoaded: boolean = false;
+    private syncEnabled: boolean = false;
+    private lastSync: number = 0;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -47,11 +53,22 @@ export class TaskManager {
         this.eisenMgr = new EisenManager(this);
 
         onSettingsLoad(() => this.settingsLoaded = true);
+        onSettingChange("syncEnabled", e => {
+            this.syncEnabled = e.value
+        })
     }
 
     async start() {
         await this.loadTasks();
         this.render();
+
+        onWindowFocused(() => this.sync().then())
+        onTaskEvent(_ => this.sync(true).then(), true, true)
+        onListEdit(_ => this.sync(true).then())
+        getElement("syncnowbutton").addEventListener(
+            "click",
+            _ => this.sync(true).then()
+        )
     }
 
     private async loadTasks() {
@@ -75,6 +92,23 @@ export class TaskManager {
             this.taskNotifier.refresh();
         } else {
             onSettingsLoad(() => this.taskNotifier.refresh());
+        }
+    }
+
+    private async sync(force: boolean = false) {
+        if (!this.syncEnabled) {
+            return
+        }
+        if (Date.now() - this.lastSync < MIN_SYNC_SPACING && !force) {
+            return
+        } else if (!isAuthenticated()) {
+            return
+        }
+
+        const res = await doSync()
+        if (res) {
+            this.lastSync = Date.now()
+            await loadTasks()
         }
     }
 

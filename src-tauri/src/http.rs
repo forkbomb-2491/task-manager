@@ -1,15 +1,17 @@
-use std::{collections::HashMap, env::consts::OS, str::FromStr, sync::Mutex, time::Duration};
+use std::{collections::HashMap, env::consts::OS, fs::{self, read_to_string, remove_file, write}, str::FromStr, sync::Mutex, time::Duration};
 
 use reqwest::{header, Error, Method, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, to_string};
-use tauri::Url;
+use tauri::{Event, Listener, Runtime, Url};
 use reqwest::{Client, Response, RequestBuilder};
 
 use crate::{task::{compare_and_save, ListEntry, TaskEntry}, utils::now};
 
-// const API_ROOT: &str = "https://api.forkbomb2491.dev";
-const API_ROOT: &str = "http://localhost:5000";
+// const API_ROOT: &str = "https://api.forkbomb2491.dev"; // Prod
+// const COOKIE_PATH: &str = "/cookie"; // Prod
+const API_ROOT: &str = "http://localhost:5000"; // Debug/testing
+const COOKIE_PATH: &str = "/cookie2"; // Debug/testing
 
 static mut COOKIE: Option<SessionCooke> = None;
 static mut APP_CONF_DIR: Option<String> = None;
@@ -41,13 +43,45 @@ impl SessionCooke {
     }
 }
 
-// fn read_cookie() -> Option<String> {
+fn read_cookie() -> Option<String> {
+    // Check if app data is set
+    unsafe { 
+        if APP_CONF_DIR.is_none() {
+            return None;
+        }
+        let base_dir = APP_CONF_DIR.as_mut().unwrap().clone();
+        let res = read_to_string(base_dir + COOKIE_PATH);
+        if res.is_ok() {
+            return Some(res.unwrap());
+        } else {
+            return None;
+        }
+    }
+}
 
-// }
+fn write_cookie(cookie: &str) {
+    // Check if app data is set
+    unsafe { 
+        if APP_CONF_DIR.is_none() {
+            return;
+        }
+        let base_dir = APP_CONF_DIR.as_mut().unwrap().clone();
+        let res = write(base_dir + COOKIE_PATH, cookie);
+        if res.is_err() {
+            println!("Write cookie error {}", res.unwrap_err());
+        }
+    }
+}
 
-// fn write_cookie(cookie: &str) {
-
-// }
+fn save_cookie(_e: Event) {
+    // Check if cookie is initialized
+    unsafe {
+        if COOKIE.is_none() {
+            return;
+        }
+        write_cookie(&COOKIE.as_mut().unwrap().get_cookie());
+    }
+}
 
 fn set_cookie(response: &Response) {
     if (*response).headers().contains_key(header::SET_COOKIE) {
@@ -62,6 +96,7 @@ fn set_cookie(response: &Response) {
                 COOKIE = Some(SessionCooke::new());
             }
             COOKIE.as_mut().unwrap().set_cookie(cookie);
+            write_cookie(cookie);
         }
     }
 }
@@ -82,10 +117,16 @@ fn base_request(endpoint: &str, method: Method) -> RequestBuilder {
 }
 
 #[tauri::command]
-pub fn is_logged_in() -> bool {
+pub fn is_logged_in<R: Runtime>(app: tauri::AppHandle<R>) -> bool {
     unsafe {
         if COOKIE.is_none() {
-            return false;
+            let cookie = read_cookie();
+            if cookie.is_none() {
+                return false;
+            }
+            app.listen_any("exit-requested", save_cookie);
+            COOKIE = Some(SessionCooke::new());
+            COOKIE.as_mut().unwrap().set_cookie(&cookie.unwrap());
         }
         let cookie = COOKIE.as_mut().unwrap().get_cookie();
         return cookie != "";
@@ -93,15 +134,29 @@ pub fn is_logged_in() -> bool {
 }
 
 #[tauri::command]
-pub async fn log_in(username: &str, password: &str) -> Result<bool, String> {
+pub async fn log_in<R: Runtime>(app: tauri::AppHandle<R>, username: &str, password: &str) -> Result<bool, String> {
     let mut request = base_request("/login", Method::GET);
     request = request.basic_auth(username, Some(password));
     let response = request.send().await.or_else(|e| Err(format!("{}", e)))?;
     if response.status() == StatusCode::FORBIDDEN {
         return Err("Invalid credentials.".to_string());
     }
+    unsafe { if COOKIE.is_none() {
+        app.listen_any("exit-requested", save_cookie);
+    }}
     set_cookie(&response);
     Ok(true)
+}
+
+#[tauri::command]
+pub async fn log_out() -> Result<(),  ()> {
+    unsafe {
+        if COOKIE.is_none() { return Ok(()); }
+        COOKIE = None;
+        let base_dir = APP_CONF_DIR.as_mut().unwrap().clone();
+        let _ = remove_file(base_dir + COOKIE_PATH);
+        Ok(())
+    }
 }
 
 async fn get(endpoint: &str) -> Result<Response, Error> {

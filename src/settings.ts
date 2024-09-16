@@ -202,6 +202,13 @@ export class SettingsView {
         const syncCheckbox = document.getElementById("syncenabled")!
         // @ts-ignore
         syncCheckbox.checked = this.settings.syncEnabled
+        
+        getElement("logoutbutton").addEventListener(
+            "click",
+            _ => {
+                logOut().then(_ => this.syncShowSignIn())
+            }
+        )
 
         if (this.settings.syncEnabled) {
             this.syncSettingsChange(true).then()
@@ -435,6 +442,12 @@ export class SettingsView {
         getElement("syncsigninbox").style.display = "none"
         getElement("syncbuttonbox").style.display = "block"
     }
+
+    private syncShowSignIn() {
+        getElement("syncinfo").style.display = "none"
+        getElement("syncsigninbox").style.display = "block"
+        getElement("syncbuttonbox").style.display = "none"
+    }
     
     private async syncSignInFormSubmit() {
         getElement("syncinfo").style.display = "block"
@@ -463,9 +476,7 @@ export class SettingsView {
             getElement("syncinfo").style.display = "block"
             var isAuthed = isAuthenticated()
             if (!isAuthed) {
-                // if (this.settings.syncToken != "" && await logInWithToken(this.settings.syncToken)) return this.syncSignedIn()
-                getElement("syncinfo").style.display = "none"
-                getElement("syncsigninbox").style.display = "block"
+                this.syncShowSignIn()
                 return
             }
             this.syncSignedIn()
@@ -474,8 +485,7 @@ export class SettingsView {
             getElement("syncsigninbox").style.display = "none"
             getElement("syncbuttonbox").style.display = "none"
 
-            await logOut(this.settings.syncToken)
-            this.settings.syncToken = ""
+            await logOut()
         }
     }
 }
@@ -745,14 +755,6 @@ export class Settings {
 
     set tabsActive(tabs: TabsActive) {
         this.setKey("tabsActive", tabs)
-    }
-
-    get syncToken(): string {
-        return this.getKey("syncToken", "")
-    }
-
-    set syncToken(token: string) {
-        this.setKey("syncToken", token, false)
     }
 
     get syncEnabled(): boolean {
