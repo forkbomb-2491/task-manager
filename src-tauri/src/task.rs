@@ -247,13 +247,14 @@ pub async fn compare_and_save(data: &SyncData) -> Result<Option<SyncData>, sqlx:
     // Compare tasks
     for local_key in local.tasks.keys() {
         if !data.tasks.contains_key(local_key) {
+            println!("{}", local_key);
             // If remote does NOT contain this list (i.e., no remote tasks have changed in this list)
-            ret.tasks.insert(local_key.to_owned(), local.tasks.get(local_key).unwrap().to_owned());
-        } else {
             // Check that entry isn't empty
             if local.tasks.get(local_key).unwrap().len() == 0 {
                 continue;
             }
+            ret.tasks.insert(local_key.to_owned(), local.tasks.get(local_key).unwrap().to_owned());
+        } else {
             // Do comparison
             let mut local_tasks: HashMap<String, &TaskEntry> = HashMap::new();
             for t in local.tasks.get(local_key).unwrap() {
