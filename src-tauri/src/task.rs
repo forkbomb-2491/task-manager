@@ -3,7 +3,7 @@ use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
-use crate::{http::{check_timestamp, SyncData}, storage::TaskDb, utils::de_float_guard};
+use crate::{http::{check_timestamp, SyncData}, storage::TaskDb, utils::{de_float_guard, now}};
 
 static mut TASKS: Option<TaskDb> = None;
 
@@ -217,7 +217,8 @@ pub async fn compare_and_save(data: &SyncData) -> Result<Option<SyncData>, sqlx:
             .filter_lists(vec![
                 format!("last_edited > {}", last_sync)
             ]).await?.unwrap();
-        for l in &local.lists {
+        let all_lists = TASKS.as_mut().unwrap().get_lists().await?.unwrap();
+        for l in &all_lists {
             local.tasks.insert(
                 l.uuid.clone(), 
                 TASKS
