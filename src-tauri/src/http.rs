@@ -8,10 +8,10 @@ use reqwest::{Client, Response, RequestBuilder};
 
 use crate::{task::{compare_and_save, ListEntry, TaskEntry}, utils::now};
 
-// const API_ROOT: &str = "https://api.forkbomb2491.dev"; // Prod
-// const COOKIE_PATH: &str = "/cookie"; // Prod
-const API_ROOT: &str = "http://localhost:5000"; // Debug/testing
-const COOKIE_PATH: &str = "/cookie2"; // Debug/testing
+const API_ROOT: &str = "https://api.forkbomb2491.dev"; // Prod
+const COOKIE_PATH: &str = "/cookie"; // Prod
+// const API_ROOT: &str = "http://localhost:5000"; // Debug/testing
+// const COOKIE_PATH: &str = "/cookie2"; // Debug/testing
 
 static mut COOKIE: Option<SessionCooke> = None;
 static mut APP_CONF_DIR: Option<String> = None;

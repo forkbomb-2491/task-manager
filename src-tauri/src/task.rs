@@ -5,8 +5,8 @@ use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtim
 
 use crate::{http::{check_timestamp, SyncData}, storage::TaskDb, utils::{de_float_guard, now}};
 
-// static TASKS_PATH: &str = "/tasks.db"; // Prod
-static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
+static TASKS_PATH: &str = "/tasks.db"; // Prod
+// static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
 
 static mut TASKS: Option<TaskDb> = None;
 

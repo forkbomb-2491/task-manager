@@ -32,8 +32,8 @@
     - [ ] Smart Help tab ordering
     - [x] Fallback due date adjustments (use other lists/importances)
 - [ ] Syncing
-    - [ ] Get changes
-    - [ ] Send changes
+    - [x] Get changes
+    - [x] Send changes
     - [ ] Implement deletions
 - [ ] Can move tasks between lists
 - [ ] Time Block
@@ -46,6 +46,7 @@
 
 #### Bugs
 - [x] After DB tasks, editing multiple tasks was bugged
+- [ ] Tasks added in taskplan do not immediately appear on calendar view in planner
 
 ### v0.5
 - [ ] Schedule planner
