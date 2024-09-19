@@ -1,5 +1,5 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused, Months, getElement, showSheetElement } from "./utils"
-import { Task, getColor, onTaskAdd, onTaskAdopt, onTaskEdit, onTaskEvent } from "./task"
+import { Task, onTaskAdd, onTaskAdopt, onTaskEvent } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
@@ -73,10 +73,7 @@ export class Planner {
         onSettingChange("plannerStartDay", e => this.startDay = e.value)
         onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
         onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
-        onTaskEdit(e => {
-            this.addTask(this.taskMgr.getTask(e.task.id)!)
-            this.refresh()
-        })
+        onTaskEvent(_ => this.render(), false, false, false)
 
         onWindowFocused(() => this.refresh())
 
@@ -467,32 +464,6 @@ class CalendarDay {
         onWindowFocused(() => this.checkIsToday())
     }
 
-    private getTaskCheckbox(task: Task, disabled: boolean = false): HTMLLabelElement {
-        const element = document.createElement("label")
-        element.className = "checkcontainer"
-        element.title = task.name
-        
-        const checkbox = document.createElement("input")
-        checkbox.type = "checkbox"
-        checkbox.checked = task.completed
-        if (!disabled) {
-            checkbox.addEventListener("change", _ => {
-                task.completed = checkbox.checked
-            })
-        } else {
-            checkbox.disabled = true
-        }
-        element.appendChild(checkbox)
-
-        const checkmark = document.createElement("span")
-        checkmark.className = "taskcheckbox"
-        checkmark.style.backgroundColor = getColor(task.color)
-        checkmark.innerHTML = "<p>✔</p>"
-        element.appendChild(checkmark)
-
-        return element
-    }
-
     private checkIsToday() {
         if (isSameDay(this.date, new Date()) && this.element != undefined) {
             this.element.className = "caldate today"
@@ -541,7 +512,7 @@ class CalendarDay {
         })
         // add checkboxes
         tasks.forEach(t => {
-            this.element!.appendChild(this.getTaskCheckbox(t))
+            this.element!.appendChild(t.getTaskCheckbox())
         })
 
         this.checkIsToday()

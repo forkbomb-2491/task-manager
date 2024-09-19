@@ -127,11 +127,11 @@ export function onTaskAdopt(cb: (event: TaskEvent) => void) {
     )
 }
 
-export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean = false, includeAdopt: boolean = false) {
+export function onTaskEvent(cb: (event: TaskEvent) => void, includeAdd: boolean = false, includeAdopt: boolean = false, includeCompletes: boolean = true) {
     onTaskDelete(cb)
     onTaskEdit(cb)
-    onTaskComplete(cb)
-    onTaskUncomplete(cb)
+    if (includeCompletes) onTaskComplete(cb)
+    if (includeCompletes) onTaskUncomplete(cb)
     if (includeAdd) onTaskAdd(cb)
     if (includeAdopt) onTaskAdopt(cb)
 }
@@ -489,17 +489,18 @@ export class Task {
         if (this._completed) {
             newElement.className = " completed"
         }
-        newElement.innerHTML = `
-        <button class="complete"></button>
-        ${this._name}
-        `
+        newElement.appendChild(this.getTaskCheckbox())
+        var label = document.createElement("span")
+        label.innerText = this._name
+        label.style.marginLeft = "1ch"
+        newElement.appendChild(label)
         // Add callback for the complete button
-        var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
+        // var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
 
-        newElement.getElementsByClassName("complete")[0].addEventListener(
-            "click",
-            completeTaskCallback
-        )
+        // newElement.getElementsByClassName("complete")[0].addEventListener(
+        //     "click",
+        //     completeTaskCallback
+        // )
         // Add color
         if (this._color != "Default") {
             newElement.style.color = getColor(this._color)
@@ -746,6 +747,47 @@ export class Task {
         // Marks Task as completed or not; dispatch Events to which other classes may listen.
         this.completed = !this.completed
     }
+    
+    getTaskCheckbox(disabled: boolean = false): HTMLLabelElement {
+        const element = document.createElement("label")
+        element.className = "checkcontainer"
+        element.title = this.name
+        
+        const checkbox = document.createElement("input")
+        checkbox.type = "checkbox"
+        checkbox.checked = this.completed
+        if (!disabled) {
+            checkbox.addEventListener("change", _ => {
+                this.completed = checkbox.checked
+            })
+        } else {
+            checkbox.disabled = true
+        }
+        // Janky, pls fix
+        var changeCheckboxChecked = (s: boolean) => {
+            checkbox.checked = s
+        }
+        onTaskComplete(e => {
+            if (e.task.id == this.id) {
+                changeCheckboxChecked(true)
+            }
+        })
+        onTaskUncomplete(e => {
+            if (e.task.id == this.id) {
+                changeCheckboxChecked(false)
+            }
+        })
+        // </janky>
+        element.appendChild(checkbox)
+
+        const checkmark = document.createElement("span")
+        checkmark.className = "taskcheckbox"
+        checkmark.style.backgroundColor = getColor(this.color)
+        checkmark.innerHTML = "<p>✔</p>"
+        element.appendChild(checkmark)
+
+        return element
+    }
 
     /**
      * Removes the the elements list all Elements that have been deleted
@@ -970,10 +1012,10 @@ export class Task {
                 <input type="submit" style="background: none; border: none; padding: 0; width: 1.35rem; margin-right: 0.5rem;" value="➕">
                 <div style="display: flex; flex-grow: 1;">
                     <div style="flex-grow: 1;">
-                        <input type = "text" name="titleinput" required value="${this._name.replaceAll('"', "&#34;")}">
+                        <input style="min-height: calc(1.25rem + 2px); max-width: calc(100% - 2ch); margin-right: 1ch;" type = "text" name="titleinput" required value="${this._name.replaceAll('"', "&#34;")}">
                     </div>
-                    <div style="min-width: 10ch; max-width: 10ch;">
-                        <select name = "sizeinput" required>
+                    <div style="min-width: 10ch; max-width: 10ch; display: flex;">
+                        <select name = "sizeinput" style="flex-grow: 1; margin-right: 1ch;" required>
                             <option name="0" ${this._size == 0 ? "selected": ""}>Tiny</option>
                             <option name="1" ${this._size == 1 ? "selected": ""}>Small</option>
                             <option name="2" ${this._size == 2 ? "selected": ""}>Medium</option>
@@ -981,8 +1023,8 @@ export class Task {
                             <option name="4" ${this._size == 4 ? "selected": ""}>Huge</option>
                         </select>
                     </div>
-                    <div style="min-width: 13ch; min-width: 13ch; display: flex;">
-                        <select name="importanceinput" required>
+                    <div style="min-width: 13ch; max-width: 13ch; display: flex;">
+                        <select name="importanceinput" style="flex-grow: 1; margin-right: 1ch;" required>
                             <option name="0" ${this._importance == 0 ? "selected": ""}>Trivial</option>
                             <option name="1" ${this._importance == 1 ? "selected": ""}>Unimportant</option>
                             <option name="2" ${this._importance == 2 ? "selected": ""}>Average</option>
