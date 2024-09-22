@@ -54,6 +54,8 @@ button.plannershift {
 
     color: var(--primary-text-color);
 
+    cursor: pointer;
+
     border: none;
 
     text-shadow: 0 0 0.25rem var(--primary-shadow-color);

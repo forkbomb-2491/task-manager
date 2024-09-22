@@ -341,6 +341,8 @@ export class Calendar {
                 this.render()
             }
         )
+
+        onTaskEvent(_ => this.render(), true, true, false)
     }
 
     private shiftMonth(by: number) {
@@ -483,6 +485,7 @@ class CalendarDay {
         var element = document.createElement("div")
         // Load tasks
         var tasks = this.taskMgr.getTasks().filter(t => {
+            if (t.deleted) { return }
             return isSameDay(this.date, t.due)
         })
         // Add tasks to element
@@ -512,6 +515,7 @@ class CalendarDay {
         })
         // add checkboxes
         tasks.forEach(t => {
+            if (t.deleted) { return }
             this.element!.appendChild(t.getTaskCheckbox())
         })
 
