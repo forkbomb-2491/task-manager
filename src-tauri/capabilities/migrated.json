@@ -60,14 +60,12 @@
     "dialog:allow-message",
     "dialog:allow-confirm",
     "dialog:default",
-    "updater:default",
     "http:default",
     "sql:default",
     "sql:allow-close",
     "sql:allow-execute",
     "sql:allow-load",
     "sql:allow-select",
-    "os:default",
-    "updater:default"
+    "os:default"
   ]
 }

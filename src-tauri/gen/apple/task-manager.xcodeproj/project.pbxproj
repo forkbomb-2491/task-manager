@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -23,25 +23,32 @@
 
 /* Begin PBXFileReference section */
 		000DA5BE1C210035E482499F /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
-		015E57CE6FCBA121D477AC49 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
-		0D830D33745CE8126BE755FF /* histTests.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = histTests.txt; sourceTree = "<group>"; };
-		1A6903BADF82E44B7BEAB895 /* task.rs */ = {isa = PBXFileReference; path = task.rs; sourceTree = "<group>"; };
+		015E57CE6FCBA121D477AC49 /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
+		1A442C47EBCA5311512E21CC /* mod.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mod.rs; sourceTree = "<group>"; };
+		1A6903BADF82E44B7BEAB895 /* task.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = task.rs; sourceTree = "<group>"; };
 		21745DBE7BA00E18D6170BD5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		25BE65794319B5EAA404C5AB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2CA14D166009C040449EA505 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		2E5D2CDFFF018A54D8AF25E5 /* task-manager_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "task-manager_iOS.entitlements"; sourceTree = "<group>"; };
-		3F9F032CD6B20AD8A3AD5F17 /* task-manager_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "task-manager_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30D38865846FD0DE7189F723 /* utils.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = utils.rs; sourceTree = "<group>"; };
+		3F9F032CD6B20AD8A3AD5F17 /* task-manager_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; name = "task-manager_iOS.app"; path = "Task Manager (DEV).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		44DDD5B511C13C8559C1AB35 /* libtask_manager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtask_manager.a; sourceTree = "<group>"; };
-		550A8A8F09E9119D8F37B503 /* algorithm.rs */ = {isa = PBXFileReference; path = algorithm.rs; sourceTree = "<group>"; };
+		45E620168DC5599BAB51CEBE /* storage_tests.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = storage_tests.rs; sourceTree = "<group>"; };
+		4C6EC9BA24E5E50153064553 /* task_tests.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = task_tests.rs; sourceTree = "<group>"; };
+		550A8A8F09E9119D8F37B503 /* algorithm.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = algorithm.rs; sourceTree = "<group>"; };
 		6DE20D02B6F0FD4DC26444E2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		736E87840911005C3C0F6F40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F96C3EF1EAF364E817F93B4 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
-		8F5B36DCCFE17CF522259F64 /* history.rs */ = {isa = PBXFileReference; path = history.rs; sourceTree = "<group>"; };
+		8F5B36DCCFE17CF522259F64 /* history.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = history.rs; sourceTree = "<group>"; };
+		A38B2D6C452276C706A3B2C7 /* history_tests.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = history_tests.rs; sourceTree = "<group>"; };
+		A47A408743A78C4AF8AD0539 /* http.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = http.rs; sourceTree = "<group>"; };
+		A5321FCC7CD544559C48072E /* storage.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = storage.rs; sourceTree = "<group>"; };
 		B895DA576648A95780A85700 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CD73526D37BE7667E805BBE5 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		D76802FE9D4C43709D3AA1C5 /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
 		E2159B90409D06AC135C6950 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E5B14C19E28E87989EC9E8B0 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
-		E80782D1C80E191F67AEAA7F /* testutils.rs */ = {isa = PBXFileReference; path = testutils.rs; sourceTree = "<group>"; };
+		E80782D1C80E191F67AEAA7F /* testutils.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = testutils.rs; sourceTree = "<group>"; };
 		EA23BC53FAC844D381B37719 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FF7EE18227DC6DD32E5BC88F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -108,10 +115,14 @@
 			children = (
 				550A8A8F09E9119D8F37B503 /* algorithm.rs */,
 				8F5B36DCCFE17CF522259F64 /* history.rs */,
-				0D830D33745CE8126BE755FF /* histTests.txt */,
+				A47A408743A78C4AF8AD0539 /* http.rs */,
+				D76802FE9D4C43709D3AA1C5 /* lib.rs */,
 				015E57CE6FCBA121D477AC49 /* main.rs */,
+				A5321FCC7CD544559C48072E /* storage.rs */,
 				1A6903BADF82E44B7BEAB895 /* task.rs */,
 				E80782D1C80E191F67AEAA7F /* testutils.rs */,
+				30D38865846FD0DE7189F723 /* utils.rs */,
+				B696CCE06683EC4004DB4274 /* tests */,
 			);
 			name = src;
 			path = ../../src;
@@ -147,6 +158,17 @@
 				2E5D2CDFFF018A54D8AF25E5 /* task-manager_iOS.entitlements */,
 			);
 			path = "task-manager_iOS";
+			sourceTree = "<group>";
+		};
+		B696CCE06683EC4004DB4274 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				A38B2D6C452276C706A3B2C7 /* history_tests.rs */,
+				1A442C47EBCA5311512E21CC /* mod.rs */,
+				45E620168DC5599BAB51CEBE /* storage_tests.rs */,
+				4C6EC9BA24E5E50153064553 /* task_tests.rs */,
+			);
+			path = tests;
 			sourceTree = "<group>";
 		};
 		EE7BD5AC45E3A94C3D34DD3A /* task-manager */ = {
@@ -340,9 +362,27 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.pgil.forkbomb.taskmgr;
 				PRODUCT_NAME = "Task Manager (DEV)";
 				SDKROOT = iphoneos;
@@ -375,9 +415,27 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.pgil.forkbomb.taskmgr;
 				PRODUCT_NAME = "Task Manager (DEV)";
 				SDKROOT = iphoneos;
@@ -459,7 +517,7 @@
 				A6CE132E4FB7E8B6B943E6C9 /* release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = debug;
+			defaultConfigurationName = release;
 		};
 		933AB26969FA369FE1B2F779 /* Build configuration list for PBXProject "task-manager" */ = {
 			isa = XCConfigurationList;
@@ -468,7 +526,7 @@
 				2B7EAA37CAF36A806E6E2C15 /* release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = debug;
+			defaultConfigurationName = release;
 		};
 /* End XCConfigurationList section */
 	};

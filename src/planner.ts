@@ -1,5 +1,5 @@
 import { Weekdays, DayCols, WEEKDAY_STRINGS, isSameDay, findFirstPrecedingDay, onWindowFocused, Months, getElement, showSheetElement } from "./utils"
-import { Task, onTaskAdd, onTaskAdopt, onTaskEvent } from "./task"
+import { Task, onTaskAdd, onTaskEvent } from "./task"
 import { TaskManager } from "./taskmanager"
 import { onSettingChange } from "./settings"
 
@@ -72,8 +72,8 @@ export class Planner {
 
         onSettingChange("plannerStartDay", e => this.startDay = e.value)
         onTaskAdd(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
-        onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
-        onTaskEvent(_ => this.render(), false, false, false)
+        // onTaskAdopt(e => this.addTask(this.taskMgr.getTask(e.task.id)!))
+        onTaskEvent(_ => this.render(), false, true, false)
 
         onWindowFocused(() => this.refresh())
 
