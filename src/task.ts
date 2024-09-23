@@ -489,10 +489,10 @@ export class Task {
         if (this._completed) {
             newElement.className = " completed"
         }
-        newElement.appendChild(this.getTaskCheckbox())
+        newElement.appendChild(this.getTaskCheckbox(false, 0.97))
         var label = document.createElement("span")
         label.innerText = this._name
-        label.style.marginLeft = "1ch"
+        label.style.marginLeft = "0.5ch"
         newElement.appendChild(label)
         // Add callback for the complete button
         // var completeTaskCallback = (_: Event) => { this.toggleCompleted() }
@@ -748,8 +748,9 @@ export class Task {
         this.completed = !this.completed
     }
     
-    getTaskCheckbox(disabled: boolean = false): HTMLLabelElement {
+    getTaskCheckbox(disabled: boolean = false, scale: number = 1.0): HTMLLabelElement {
         const element = document.createElement("label")
+        element.style.scale = `${scale}`
         element.className = "checkcontainer"
         element.title = this.name
         
