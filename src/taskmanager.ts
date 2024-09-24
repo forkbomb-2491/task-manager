@@ -56,6 +56,7 @@ export class TaskManager {
         onSettingChange("syncEnabled", e => {
             this.syncEnabled = e.value
         })
+        onWindowFocused(() => this.render())
     }
 
     async start() {

@@ -6,12 +6,12 @@
     "main"
   ],
   "permissions": [
-    "path:default",
-    "event:default",
-    "window:default",
-    "app:default",
-    "menu:default",
-    "tray:default",
+    "core:path:default",
+    "core:event:default",
+    "core:window:default",
+    "core:app:default",
+    "core:menu:default",
+    "core:tray:default",
     "fs:allow-read-file",
     "fs:allow-write-file",
     "fs:allow-read-dir",
@@ -22,7 +22,7 @@
     "fs:allow-rename",
     "fs:allow-exists",
     "fs:allow-app-write",
-    "path:allow-resolve-directory",
+    "core:path:allow-resolve-directory",
     "store:allow-get",
     "store:allow-set",
     "store:allow-save",
@@ -33,7 +33,7 @@
     "store:allow-reset",
     "store:allow-values",
     "store:allow-entries",
-    "window:allow-set-progress-bar",
+    "core:window:allow-set-progress-bar",
     {
       "identifier": "fs:scope",
       "allow": [
@@ -66,6 +66,7 @@
     "sql:allow-execute",
     "sql:allow-load",
     "sql:allow-select",
-    "os:default"
+    "os:default",
+    "updater:default"
   ]
 }

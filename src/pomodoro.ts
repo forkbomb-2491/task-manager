@@ -1,6 +1,8 @@
 import { getTimeString } from "./utils";
-import { getCurrent, ProgressBarStatus } from "@tauri-apps/api/window";
+import { getCurrentWindow, ProgressBarStatus } from "@tauri-apps/api/window";
 import { sendNotif } from "./utils.ts";
+
+var getCurrent = getCurrentWindow
 
 export class TimerHandler {
     private counter: number // times we swap isBreak. (# of work blocks * 2) -1

@@ -5,13 +5,15 @@ import { TimerHandler } from "./pomodoro";
 import { Settings, SettingsEvent, SettingsView, TabsActive, onSettingChange, onSettingsLoad } from './settings'
 // @ts-ignore
 import { addDebugFuncs } from './debug'
-import { ProgressBarStatus, getCurrent } from '@tauri-apps/api/window';
+import { ProgressBarStatus, getCurrentWindow } from '@tauri-apps/api/window';
 import { TaskManager } from "./taskmanager";
 import { toHTMLDateTimeString, showTooltipOnHover } from './utils';
 import { invoke } from '@tauri-apps/api/core';
 import { check } from '@tauri-apps/plugin-updater';
 import { ask } from '@tauri-apps/plugin-dialog';
 import { type } from '@tauri-apps/plugin-os';
+
+var getCurrent = getCurrentWindow
 
 const DEBUG_TAB = true
 if (DEBUG_TAB) {

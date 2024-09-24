@@ -1,5 +1,8 @@
-import { getCurrent } from "@tauri-apps/api/window"
+
+import { getCurrentWindow } from "@tauri-apps/api/window"
 import { sendNotification } from "@tauri-apps/plugin-notification"
+
+var getCurrent = getCurrentWindow
 
 /**
  * Registers the given closure/function as an event listener for 
