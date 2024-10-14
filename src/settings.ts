@@ -6,6 +6,8 @@ import { getVersion } from "@tauri-apps/api/app";
 import { isAuthenticated, logOut, sendMetadata as sendTelemetry, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { UnlistenFn } from "@tauri-apps/api/event";
 
 const VERSION = await getVersion()
 
@@ -25,6 +27,8 @@ export class SettingsView {
     private settings: Settings
 
     private update: Update | undefined
+
+    private unlistenAutoTheme: UnlistenFn | undefined
 
     constructor(settings: Settings | null = null) {
         if (settings != null) {
@@ -387,7 +391,31 @@ export class SettingsView {
         }
     }
 
+    private doAutoTheme() {
+        getCurrentWindow().theme().then(e => {
+            if (e != null) {
+                console.log("Changing theme to" + e)
+                this.changeTheme(e)
+            }
+        })
+        getCurrentWindow().onThemeChanged(_ => this.doAutoTheme()).then(r => this.unlistenAutoTheme = r)
+    }
+
     private changeTheme(theme: string) {
+        // Auto Theme
+        if (theme == "auto") {
+            console.log("Auto set!")
+            this.doAutoTheme()
+            if (this.unlistenAutoTheme == undefined) {
+                getCurrentWindow().onThemeChanged(_ => this.doAutoTheme()).then(r => this.unlistenAutoTheme = r)
+            }
+            return
+        }
+        if (this.unlistenAutoTheme != undefined) {
+            this.unlistenAutoTheme()
+            this.unlistenAutoTheme = undefined
+        }
+        // Non-Auto Theme
         var themes = document.head.getElementsByClassName("theme")
         for (let i = 0; i < themes.length; i++) {
             const themeSheet = themes[i];
