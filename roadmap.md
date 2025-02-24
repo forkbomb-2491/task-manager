@@ -49,7 +49,18 @@
 - [ ] Tasks added in taskplan do not immediately appear on calendar view in planner
 
 ### v0.5
-- [ ] Schedule planner
+- [ ] Major UI overhaul
+    - [ ] Gridify UI
+    - [ ] TS cleanup
+- [ ] Rustify logic
+- [ ] Clean up Rust
+
+- [ ] Time Block
+    - [ ] Preset Time Blocks
+    - [ ] Smart Time Block
+- [ ] Task View
+    - [ ] Can move tasks between lists
+    - [ ] List color change
 
 ## Previous Releases
 
