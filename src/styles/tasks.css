@@ -153,6 +153,8 @@ button.complete:hover {
     color: rgba(0, 0, 0, 0);
     text-shadow: none;
 
+    cursor: pointer;
+
     font-family: "Times New Roman";
 
     margin: 0.125rem;
