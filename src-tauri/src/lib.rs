@@ -1,7 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use history::History;
+use storage::TaskDb;
 use tauri::{Emitter, Manager};
+use utils::get_data_dir;
 
 mod algorithm;
 mod history;
@@ -10,10 +13,10 @@ mod task;
 mod storage;
 mod utils;
 
-mod tests;
+// mod tests;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_os::init())
@@ -42,6 +45,21 @@ pub fn run() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
+
+    // Manage history
+    let hist = History::new(get_data_dir(app.path()).unwrap()).await.unwrap();
+    let hist_success = app.manage(hist);
+    if !hist_success {
+        panic!("Failed to add history state to app!");
+    }
+
+    // Manage tasks
+    let tasks = TaskDb::new(get_data_dir(app.path()).unwrap()).await.unwrap();
+    let tasks_success = app.manage(tasks);
+    if !tasks_success {
+        panic!("Failed to add task state to app!");
+    }
+
     app.run(|handle, event| match event {
         tauri::RunEvent::ExitRequested { .. } => {
             let _ = handle.emit("exit-requested", ());

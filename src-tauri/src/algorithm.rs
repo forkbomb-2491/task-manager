@@ -1,24 +1,6 @@
 use std::collections::HashMap;
 
-use tauri::{async_runtime::block_on, Event, Listener, Manager, Runtime};
-
 use crate::{history::History, utils::now};
-
-static mut HISTORY: Option<History> = None;
-
-unsafe fn init_history() {
-    if HISTORY.is_none() {
-        HISTORY = Some(History::new());
-    }
-}
-
-fn close_history(_e: Event) {
-    unsafe {
-        if HISTORY.is_some() {
-            block_on(HISTORY.as_mut().unwrap().close());
-        }
-    }
-}
 
 #[derive(PartialEq)]
 pub enum DueEventType {
@@ -59,6 +41,7 @@ async fn record_due_event(
     importance: i32,
     size: i32,
     due: i64,
+    hist: &History,
 ) -> Result<(), String> {
     let event = DueEvent {
         event_type: event_type,
@@ -69,50 +52,31 @@ async fn record_due_event(
         size: size,
         due: due,
     };
-    unsafe { HISTORY.as_mut().unwrap().insert_due_event(event).await }
+    hist.insert_due_event(event).await
 }
 
 #[tauri::command]
 pub async fn record_create_event(
+    hist: tauri::State<'_, History>,
     id: String,
     color: String,
     importance: i32,
     size: i32,
     due: i64,
 ) -> Result<(), String> {
-    record_due_event(DueEventType::Create, id, color, importance, size, due).await
+    record_due_event(DueEventType::Create, id, color, importance, size, due, &hist).await
 }
 
 #[tauri::command]
 pub async fn record_complete_event(
+    hist: tauri::State<'_, History>,
     id: String,
     color: String,
     importance: i32,
     size: i32,
     due: i64,
 ) -> Result<(), String> {
-    record_due_event(DueEventType::Complete, id, color, importance, size, due).await
-}
-
-#[tauri::command]
-pub async fn init_algo<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
-    let path = app
-        .path()
-        .app_data_dir()
-        .unwrap()
-        .to_str()
-        .expect("AppData failed to resolve")
-        .to_owned()
-        + "/history2.db"; // CHANGE FOR RELEASE VERSIONS
-    unsafe {
-        init_history();
-        let hist = HISTORY.as_mut().unwrap();
-        hist.load(&path)
-            .await
-            .expect("Issue loading history database.");
-        app.listen_any("exit-requested", close_history);
-    }
-    Ok(())
+    record_due_event(DueEventType::Complete, id, color, importance, size, due, &hist).await
 }
 
 struct CreateCompletePair {
@@ -217,107 +181,96 @@ async fn get_due_offset_all_filters(
     size: i32,
     importance: i32,
     list: String,
+    hist: &History
 ) -> Result<i32, SmartDueError> {
-    unsafe {
-        let filtered = HISTORY
-            .as_mut()
-            .unwrap()
-            .filter_due_events(Vec::from([
-                format!("size={size}"),
-                format!("importance={importance}"),
-                format!("list='{list}'"),
-            ]))
-            .await;
-        if filtered.is_err() {
-            return Err(SmartDueError::SqlError);
-        }
-        return process_filter(filtered.unwrap()).await;
+    let filtered = hist
+        .filter_due_events(Vec::from([
+            format!("size={size}"),
+            format!("importance={importance}"),
+            format!("list='{list}'"),
+        ]))
+        .await;
+    if filtered.is_err() {
+        return Err(SmartDueError::SqlError);
     }
+    return process_filter(filtered.unwrap()).await;
 }
 
 async fn get_due_offset_size_importance(
     size: i32,
     importance: i32,
+    hist: &History
 ) -> Result<i32, SmartDueError> {
-    unsafe {
-        let filtered = HISTORY
-            .as_mut()
-            .unwrap()
-            .filter_due_events(Vec::from([
-                format!("size={size}"),
-                format!("importance={importance}"),
-            ]))
-            .await;
-        if filtered.is_err() {
-            return Err(SmartDueError::SqlError);
-        }
-        return process_filter(filtered.unwrap()).await;
+    let filtered = hist
+        .filter_due_events(Vec::from([
+            format!("size={size}"),
+            format!("importance={importance}"),
+        ]))
+        .await;
+    if filtered.is_err() {
+        return Err(SmartDueError::SqlError);
     }
+    return process_filter(filtered.unwrap()).await;
 }
 
 async fn get_due_offset_size_list(
     size: i32,
     list: String,
+    hist: &History
 ) -> Result<i32, SmartDueError> {
-    unsafe {
-        let filtered = HISTORY
-            .as_mut()
-            .unwrap()
-            .filter_due_events(Vec::from([
-                format!("size={size}"),
-                format!("list='{list}'"),
-            ]))
-            .await;
-        if filtered.is_err() {
-            return Err(SmartDueError::SqlError);
-        }
-        return process_filter(filtered.unwrap()).await;
+    let filtered = hist
+        .filter_due_events(Vec::from([
+            format!("size={size}"),
+            format!("list='{list}'"),
+        ]))
+        .await;
+    if filtered.is_err() {
+        return Err(SmartDueError::SqlError);
     }
+    return process_filter(filtered.unwrap()).await;
 }
 
 async fn get_due_offset_size(
     size: i32,
+    hist: &History
 ) -> Result<i32, SmartDueError> {
-    unsafe {
-        let filtered = HISTORY
-            .as_mut()
-            .unwrap()
-            .filter_due_events(Vec::from([
-                format!("size={size}"),
-            ]))
-            .await;
-        if filtered.is_err() {
-            return Err(SmartDueError::SqlError);
-        }
-        return process_filter(filtered.unwrap()).await;
+    let filtered = hist
+        .filter_due_events(Vec::from([
+            format!("size={size}"),
+        ]))
+        .await;
+    if filtered.is_err() {
+        return Err(SmartDueError::SqlError);
     }
+    return process_filter(filtered.unwrap()).await;
 }
 
 #[tauri::command]
 pub async fn get_suggested_due_offset(
+    hist: tauri::State<'_, History>,
     size: i32,
     importance: i32,
     list: String,
 ) -> Result<i32, String> {
-    let all_result = get_due_offset_all_filters(size, importance, list.clone()).await;
+    let all_result = get_due_offset_all_filters(size, importance, list.clone(), &hist).await;
     if all_result.is_ok() {
         println!("All filters found match");
         return Ok(all_result.unwrap());
     }
 
-    let size_list_result = get_due_offset_size_list(size, list.clone()).await;
+    let size_list_result = get_due_offset_size_list(size, list.clone(), &hist).await;
     if size_list_result.is_ok() {
         println!("Fallback: Size & list filters found match");
         return Ok(size_list_result.unwrap());
     }
 
-    let size_importance_result = get_due_offset_size_importance(size, importance).await;
+    let size_importance_result = get_due_offset_size_importance(size, importance, &hist).await;
     if size_importance_result.is_ok() {
         println!("Fallback 2: Size & importance filters found match");
         return Ok(size_importance_result.unwrap());
     }
 
-    let size_result = get_due_offset_size(size).await;
+    let size_result = get_due_offset_size(size, &hist).await;
     if size_result.is_ok() {
         println!("Fallback 3: Size filters found match");
         return Ok(size_result.unwrap());
@@ -348,18 +301,19 @@ pub async fn get_suggested_due_offset(
 }
 
 #[tauri::command]
-pub async fn clear_due_events() -> Result<(), String> {
-    unsafe {
-        Ok(HISTORY
-            .as_mut()
-            .unwrap()
-            .clear_due_events(Vec::new())
-            .await?)
-    }
+pub async fn clear_due_events(
+    hist: tauri::State<'_, History>
+) -> Result<(), String> {
+    Ok(hist
+        .clear_due_events(Vec::new())
+        .await?)
 }
 
 #[tauri::command]
-pub async fn remove_due_event(id: String, create: bool, complete: bool) -> Result<(), String> {
+pub async fn remove_due_event(
+    hist: tauri::State<'_, History>,
+    id: String, create: bool, complete: bool
+) -> Result<(), String> {
     let mut conditions: Vec<String> = Vec::new();
     conditions.push(format!("id='{}'", id));
     if !create && !complete {
@@ -369,11 +323,7 @@ pub async fn remove_due_event(id: String, create: bool, complete: bool) -> Resul
     } else if !create && complete {
         conditions.push(format!("type=1"));
     }
-    unsafe {
-        Ok(HISTORY
-            .as_mut()
-            .unwrap()
-            .clear_due_events(conditions)
-            .await?)
-    }
+    Ok(hist
+        .clear_due_events(conditions)
+        .await?)
 }

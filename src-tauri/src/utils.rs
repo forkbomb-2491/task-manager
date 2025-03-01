@@ -1,5 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
-
+use std::{collections::HashMap, fs, path::PathBuf, sync::Mutex};
+use tauri::{path::PathResolver, Runtime};
 use serde::{Deserializer, de, Deserialize};
 use serde_json::Value;
 
@@ -22,4 +23,19 @@ pub fn de_float_guard<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Opti
         Value::Null => None,
         _ => return Err(de::Error::custom("wrong type"))
     })
+}
+
+pub fn get_data_dir<R: Runtime>(path_resolver: &PathResolver<R>) -> Result<String, String> {
+    let data_dir = path_resolver
+        .data_dir()
+        .map_err(|_| "Failed to resolve data path.".to_owned())?
+        .join("Task Manager 2491");
+    Ok(check_app_data_exists(data_dir))
+}
+
+fn check_app_data_exists(path: PathBuf) -> String {
+    if !path.exists() {
+        let _ = fs::create_dir(path.clone());
+    }
+    path.to_str().unwrap().to_owned()
 }

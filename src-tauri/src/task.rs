@@ -8,37 +8,37 @@ use crate::{storage::TaskDb, utils::{de_float_guard, now}};
 static TASKS_PATH: &str = "/tasks.db"; // Prod
 // static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
 
-static mut TASKS: Option<TaskDb> = None;
+// static mut TASKS: Option<TaskDb> = None;
 
-unsafe fn init_tasks() {
-    if TASKS.is_none() {
-        TASKS = Some(TaskDb::new());
-    }
-}
+// unsafe fn init_tasks() {
+//     if TASKS.is_none() {
+//         TASKS = Some(TaskDb::new());
+//     }
+// }
 
-fn close_tasks(_e: Event) {
-    unsafe {
-        if TASKS.is_some() {
-            block_on(TASKS.as_mut().unwrap().close());
-        }
-    }
-}
+// fn close_tasks(_e: Event) {
+//     unsafe {
+//         if TASKS.is_some() {
+//             block_on(TASKS.as_mut().unwrap().close());
+//         }
+//     }
+// }
 
-async unsafe fn load_task_db<R: Runtime>(app: AppHandle<R>) {
-    init_tasks();
-    let path = app
-        .path()
-        .app_data_dir()
-        .unwrap()
-        .to_str()
-        .expect("AppData failed to resolve")
-        .to_owned()
-        + TASKS_PATH;
-    if !TASKS.as_ref().unwrap().is_loaded {
-        let _ = TASKS.as_mut().unwrap().load(&path).await;
-        app.listen_any("exit-requested", close_tasks);
-    }
-}
+// async unsafe fn load_task_db<R: Runtime>(app: AppHandle<R>) {
+//     init_tasks();
+//     let path = app
+//         .path()
+//         .app_data_dir()
+//         .unwrap()
+//         .to_str()
+//         .expect("AppData failed to resolve")
+//         .to_owned()
+//         + TASKS_PATH;
+//     if !TASKS.as_ref().unwrap().is_loaded {
+//         let _ = TASKS.as_mut().unwrap().load(&path).await;
+//         app.listen_any("exit-requested", close_tasks);
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct TaskRecord {

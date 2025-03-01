@@ -5,35 +5,40 @@ use crate::{task::{ListEntry, TaskEntry}, utils::now};
 
 type Db = sqlx::sqlite::Sqlite;
 
-async fn connect(path: &str) -> Result<Pool<Db>, Error> {
-    if !Db::database_exists(path).await.unwrap_or(false) {
-        Db::create_database(&("sqlite:".to_string().to_owned() + path)).await?;
-    }
-    let pool: Pool<Db> = Pool::connect(&("sqlite:".to_string().to_owned() + path)).await?;
-    println!("{path}");
-    Ok(pool)
-}
-
 #[derive(Clone)]
 pub struct DatabaseManager {
     pool: Option<Pool<Db>>,
-    is_loaded: bool,
+    path: String
+    // is_loaded: bool,
 }
 
 impl DatabaseManager {
-    pub fn new() -> DatabaseManager {
+    pub fn new(path: String) -> DatabaseManager {
         return DatabaseManager {
             pool: None,
-            is_loaded: false,
+            path: path,
         };
     }
 
+    pub async fn connect(&mut self) -> Result<(), String> {
+        self.pool = Some(
+            Pool::connect(&self.path)
+                .await
+                .map_err(|err| err.to_string())?,
+        );
+        Ok(())
+    }
+
+    fn is_loaded(&self) -> bool {
+        self.pool.is_some()
+    }
+
     pub async fn execute(
-        &mut self,
+        &self,
         query: &str,
         values: Vec<JsonValue>,
     ) -> Result<Option<(u64, i64)>, Error> {
-        if !self.is_loaded {
+        if !self.is_loaded() {
             return Ok(None);
         }
         let mut query = sqlx::query(query);
@@ -48,19 +53,19 @@ impl DatabaseManager {
                 query = query.bind(val);
             }
         }
-        let result = query.execute(&*self.pool.as_mut().unwrap()).await?;
+        let result = query.execute(self.pool.as_ref().unwrap()).await?;
         Ok(Some((result.rows_affected(), result.last_insert_rowid())))
     }
 
     pub async fn select_all<T>(
-        &mut self,
+        &self,
         query: &str,
         values: Vec<JsonValue>,
     ) -> Result<Option<Vec<T>>, Error>
     where
         T: for<'r> FromRow<'r, SqliteRow> + std::marker::Send + std::marker::Unpin,
     {
-        if !self.is_loaded {
+        if !self.is_loaded() {
             return Ok(None);
         }
         let mut query = sqlx::query_as(query);
@@ -75,19 +80,19 @@ impl DatabaseManager {
                 query = query.bind(val);
             }
         }
-        let rows: Vec<T> = query.fetch_all(&*self.pool.as_mut().unwrap()).await?;
+        let rows: Vec<T> = query.fetch_all(self.pool.as_ref().unwrap()).await?;
         Ok(Some(rows))
     }
 
     pub async fn select_one<T>(
-        &mut self,
+        &self,
         query: &str,
         values: Vec<JsonValue>,
     ) -> Result<Option<T>, Error>
     where
         T: for<'r> FromRow<'r, SqliteRow> + std::marker::Send + std::marker::Unpin,
     {
-        if !self.is_loaded {
+        if !self.is_loaded() {
             return Ok(None);
         }
         let mut query = sqlx::query_as(query);
@@ -102,30 +107,12 @@ impl DatabaseManager {
                 query = query.bind(val);
             }
         }
-        let ret: Result<T, Error> = query.fetch_one(&*self.pool.as_mut().unwrap()).await;
+        let ret: Result<T, Error> = query.fetch_one(self.pool.as_ref().unwrap()).await;
         if ret.is_ok() {
             Ok(Some(ret.unwrap()))
         } else {
             Ok(None)
         }
-    }
-
-    pub async fn load(&mut self, path: &str) -> Result<(), Error> {
-        if self.is_loaded {
-            return Ok(());
-        }
-        self.pool = Some(connect(path).await?);
-        self.is_loaded = true;
-        Ok(())
-    }
-
-    #[allow(unused)]
-    pub async fn close(&mut self) -> bool {
-        if !self.is_loaded { return false; }
-        self.pool.clone().unwrap().close().await;
-        self.pool = None;
-        self.is_loaded = false;
-        return true;
     }
 }
 
