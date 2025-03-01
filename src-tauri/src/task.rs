@@ -8,38 +8,6 @@ use crate::{storage::TaskDb, utils::{de_float_guard, now}};
 static TASKS_PATH: &str = "/tasks.db"; // Prod
 // static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
 
-// static mut TASKS: Option<TaskDb> = None;
-
-// unsafe fn init_tasks() {
-//     if TASKS.is_none() {
-//         TASKS = Some(TaskDb::new());
-//     }
-// }
-
-// fn close_tasks(_e: Event) {
-//     unsafe {
-//         if TASKS.is_some() {
-//             block_on(TASKS.as_mut().unwrap().close());
-//         }
-//     }
-// }
-
-// async unsafe fn load_task_db<R: Runtime>(app: AppHandle<R>) {
-//     init_tasks();
-//     let path = app
-//         .path()
-//         .app_data_dir()
-//         .unwrap()
-//         .to_str()
-//         .expect("AppData failed to resolve")
-//         .to_owned()
-//         + TASKS_PATH;
-//     if !TASKS.as_ref().unwrap().is_loaded {
-//         let _ = TASKS.as_mut().unwrap().load(&path).await;
-//         app.listen_any("exit-requested", close_tasks);
-//     }
-// }
-
 #[derive(Serialize, Deserialize, Clone)]
 pub struct TaskRecord {
     pub name: String,
@@ -207,151 +175,142 @@ impl ListRecord {
 }
 
 #[tauri::command]
-pub async fn migrate_tasks<R: Runtime>(app: tauri::AppHandle<R>, lists: Vec<ListRecord>) -> Result<bool, String> {
+pub async fn migrate_tasks (
+    db: tauri::State<'_, TaskDb>,
+    lists: Vec<ListRecord>
+) -> Result<bool, String> {
     println!("{}", &lists.len());
-    unsafe {
-        load_task_db(app).await;
-        for l in &lists {
-            println!("{}", l.name);
-            let entry = ListEntry::from_record(l);
-            let res = TASKS.as_mut().unwrap().new_list(&entry).await;
+    for l in &lists {
+        println!("{}", l.name);
+        let entry = ListEntry::from_record(l);
+        let res = db.new_list(&entry).await;
+        if !res.is_ok() { return Err(format!("{}", res.unwrap_err())); }
+        
+        let mut tasks: Vec<TaskEntry> = vec![];
+        for t in &l.tasks {
+            tasks.append(&mut TaskEntry::entries_from_record(t, None));
+        }
+        for t in tasks {
+            let res = db.new_task(entry.uuid.clone(), &t).await;
             if !res.is_ok() { return Err(format!("{}", res.unwrap_err())); }
-            
-            let mut tasks: Vec<TaskEntry> = vec![];
-            for t in &l.tasks {
-                tasks.append(&mut TaskEntry::entries_from_record(t, None));
-            }
-            for t in tasks {
-                let res = TASKS.as_mut().unwrap().new_task(entry.uuid.clone(), &t).await;
-                if !res.is_ok() { return Err(format!("{}", res.unwrap_err())); }
-            }
         }
     }
     Ok(true)
 }
 
 #[tauri::command]
-pub async fn load_tasks<R: Runtime>(app: tauri::AppHandle<R>) -> Result<Vec<ListRecord>, String> {
+pub async fn load_tasks (
+    db: tauri::State<'_, TaskDb>,
+) -> Result<Vec<ListRecord>, String> {
     let mut ret: Vec<ListRecord> = Vec::new();
-    unsafe {
-        load_task_db(app).await;
-        // Get all lists
-        let lists = TASKS.as_mut().unwrap().get_lists().await;
-        if lists.is_err() { return Err(format!("{}", lists.unwrap_err())); }
-        let lists = lists.unwrap();
-        if lists.is_none() { return Ok(ret); }
-        let lists = lists.unwrap();
-        // For each list
-        for l in lists {
-            let mut list = ListRecord::from_entry(&l);
-            // Get all tasks from list
-            let tasks = TASKS.as_mut().unwrap().get_tasks(l.uuid.to_string()).await;
-            if tasks.is_err() { return Err(format!("{}", tasks.unwrap_err())); }
-            let tasks = tasks.unwrap();
-            if tasks.is_some() {
-                // Run thru Evil, Affront-To-God Graph Method
-                list.tasks = load_records(&tasks.unwrap());
-            } else {
-                list.tasks = vec![];
-            }
-            ret.push(list);
+    // Get all lists
+    let lists = db.get_lists().await;
+    if lists.is_err() { return Err(format!("{}", lists.unwrap_err())); }
+    let lists = lists.unwrap();
+    if lists.is_none() { return Ok(ret); }
+    let lists = lists.unwrap();
+    // For each list
+    for l in lists {
+        let mut list = ListRecord::from_entry(&l);
+        // Get all tasks from list
+        let tasks = db.get_tasks(l.uuid.to_string()).await;
+        if tasks.is_err() { return Err(format!("{}", tasks.unwrap_err())); }
+        let tasks = tasks.unwrap();
+        if tasks.is_some() {
+            // Run thru Evil, Affront-To-God Graph Method
+            list.tasks = load_records(&tasks.unwrap());
+        } else {
+            list.tasks = vec![];
         }
+        ret.push(list);
     }
     Ok(ret)
 }
 
 #[tauri::command]
-pub async fn add_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-    }
+pub async fn add_list (
+    db: tauri::State<'_, TaskDb>, 
+    list: ListRecord
+) -> Result<bool, String> {
     let list = ListEntry::from_record(&list);
-    unsafe {
-        let result = TASKS.as_mut().unwrap().new_list(&list).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+    let result = db.new_list(&list).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }
 
 #[tauri::command]
-pub async fn edit_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-    }
+pub async fn edit_list (
+    db: tauri::State<'_, TaskDb>, 
+    list: ListRecord
+) -> Result<bool, String> {
     let list = ListEntry::from_record(&list);
-    unsafe {
-        let result = TASKS.as_mut().unwrap().edit_list(&list).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+    let result = db.edit_list(&list).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }
 
 #[tauri::command]
-pub async fn delete_list<R: Runtime>(app: tauri::AppHandle<R>, list: ListRecord) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-        let result = TASKS.as_mut().unwrap().delete_list(list.uuid).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+pub async fn delete_list (
+    db: tauri::State<'_, TaskDb>, 
+    list: ListRecord
+) -> Result<bool, String> {
+    let result = db.delete_list(list.uuid).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }
 
 #[tauri::command]
-pub async fn add_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String, parent: Option<String>) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-    }
+pub async fn add_task (
+    db: tauri::State<'_, TaskDb>, 
+    task: TaskRecord, list: String, parent: Option<String>
+) -> Result<bool, String> {
     let task = TaskEntry::from_record(&task, parent);
-    unsafe {
-        let result = TASKS.as_mut().unwrap().new_task(list, &task).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+    let result = db.new_task(list, &task).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }
 
 #[tauri::command]
-pub async fn edit_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String, parent: Option<String>) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-    }
+pub async fn edit_task (
+    db: tauri::State<'_, TaskDb>,
+    task: TaskRecord, list: String, parent: Option<String>
+) -> Result<bool, String> {
     let task = TaskEntry::from_record(&task, parent);
-    unsafe {
-        let result = TASKS.as_mut().unwrap().edit_task(list, &task).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+    let result = db.edit_task(list, &task).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }
 
 #[tauri::command]
-pub async fn delete_task<R: Runtime>(app: tauri::AppHandle<R>, task: TaskRecord, list: String) -> Result<bool, String> {
-    unsafe {
-        load_task_db(app).await;
-        let result = TASKS.as_mut().unwrap().delete_task(list, task.id).await;
-        if result.is_err() {
-            Err(format!("{}", result.unwrap_err()))
-        } else {
-            // Syncing here
-            Ok(result.unwrap())
-        }
+pub async fn delete_task (
+    db: tauri::State<'_, TaskDb>, 
+    task: TaskRecord, list: String
+) -> Result<bool, String> {
+    let result = db.delete_task(list, task.id).await;
+    if result.is_err() {
+        Err(format!("{}", result.unwrap_err()))
+    } else {
+        // Syncing here
+        Ok(result.unwrap())
     }
 }

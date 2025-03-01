@@ -29,7 +29,8 @@ pub fn get_data_dir<R: Runtime>(path_resolver: &PathResolver<R>) -> Result<Strin
     let data_dir = path_resolver
         .data_dir()
         .map_err(|_| "Failed to resolve data path.".to_owned())?
-        .join("Task Manager 2491");
+        .join("dev.pgil.forkbomb.taskmgr");
+        // .join("Task Manager 2491");
     Ok(check_app_data_exists(data_dir))
 }
 

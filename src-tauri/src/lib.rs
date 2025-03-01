@@ -28,7 +28,6 @@ pub async fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_notification::init())
         .invoke_handler(tauri::generate_handler![
-            algorithm::init_algo,
             algorithm::record_create_event,
             algorithm::record_complete_event,
             algorithm::get_suggested_due_offset,
