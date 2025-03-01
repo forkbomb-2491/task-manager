@@ -1,5 +1,5 @@
 use std::time::{SystemTime, UNIX_EPOCH};
-use std::{collections::HashMap, fs, path::PathBuf, sync::Mutex};
+use std::{fs, path::PathBuf};
 use tauri::{path::PathResolver, Runtime};
 use serde::{Deserializer, de, Deserialize};
 use serde_json::Value;

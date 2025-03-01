@@ -59,10 +59,5 @@ pub async fn run() {
         panic!("Failed to add task state to app!");
     }
 
-    app.run(|handle, event| match event {
-        tauri::RunEvent::ExitRequested { .. } => {
-            let _ = handle.emit("exit-requested", ());
-        },
-        _ => {},
-    })
+    app.run(|_, _| {});
 }

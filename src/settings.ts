@@ -1,4 +1,4 @@
-import { Store } from "@tauri-apps/plugin-store";
+import {  LazyStore } from "@tauri-apps/plugin-store";
 import { CheckInHandler } from "./notifications";
 import { Weekdays, getElement, onWindowFocused, padWithLeftZeroes, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
@@ -506,7 +506,7 @@ export function onSettingsLoad(cb: () => void) {
  * disk, and handles Event dispatches when settings are changed.
  */
 export class Settings {
-    private store: Store
+    private store: LazyStore
     private entries: [key: string, value: unknown][] = []
 
     private _isLoaded: boolean = false
@@ -518,7 +518,7 @@ export class Settings {
     }
 
     constructor() {
-        this.store = new Store(SETTINGS_PATH)
+        this.store = new LazyStore(SETTINGS_PATH)
     }
 
     /**
@@ -529,7 +529,7 @@ export class Settings {
      */
     load() {
         if (!this._isLoaded) {
-            this.store.load().then(_ => {
+            this.store.init().then(_ => {
                 this.store.entries().then(ret => {
                     this.entries = ret
                     ret.forEach(stg => {

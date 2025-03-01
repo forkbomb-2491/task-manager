@@ -3,13 +3,11 @@ import { HelpManager } from "./help";
 import { TaskNotifier } from "./notifications";
 import { Calendar, Planner } from "./planner";
 import { EisenManager } from "./eisenhower";
-import { onSettingChange, onSettingsLoad } from "./settings";
+import { onSettingsLoad } from "./settings";
 import { loadTasks } from "./storage";
 import { TaskPlanner } from "./taskplan";
-import { Task, List, colorStrToEnum, TaskColor, ListEvent, TaskEventType, onTaskEvent, onListEdit } from "./task";
-import { getElement, onWindowFocused } from "./utils";
-
-const MIN_SYNC_SPACING = 5 * 60 * 1000
+import { Task, List, colorStrToEnum, TaskColor, ListEvent, TaskEventType } from "./task";
+import { onWindowFocused } from "./utils";
 
 /**
  * The Task Manager.
@@ -39,8 +37,6 @@ export class TaskManager {
     private eisenMgr: EisenManager;
 
     private settingsLoaded: boolean = false;
-    private syncEnabled: boolean = false;
-    private lastSync: number = 0;
 
     constructor() {
         this.taskList = new TaskList(this);
@@ -52,9 +48,6 @@ export class TaskManager {
         this.eisenMgr = new EisenManager(this);
 
         onSettingsLoad(() => this.settingsLoaded = true);
-        onSettingChange("syncEnabled", e => {
-            this.syncEnabled = e.value
-        })
         onWindowFocused(() => this.render())
     }
 

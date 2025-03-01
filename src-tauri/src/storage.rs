@@ -2,7 +2,7 @@ use std::path::Path;
 use std::fs::write;
 
 use serde_json::{json, Value as JsonValue};
-use sqlx::{migrate::MigrateDatabase, sqlite::SqliteRow, Error, FromRow, Pool};
+use sqlx::{sqlite::SqliteRow, Error, FromRow, Pool};
 
 use crate::{task::{ListEntry, TaskEntry}, utils::now};
 
@@ -29,6 +29,8 @@ impl DatabaseManager {
                 .await
                 .map_err(|err| err.to_string())?,
         );
+        // Prevents WAL from being enabled (could cause problems with syncing on cloud providers)
+        let _ = self.execute("PRAGMA journal_mode=DELETE", Vec::new()).await;
         Ok(())
     }
 
@@ -125,9 +127,12 @@ pub struct TaskDb {
     path: String,
 }
 
+static TASKS_PATH: &str = "tasks.db"; // Prod
+// static TASKS_PATH: &str = "tasks2.db"; // Testing/debug
+
 impl TaskDb {
     pub async fn new(dir: String) -> Result<Self, String> {
-        let path = Path::new(&dir).join("tasks.db");
+        let path = Path::new(&dir).join(TASKS_PATH);
         if !path.exists() {
             let _ = write(&path, "");
         }
@@ -325,31 +330,6 @@ impl TaskDb {
             vec![json!(id.clone())]
         ).await?;
         Ok(result.is_some())
-    }
-
-    pub async fn filter_tasks(
-        &mut self,
-        list: String,
-        conditions: Vec<String>,
-    ) -> Result<Option<Vec<TaskEntry>>, Error> {
-        let mut query = format!("SELECT * FROM '{}'", list).to_string();
-        if conditions.len() > 0 {
-            let conditions = conditions.join(" AND ");
-            query += &(" WHERE ".to_string() + &conditions);
-        }
-        Ok(self.db_mgr.as_mut().unwrap().select_all::<TaskEntry>(&query, Vec::new()).await?)
-    }
-
-    pub async fn filter_lists(
-        &mut self,
-        conditions: Vec<String>,
-    ) -> Result<Option<Vec<ListEntry>>, Error> {
-        let mut query = "SELECT * FROM Lists".to_string();
-        if conditions.len() > 0 {
-            let conditions = conditions.join(" AND ");
-            query += &(" WHERE ".to_string() + &conditions);
-        }
-        Ok(self.db_mgr.as_mut().unwrap().select_all::<ListEntry>(&query, Vec::new()).await?)
     }
 }
 

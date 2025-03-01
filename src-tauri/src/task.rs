@@ -1,12 +1,8 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use tauri::{async_runtime::block_on, AppHandle, Event, Listener, Manager, Runtime};
 
-use crate::{storage::TaskDb, utils::{de_float_guard, now}};
-
-static TASKS_PATH: &str = "/tasks.db"; // Prod
-// static TASKS_PATH: &str = "/tasks2.db"; // Testing/debug
+use crate::{storage::TaskDb, utils::de_float_guard};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct TaskRecord {
