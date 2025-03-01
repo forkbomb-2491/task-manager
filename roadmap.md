@@ -54,7 +54,9 @@
     - [ ] TS cleanup
 - [ ] Rustify logic
 - [ ] Clean up Rust
-
+    - [x] Delete old sync logic
+    - [ ] Implement custom DB path
+    - [ ] Bring DB connection logic in line with Mythic 7509
 - [ ] Time Block
     - [ ] Preset Time Blocks
     - [ ] Smart Time Block

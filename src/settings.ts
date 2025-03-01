@@ -3,7 +3,6 @@ import { CheckInHandler } from "./notifications";
 import { Weekdays, getElement, onWindowFocused, padWithLeftZeroes, registerShowHideButton } from "./utils";
 import { SETTINGS_PATH } from "./storage";
 import { getVersion } from "@tauri-apps/api/app";
-import { isAuthenticated, logOut, sendMetadata as sendTelemetry, signIn } from "./http";
 import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -143,16 +142,6 @@ export class SettingsView {
             }
         )
 
-        document.getElementById("syncenabled")!.addEventListener(
-            "change",
-            _ => {
-                // @ts-ignore
-                const element: HTMLInputElement = document.getElementById("syncenabled")!
-                this.settings.syncEnabled = element.checked
-                this.syncSettingsChange(element.checked).then()
-            }
-        )
-
         document.getElementById("tabsettings")!.addEventListener(
             "change",
             _ => {
@@ -201,30 +190,6 @@ export class SettingsView {
         const remindersCheckbox = document.getElementById("remindersenabled")!
         // @ts-ignore
         remindersCheckbox.checked = this.settings.remindersEnabled
-
-
-        const syncCheckbox = document.getElementById("syncenabled")!
-        // @ts-ignore
-        syncCheckbox.checked = this.settings.syncEnabled
-        
-        getElement("logoutbutton").addEventListener(
-            "click",
-            _ => {
-                logOut().then(_ => this.syncShowSignIn())
-            }
-        )
-
-        if (this.settings.syncEnabled) {
-            this.syncSettingsChange(true).then()
-        }
-
-        document.getElementById("syncsigninform")!.addEventListener(
-            "submit",
-            e => {
-                e.preventDefault()
-                this.syncSignInFormSubmit()
-            }
-        )
 
         getElement("defaultplannerview").addEventListener("change", _ => {
             const selector = getElement("defaultplannerview") as HTMLFormElement
@@ -464,59 +429,7 @@ export class SettingsView {
 
         document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
     }
-
-    private syncSignedIn() {
-        getElement("syncinfo").style.display = "none"
-        getElement("syncsigninbox").style.display = "none"
-        getElement("syncbuttonbox").style.display = "block"
-    }
-
-    private syncShowSignIn() {
-        getElement("syncinfo").style.display = "none"
-        getElement("syncsigninbox").style.display = "block"
-        getElement("syncbuttonbox").style.display = "none"
-    }
-    
-    private async syncSignInFormSubmit() {
-        getElement("syncinfo").style.display = "block"
-        getElement("syncinfo").innerHTML = "Signing in..."
-        getElement("syncsigninbox").style.display = "none"
-
-        // @ts-ignore
-        var form: HTMLFormElement = document.getElementById("syncsigninform")!
-        const uname = form.username.value
-        const passwd = form.password.value
-
-        form.reset()
-
-        try {
-            await signIn(uname, passwd)
-            this.syncSignedIn()
-        } catch (error) {
-            getElement("syncinfo").innerHTML = "<element style='color: red;'>Username or password incorrect. Please try again.</element>"
-            getElement("syncsigninbox").style.display = "block"
-        }
-    }
-
-    private async syncSettingsChange(newStatus: boolean) {
-        if (newStatus) {
-            getElement("syncinfo").innerHTML = "Checking your sync status..."
-            getElement("syncinfo").style.display = "block"
-            var isAuthed = isAuthenticated()
-            if (!isAuthed) {
-                this.syncShowSignIn()
-                return
-            }
-            this.syncSignedIn()
-        } else {
-            getElement("syncinfo").style.display = "none"
-            getElement("syncsigninbox").style.display = "none"
-            getElement("syncbuttonbox").style.display = "none"
-
-            await logOut()
-        }
-    }
-}
+}    
 
 /**
  * The different types of Settings events the Settings class may dispatch or to
@@ -626,10 +539,10 @@ export class Settings {
                     this._isLoaded = true
                     window.dispatchEvent(new Event("settingsloaded"))
                     if (VERSION > this.lastVersion) {
-                        sendTelemetry(this.deviceId, this.lastVersion).then(() => {
-                            // Implement sheet
-                            this.updateVersion()
-                        })
+                        // sendTelemetry(this.deviceId, this.lastVersion).then(() => {
+                        //     // Implement sheet
+                        //     this.updateVersion()
+                        // })
                     }
                 })
             }).catch(_ => {

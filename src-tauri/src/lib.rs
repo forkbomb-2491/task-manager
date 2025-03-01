@@ -9,7 +9,6 @@ mod testutils;
 mod task;
 mod storage;
 mod utils;
-mod http;
 
 mod tests;
 
@@ -40,15 +39,9 @@ pub fn run() {
             task::add_task,
             task::edit_task,
             task::delete_task,
-            http::log_in,
-            http::is_logged_in,
-            http::send_telemetry,
-            http::do_sync,
-            http::log_out,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
-    http::set_app_conf_dir(app.path().app_data_dir().unwrap().to_str().unwrap().to_string());
     app.run(|handle, event| match event {
         tauri::RunEvent::ExitRequested { .. } => {
             let _ = handle.emit("exit-requested", ());
