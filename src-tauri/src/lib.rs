@@ -4,13 +4,14 @@
 use history::History;
 use storage::TaskDb;
 use tauri::{Emitter, Manager};
-use utils::get_data_dir;
+use utils::{get_data_dir, get_database_dir};
 
 mod algorithm;
 mod history;
 mod testutils;
 mod task;
 mod storage;
+mod settings;
 mod utils;
 
 // mod tests;
@@ -41,19 +42,20 @@ pub async fn run() {
             task::add_task,
             task::edit_task,
             task::delete_task,
+            settings::change_database_path
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
 
     // Manage history
-    let hist = History::new(get_data_dir(app.path()).unwrap()).await.unwrap();
+    let hist = History::new(get_database_dir(app.path()).unwrap()).await.unwrap();
     let hist_success = app.manage(hist);
     if !hist_success {
         panic!("Failed to add history state to app!");
     }
 
     // Manage tasks
-    let tasks = TaskDb::new(get_data_dir(app.path()).unwrap()).await.unwrap();
+    let tasks = TaskDb::new(get_database_dir(app.path()).unwrap()).await.unwrap();
     let tasks_success = app.manage(tasks);
     if !tasks_success {
         panic!("Failed to add task state to app!");

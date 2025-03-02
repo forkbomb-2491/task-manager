@@ -7,6 +7,8 @@ import { Update, check } from "@tauri-apps/plugin-updater";
 import { loadBugReport } from "./feedback";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
+import { message, open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 
 const VERSION = await getVersion()
 
@@ -202,6 +204,23 @@ export class SettingsView {
                     this.settings.plannerInCalendar = false
                     break;
             }
+        })
+
+        getElement("customdatadirbutton").addEventListener("click", async () => {
+            var path = await open({
+                multiple: false,
+                directory: true
+            })
+            if (path == null) { return; }
+            await invoke("change_database_path", {
+                target: path
+            })
+            this.settings.customDatabaseDir = path + "/Task Manager"
+        })
+
+        getElement("resetdatadirbutton").addEventListener("click", async () => {
+            this.settings.customDatabaseDir = null
+            await message("Database location has been reset. Please note: your tasks have NOT been copied over. Restart Task Manager.")
         })
 
         this.setSettingsFieldsToSavedValues()
@@ -734,6 +753,14 @@ export class Settings {
 
     updateVersion() {
         this.setKey("lastVersion", VERSION)
+    }
+
+    get customDatabaseDir(): string | null {
+        return this.getKey("customDatabaseDir", null)
+    }
+
+    set customDatabaseDir(val: string | null) {
+        this.setKey("customDatabaseDir", val)
     }
 }
 

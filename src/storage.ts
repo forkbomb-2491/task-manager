@@ -8,7 +8,6 @@ import { invoke } from "@tauri-apps/api/core";
 
 const TASKS_FN = "tasks2.json"
 export const SETTINGS_PATH = await resolve(await appDataDir()) + "/settings2.json";
-export const DATABASE_PATH = await resolve(await appDataDir()) + "/history.db";
 
 // Checks to make sure the AppData folder for the App exists.
 var dirExists = await exists(".", {
