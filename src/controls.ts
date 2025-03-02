@@ -75,16 +75,16 @@ export const addSliderControl = addRangeControl
 
 export function addRadioControl(
     id: string, 
-    getter: () => Promise<number>, 
-    setter: (arg0: number) => Promise<void>,
+    getter: () => Promise<string>, 
+    setter: (arg0: string) => Promise<void>,
     updateOnEvent: boolean = false
 ) {
     // @ts-ignore
     const element: HTMLFormElement = getElement(id)
     
     getter().then(res => {
-        for (const input of element.getElementsByTagName("input")) {
-            if (input.valueAsNumber == res) {
+        for (const input of [...element.getElementsByTagName("input")]) {
+            if (input.value == res) {
                 input.checked = true
                 break
             }
@@ -92,10 +92,12 @@ export function addRadioControl(
     })
 
     element.addEventListener("change", async e => {
+        console.log("Change!")
         if (e.isTrusted) {
-            for (const input of element.getElementsByTagName("input")) {
+            for (const input of [...element.getElementsByTagName("input")]) {
                 if (input.checked) {
-                    await setter(element.valueAsNumber)
+                    console.log(input.value)
+                    await setter(input.value)
                     break
                 }
             }

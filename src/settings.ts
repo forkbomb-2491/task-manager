@@ -9,6 +9,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
+import { addCheckboxControl, addRadioControl, addSliderControl } from "./controls";
 
 const VERSION = await getVersion()
 
@@ -21,8 +22,6 @@ export class SettingsView {
     private reminderSettings: HTMLFormElement = document.getElementById("remindersettings")!
     // @ts-ignore
     private tabSettings: HTMLFormElement = document.getElementById("tabsettings")!
-    // @ts-ignore
-    private themeSelector: HTMLFormElement = document.getElementById("themeselector")!
 
     private checkInHandler: CheckInHandler | undefined
     private settings: Settings
@@ -109,39 +108,43 @@ export class SettingsView {
             "submit",
             (e) => { this.changeNotifSettingsCallback(e) }
         )
+        
+        addRadioControl(
+            "themeselector",
+            async () => this.settings.lastTheme,
+            async val => {
+                this.settings.lastTheme = val
+                this.changeTheme(val)
+            }
+        )
+        this.changeTheme(this.settings.lastTheme)
 
-        this.addThemeButtonCallbacks()
-
-        document.getElementById("weekstartform")!.addEventListener(
-            "change",
-            _ => {
-                this.weekStartChangeCallback()
+        addRadioControl(
+            "weekstartform",
+            async () => String(Number(this.settings.plannerStartDay)),
+            async val => {
+                console.log(`changing to ${val}`)
+                this.settings.plannerStartDay = Number(val)
             }
         )
 
-        document.getElementById("reclistslider")!.addEventListener(
-            "change",
-            _ => {
-                this.recListSliderCallback()
-            }
+        addSliderControl(
+            "reclistslider",
+            async () => this.settings.recListLength,
+            async val => {this.settings.recListLength = val}
+        )
+        getElement("reclistlabel").innerHTML = `${this.settings.recListLength}`
+
+        addCheckboxControl(
+            "checkinenabled", 
+            async () => this.settings.checkinsEnabled, 
+            async val => {this.settings.checkinsEnabled = val}
         )
 
-        document.getElementById("checkinenabled")!.addEventListener(
-            "change",
-            _ => {
-                // @ts-ignore
-                const element: HTMLInputElement = document.getElementById("checkinenabled")!
-                this.settings.checkinsEnabled = element.checked
-            }
-        )
-
-        document.getElementById("remindersenabled")!.addEventListener(
-            "change",
-            _ => {
-                // @ts-ignore
-                const element: HTMLInputElement = document.getElementById("remindersenabled")!
-                this.settings.remindersEnabled = element.checked
-            }
+        addCheckboxControl(
+            "remindersenabled", 
+            async () => this.settings.remindersEnabled, 
+            async val => {this.settings.remindersEnabled = val}
         )
 
         document.getElementById("tabsettings")!.addEventListener(
@@ -176,35 +179,23 @@ export class SettingsView {
 
         document.getElementById("bugbutton")!.addEventListener("click", _ => loadBugReport())
 
-        this.changeTheme(this.settings.lastTheme)
-
-        const recListLen = this.settings.recListLength
-        // @ts-ignore
-        const slider: HTMLInputElement = document.getElementById("reclistslider")!.value = recListLen
-        document.getElementById("reclistlabel")!.innerHTML = `${recListLen}`
-
-
-        const checkInBox = document.getElementById("checkinenabled")!
-        // @ts-ignore
-        checkInBox.checked = this.settings.checkinsEnabled
-
-
-        const remindersCheckbox = document.getElementById("remindersenabled")!
-        // @ts-ignore
-        remindersCheckbox.checked = this.settings.remindersEnabled
-
-        getElement("defaultplannerview").addEventListener("change", _ => {
-            const selector = getElement("defaultplannerview") as HTMLFormElement
-            switch (selector.plannerview.value) {
-                case "monthly":
+        addRadioControl(
+            "defaultplannerview",
+            async () => {
+                if (this.settings.plannerInCalendar) {
+                    return "monthly"
+                } else {
+                    return "weekly"
+                }
+            },
+            async val => {
+                if (val == "monthly") {
                     this.settings.plannerInCalendar = true
-                    break;
-                    
-                default:
+                } else {
                     this.settings.plannerInCalendar = false
-                    break;
+                }
             }
-        })
+        )
 
         getElement("customdatadirbutton").addEventListener("click", async () => {
             var path = await open({
@@ -224,14 +215,6 @@ export class SettingsView {
         })
 
         this.setSettingsFieldsToSavedValues()
-    }
-
-    private recListSliderCallback() {
-        const slider = document.getElementById("reclistslider")!
-        // @ts-ignore
-        const val = Number(slider.value)
-
-        this.settings.recListLength = val
     }
 
     private setSettingsFieldsToSavedValues() {
@@ -271,24 +254,6 @@ export class SettingsView {
             document.getElementById("notifinterval")!.innerHTML = reminderStgs.interval / 60_000
         }
 
-        var themeSelector = document.getElementById("themeselector")
-        for (let i = 0; i < themeSelector!.getElementsByTagName("input").length; i++) {
-            const element = themeSelector!.getElementsByTagName("input")[i];
-            if (element.value == this.settings.lastTheme) {
-                element.checked = true
-                break
-            }
-        }
-
-        var weekStartSelector = document.getElementById("weekstartform")!
-        for (let i = 0; i < weekStartSelector.getElementsByTagName("input").length; i++) {
-            const element = weekStartSelector.getElementsByTagName("input")[i];
-            if (element.value == `${this.settings.plannerStartDay}`) {
-                element.checked = true
-                break
-            }
-        }
-
         var tabsActive = this.settings.tabsActive
         // @ts-ignore
         document.getElementById("planneractive")!.checked = tabsActive.planner
@@ -305,16 +270,6 @@ export class SettingsView {
 
         // @ts-ignore
         document.getElementById("helplabelinput")!.value = this.settings.helpTabName
-
-        var plannerViewSelector = getElement("defaultplannerview")
-        for (let i = 0; i < plannerViewSelector.getElementsByTagName("input").length; i++) {
-            const element = plannerViewSelector.getElementsByTagName("input")[i];
-            if (element.value == "weekly") {
-                element.checked = !this.settings.plannerInCalendar
-            } else if (element.value == "monthly") {
-                element.checked = this.settings.plannerInCalendar
-            }
-        }
     }
 
     private async loadCheckInHandler(): Promise<boolean> {
@@ -409,44 +364,6 @@ export class SettingsView {
                 themeSheet.removeAttribute("disabled")
             }
         }
-    }
-
-    /** Assign as click callback to theme buttons. */
-    async themeButtonCallback(event: Event) {
-        var theme: string = ""
-
-        // @ts-ignore
-        var elements = event.currentTarget!.getElementsByTagName("input")!
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            if (element.checked) {
-                theme = element.value
-                break
-            }
-        }
-
-        this.changeTheme(theme)
-        this.settings.lastTheme = theme
-    }
-
-    private weekStartChangeCallback() {
-        var selector = document.getElementById("weekstartform")!
-        for (let i = 0; i < selector.getElementsByTagName("input").length; i++) {
-            const element = selector.getElementsByTagName("input")[i];
-            if (element.checked) {
-                var newDay = Number(element.value)
-                this.settings.plannerStartDay = newDay
-                break
-            }
-        }
-    }
-
-    private addThemeButtonCallbacks() {
-        var themeButtonCallback = (e: Event) => {
-            this.themeButtonCallback(e)
-        }
-
-        document.getElementById("themeselector")!.addEventListener("change", themeButtonCallback);
     }
 }    
 
