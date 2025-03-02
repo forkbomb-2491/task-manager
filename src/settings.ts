@@ -9,7 +9,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { message, open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { addCheckboxControl, addRadioControl, addSliderControl } from "./controls";
+import { addCheckboxControl, addCheckboxFormControl, addEntryControl, addRadioControl, addSliderControl } from "./controls";
 
 const VERSION = await getVersion()
 
@@ -147,34 +147,33 @@ export class SettingsView {
             async val => {this.settings.remindersEnabled = val}
         )
 
-        document.getElementById("tabsettings")!.addEventListener(
-            "change",
-            _ => {
+        addCheckboxFormControl(
+            "tabsettings",
+            async () => {
+                var selected: string[] = []
+                for (const entry of Object.entries(this.settings.tabsActive)) {
+                    if (entry[1]) {
+                        selected.push(entry[0])
+                    }
+                }
+                return selected            
+            },
+            async tabs => {
                 this.settings.tabsActive = {
-                    // @ts-ignore
-                    "planner": document.getElementById("planneractive")!.checked,
-                    // @ts-ignore
-                    "taskplan": document.getElementById("tpactive")!.checked,
-                    // @ts-ignore
-                    "pomodoro": document.getElementById("pomodoroactive")!.checked,
-                    // @ts-ignore
-                    "eisenhower": document.getElementById("eisenhoweractive")!.checked,
-                    // @ts-ignore
-                    "dopamenu": document.getElementById("dopamenuactive")!.checked,
-                    // @ts-ignore
-                    "reminders": document.getElementById("remindersactive")!.checked
+                    "planner": tabs.includes("planner"),
+                    "taskplan": tabs.includes("taskplan"),
+                    "pomodoro": tabs.includes("pomodoro"),
+                    "eisenhower": tabs.includes("eisenhower"),
+                    "dopamenu": tabs.includes("dopamenu"),
+                    "reminders": tabs.includes("reminders"),
                 }
             }
         )
 
-        document.getElementById("helplabelinput")!.addEventListener(
-            "change",
-            e => {
-                // @ts-ignore
-                if (e.currentTarget!.value.length < 1) return
-                // @ts-ignore
-                this.settings.helpTabName = e.currentTarget!.value
-            }
+        addEntryControl(
+            "helplabelinput",
+            async () => this.settings.helpTabName,
+            async name => {this.settings.helpTabName = name}
         )
 
         document.getElementById("bugbutton")!.addEventListener("click", _ => loadBugReport())
@@ -253,23 +252,6 @@ export class SettingsView {
             // @ts-ignore
             document.getElementById("notifinterval")!.innerHTML = reminderStgs.interval / 60_000
         }
-
-        var tabsActive = this.settings.tabsActive
-        // @ts-ignore
-        document.getElementById("planneractive")!.checked = tabsActive.planner
-        // @ts-ignore
-        document.getElementById("tpactive")!.checked = tabsActive.taskplan
-        // @ts-ignore
-        document.getElementById("pomodoroactive")!.checked = tabsActive.pomodoro
-        // @ts-ignore
-        document.getElementById("eisenhoweractive")!.checked = tabsActive.eisenhower
-        // @ts-ignore
-        document.getElementById("dopamenuactive")!.checked = tabsActive.dopamenu
-        // @ts-ignore
-        document.getElementById("remindersactive")!.checked = tabsActive.reminders
-
-        // @ts-ignore
-        document.getElementById("helplabelinput")!.value = this.settings.helpTabName
     }
 
     private async loadCheckInHandler(): Promise<boolean> {

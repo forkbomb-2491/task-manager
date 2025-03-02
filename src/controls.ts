@@ -112,6 +112,55 @@ export function addRadioControl(
 }
 
 
+// Checkbox form
+
+export function addCheckboxFormControl(
+    id: string, 
+    getter: () => Promise<string[]>, 
+    setter: (arg0: string[]) => Promise<void>,
+    updateOnEvent: boolean = false
+) {
+    // @ts-ignore
+    const element: HTMLFormElement = getElement(id)
+    
+    getter().then(res => {
+        for (const input of [...element.getElementsByTagName("input")]) {
+            if (input.type != "checkbox") {
+                continue
+            }
+            if (res.includes(input.value)) {
+                input.checked = true
+            } else {
+                input.checked = false
+            }
+        }
+    })
+
+    element.addEventListener("change", async e => {
+        console.log("Change!")
+        if (e.isTrusted) {
+            var ret: string[] = []
+            for (const input of [...element.getElementsByTagName("input")]) {
+                if (input.type != "checkbox") {
+                    continue
+                }
+
+                if (input.checked) {
+                    ret.push(input.value)
+                }
+            }
+            await setter(ret)
+        }
+    })
+
+    if (updateOnEvent) {
+        window.addEventListener(`control/update/${id}`, async _ => {
+            element.valueAsNumber = await getter()
+        })
+    }
+}
+
+
 // Entry
 
 export function addEntryControl(
