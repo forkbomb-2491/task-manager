@@ -1,0 +1,81 @@
+<style>
+    :root {
+        --grid-gap: 8px;
+    }
+    body {
+        width: calc(100% - var(--grid-gap));
+        display: grid;
+        grid:
+            "header" calc(5vh - var(--grid-gap)) "main" calc(95vh - 2*var(--grid-gap));
+        gap: var(--grid-gap);
+    }
+
+    header {
+        grid-area: header;
+    }
+    
+    .main {
+        grid-area: main;
+        overflow: scroll;
+    }
+    .layout {
+    width: 100%;
+
+    display: grid;
+    grid:
+        ". . . . . . . ." auto
+        "week1 . . . . . . ." 1fr
+        "week2 . . . . . . ." 1fr
+        "week3 . . . . . . ." 1fr
+        "week4 . . . . . . ." 1fr
+        "week5 . . . . . . ." 1fr
+        "week6 . . . . . . ." 1fr
+        / 48px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: var(--grid-gap);
+    }
+
+    .week1 { grid-area: week1; }
+    .week2 { grid-area: week2; }
+    .week3 { grid-area: week3; }
+    .week4 { grid-area: week4; }
+    .week5 { grid-area: week5; }
+    .week6 { grid-area: week6; }
+    .daylabel {
+        width: 100%;
+        text-align: center;
+    }
+    .caldate {
+        background-color: gray;
+        aspect-ratio: 1 / 1;
+    }
+</style>
+
+<body>
+    <header>
+        HEADER
+    </header>
+    <section class="main">
+        BODY
+        <section class="layout">
+            <div></div>
+            <div class="week1">1</div>
+            <div class="week2">2</div>
+            <div class="week3">3</div>
+            <div class="week4">4</div>
+            <div class="week5">5</div>
+            <div class="week6">6</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="daylabel">Sun</div>
+            <div class="caldate"></div>
+            <div class="caldate"></div>
+            <div class="caldate"></div>
+            <div class="caldate"></div>
+          </section>
+          
+    </section>
+</body>

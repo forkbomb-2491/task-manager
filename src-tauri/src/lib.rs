@@ -3,8 +3,8 @@
 
 use history::History;
 use storage::TaskDb;
-use tauri::{Emitter, Manager};
-use utils::{get_data_dir, get_database_dir};
+use tauri::Manager;
+use utils::get_database_dir;
 
 mod algorithm;
 mod history;
